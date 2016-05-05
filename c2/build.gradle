@@ -1,2 +1,16 @@
+def mainClass = 'gpig.c2.C2'
+
+mainClassName = mainClass
+
 dependencies {
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

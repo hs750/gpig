@@ -1,2 +1,16 @@
+def mainClass = 'gpig.drones.detection.DetectionDrone'
+
+mainClassName = mainClass
+
 dependencies {
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
