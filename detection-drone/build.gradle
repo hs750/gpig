@@ -3,6 +3,7 @@ def mainClass = 'gpig.drones.detection.DetectionDrone'
 mainClassName = mainClass
 
 dependencies {
+    compile project(':common')
 }
 
 jar {

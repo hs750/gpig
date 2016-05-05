@@ -3,6 +3,7 @@ def mainClass = 'gpig.mdc.MDC'
 mainClassName = mainClass
 
 dependencies {
+    compile project(':common')
 }
 
 jar {

@@ -3,6 +3,7 @@ def mainClass = 'gpig.c2.C2'
 mainClassName = mainClass
 
 dependencies {
+    compile project(':common')
 }
 
 jar {
