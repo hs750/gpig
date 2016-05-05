@@ -2,11 +2,14 @@ apply plugin: 'base'
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'application'
 
     repositories {
         jcenter()
     }
+}
+
+configure([project(':c2'), project(':mdc'), project(':delivery-drone'), project(':detection-drone')]) {
+    apply plugin: 'application'
 }
 
 task copyJars(type: Copy, dependsOn: subprojects.jar) {
