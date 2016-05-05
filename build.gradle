@@ -1,0 +1,16 @@
+apply plugin: 'base'
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        jcenter()
+    }
+}
+
+task copyJars(type: Copy, dependsOn: subprojects.jar) {
+    from(subprojects.jar)
+    into project.file('build')
+}
+
+build.finalizedBy(copyJars)

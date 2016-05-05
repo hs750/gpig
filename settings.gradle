@@ -1,0 +1,6 @@
+rootProject.name = 'gpig'
+
+include ':c2'
+include ':mdc'
+include ':delivery-drone'
+include ':detection-drone'
