@@ -8,7 +8,7 @@ subprojects {
     }
 }
 
-configure([project(':c2'), project(':mdc'), project(':delivery-drone'), project(':detection-drone')]) {
+configure([project(':c2'), project(':dc'), project(':delivery-drone'), project(':detection-drone')]) {
     apply plugin: 'application'
 }
 

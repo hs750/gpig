@@ -2,6 +2,6 @@ rootProject.name = 'gpig'
 
 include ':common'
 include ':c2'
-include ':mdc'
+include ':dc'
 include ':delivery-drone'
 include ':detection-drone'

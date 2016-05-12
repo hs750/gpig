@@ -1,6 +1,6 @@
-package gpig.mdc;
+package gpig.dc;
 
-public class MDC {
+public class DeploymentCentre {
 
     public static void main(String... args) {
         System.out.println("Starting mobile deployment centre");
