@@ -1,25 +1,14 @@
 package gpig.common.data;
 
-import com.javadocmd.simplelatlng.window.CircularWindow;
+import com.javadocmd.simplelatlng.util.LengthUnit;
 
 /**
  * The circle which represents the circle covered by a single deployment centre.
  */
 public class DeploymentArea {
+    public final CircularArea deploymentArea;
 
-    public final Location centre;
-    private final CircularWindow area;
-
-    public DeploymentArea(Location centre) {
-        this.centre = centre;
-        this.area = new CircularWindow(centre.location, Constants.DEPLOYMENT_RADIUS);
-    }
-
-    public boolean contains(Location that) {
-        return area.contains(that.location);
-    }
-
-    public boolean overlaps(DeploymentArea that) {
-        return area.overlaps(that.area);
+    public DeploymentArea(Location center) {
+        this.deploymentArea = new CircularArea(center, Constants.DEPLOYMENT_RADIUS, LengthUnit.KILOMETER);
     }
 }
