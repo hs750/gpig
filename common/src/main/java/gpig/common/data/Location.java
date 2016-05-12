@@ -1,5 +1,8 @@
-package gpig.common;
+package gpig.common.data;
 
+/**
+ * A single point on a map, defined by latitude and longitude.
+ */
 public class Location {
     public final float latitude;
     public final float longitude;
