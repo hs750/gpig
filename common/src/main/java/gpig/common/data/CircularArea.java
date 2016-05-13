@@ -2,6 +2,7 @@ package gpig.common.data;
 
 import com.javadocmd.simplelatlng.util.LengthUnit;
 import com.javadocmd.simplelatlng.window.CircularWindow;
+import gpig.common.units.Kilometres;
 
 /**
  * Represents a generic circular area defined by a lat-long centre
@@ -13,10 +14,9 @@ public class CircularArea {
     public final Location centre;
     private final CircularWindow area;
 
-    /* TODO: this should also be using type-safe units */
-    public CircularArea(Location centre, double radius, LengthUnit unit) {
+    public CircularArea(Location centre, Kilometres radius) {
         this.centre = centre;
-        this.area = new CircularWindow(centre.location, radius, unit);
+        this.area = new CircularWindow(centre.location, radius.value(), LengthUnit.KILOMETER);
     }
 
     public boolean contains(Location that) {

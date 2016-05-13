@@ -3,6 +3,9 @@ package gpig.common.data;
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
+import gpig.common.units.Kilometres;
+
+import static gpig.common.units.Units.kilometres;
 
 /**
  * A single point on a map, defined by latitude and longitude.
@@ -22,10 +25,9 @@ public class Location {
         return location.getLongitude();
     }
 
-    /* TODO: this should not return a double - type safe units will
-     * make confusion about units compile time errors */
-    public double distanceFrom(Location that, LengthUnit unit) {
-        return LatLngTool.distance(location, that.location, unit);
+    public Kilometres distanceFrom(Location that) {
+        double km = LatLngTool.distance(location, that.location, LengthUnit.KILOMETER);
+        return kilometres(km);
     }
 
     @Override

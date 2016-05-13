@@ -1,8 +1,12 @@
 package gpig.common.data;
 
-public class Constants {
-    /* TODO: find a value for the actual drone speed */
-    public final static double DRONE_SPEED = 1.2; /* m/s */
+import gpig.common.units.KMPH;
+import gpig.common.units.Kilometres;
 
-    public final static double DEPLOYMENT_RADIUS = 17.0; /* km */
+import static gpig.common.units.Units.*;
+
+public class Constants {
+    public final static KMPH DRONE_SPEED = kilometresPerHour(1.2);
+
+    public final static Kilometres DEPLOYMENT_RADIUS = kilometres(17.0);
 }
