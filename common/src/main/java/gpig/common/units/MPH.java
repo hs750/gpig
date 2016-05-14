@@ -1,5 +1,7 @@
 package gpig.common.units;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public class MPH implements Comparable<MPH> {
     private final double mph;
 
@@ -7,6 +9,7 @@ public class MPH implements Comparable<MPH> {
         this.mph = mph;
     }
 
+    @JsonValue
     public double value() {
         return mph;
     }
@@ -31,5 +34,9 @@ public class MPH implements Comparable<MPH> {
     @Override
     public int compareTo(MPH o) {
         return Double.compare(this.mph, o.mph);
+    }
+
+    private MPH() {
+        mph = 0.0;
     }
 }

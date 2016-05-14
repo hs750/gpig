@@ -8,4 +8,9 @@ public class Detection {
         this.location = location;
         this.person = person;
     }
+
+    private Detection() {
+        location = null;
+        person = null;
+    }
 }

@@ -12,10 +12,12 @@ import gpig.common.units.Kilometres;
  */
 public class CircularArea {
     public final Location centre;
+    public final Kilometres radius;
     private final CircularWindow area;
 
     public CircularArea(Location centre, Kilometres radius) {
         this.centre = centre;
+        this.radius = radius;
         this.area = new CircularWindow(centre.location, radius.value(), LengthUnit.KILOMETER);
     }
 
@@ -27,4 +29,9 @@ public class CircularArea {
         return area.overlaps(that.area);
     }
 
+    private CircularArea() {
+        centre = null;
+        radius = null;
+        area = null;
+    }
 }

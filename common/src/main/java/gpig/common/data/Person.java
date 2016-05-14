@@ -20,4 +20,9 @@ public class Person {
         RESCUE_TEAM,
         OTHER,
     }
+
+    private Person() {
+        id = null;
+        type = null;
+    }
 }

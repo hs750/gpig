@@ -1,5 +1,6 @@
 package gpig.common.units;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 import gpig.common.exceptions.UnimplementedException;
 
@@ -12,6 +13,7 @@ public class Miles implements Comparable<Miles> {
         this.miles = miles;
     }
 
+    @JsonValue
     public double value() {
         return miles;
     }
@@ -36,5 +38,9 @@ public class Miles implements Comparable<Miles> {
     @Override
     public int compareTo(Miles o) {
         return Double.compare(this.miles, o.miles);
+    }
+
+    private Miles() {
+        miles = 0.0;
     }
 }

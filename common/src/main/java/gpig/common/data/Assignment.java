@@ -14,5 +14,8 @@ public class Assignment {
         this.detection = detection;
         this.deploymentCentreID = deploymentCentreID;
     }
-
+    private Assignment() {
+        detection = null;
+        deploymentCentreID = null;
+    }
 }

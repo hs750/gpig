@@ -1,5 +1,7 @@
 package gpig.common.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -13,22 +15,23 @@ import java.util.Optional;
  * (e.g. on recall), a new path should be sent using the `SetPath` command.
  */
 public class Path implements Iterable<Path.Waypoint> {
-    private List<Waypoint> path;
+    @JsonProperty("waypoints")
+    private List<Waypoint> waypoints;
 
-    public Path(List<Waypoint> path) {
-        this.path = path;
+    public Path(List<Waypoint> waypoints) {
+        this.waypoints = waypoints;
     }
 
     public void addWaypoint(Waypoint waypoint) {
-        path.add(waypoint);
+        waypoints.add(waypoint);
     }
 
     public boolean contains(Waypoint waypoint) {
-        return path.contains(waypoint);
+        return waypoints.contains(waypoint);
     }
 
     public boolean contains(Location location) {
-        Optional<Waypoint> loc = path.stream()
+        Optional<Waypoint> loc = waypoints.stream()
                 .filter(w -> w.location.equals(location))
                 .findFirst();
 
@@ -37,7 +40,7 @@ public class Path implements Iterable<Path.Waypoint> {
 
     @Override
     public Iterator<Waypoint> iterator() {
-        return path.iterator();
+        return waypoints.iterator();
     }
 
     /** Represents a single waypoint in a path */
@@ -47,5 +50,13 @@ public class Path implements Iterable<Path.Waypoint> {
         public Waypoint(Location location) {
             this.location = location;
         }
+
+        private Waypoint() {
+            location = null;
+        }
+    }
+
+    private Path() {
+        waypoints = null;
     }
 }

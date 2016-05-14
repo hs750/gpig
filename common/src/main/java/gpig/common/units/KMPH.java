@@ -1,5 +1,7 @@
 package gpig.common.units;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public class KMPH implements Comparable<KMPH> {
     private final double kmph;
 
@@ -7,6 +9,7 @@ public class KMPH implements Comparable<KMPH> {
         this.kmph = kmph;
     }
 
+    @JsonValue
     public double value() {
         return kmph;
     }
@@ -31,5 +34,9 @@ public class KMPH implements Comparable<KMPH> {
     @Override
     public int compareTo(KMPH o) {
         return Double.compare(this.kmph, o.kmph);
+    }
+
+    private KMPH() {
+        kmph = 0.0;
     }
 }

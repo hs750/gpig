@@ -9,4 +9,8 @@ public class DeploymentArea {
     public DeploymentArea(Location center) {
         this.deploymentArea = new CircularArea(center, Constants.DEPLOYMENT_RADIUS);
     }
+
+    private DeploymentArea() {
+        deploymentArea = null;
+    }
 }
