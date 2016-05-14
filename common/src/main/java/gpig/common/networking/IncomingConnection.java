@@ -18,12 +18,8 @@ import com.rabbitmq.client.Envelope;
  */
 public class IncomingConnection{
 	private final String channelName;
-	private ConnectionFactory factory;
 	private Connection connection;
 	private Channel channel;
-	private Consumer consumer;
-	private ChannelReceiver receiver;
-	String queueName;
 	
 	/**
 	 * A new incoming network connection
@@ -35,23 +31,21 @@ public class IncomingConnection{
 	 * @throws TimeoutException
 	 */
 	public IncomingConnection(String incommingChannelName, InetAddress address, ChannelReceiver receiver) throws IOException, TimeoutException {
-		this.receiver = receiver;
 		channelName = incommingChannelName;
-		factory = new ConnectionFactory();
+		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(address.getHostAddress());
 		connection = factory.newConnection();
 		channel = connection.createChannel();
 		
-		//channel.queueDeclare(queueName, false, false, false, null);
 		channel.exchangeDeclare(channelName, "fanout");
-		queueName = channel.queueDeclare().getQueue(); //Anonymous queue
+		String queueName = channel.queueDeclare().getQueue(); //Anonymous queue
 		channel.queueBind(queueName, channelName, "");
 		
-		consumer = new DefaultConsumer(channel){
+		Consumer consumer = new DefaultConsumer(channel){
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body) throws IOException {
 				String message = new String(body, "UTF-8");
-				IncomingConnection.this.receiver.messageRecieved(message);
+				receiver.messageRecieved(message);
 			};
 		};
 		
