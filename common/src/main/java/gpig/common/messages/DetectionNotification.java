@@ -1,4 +1,4 @@
-package gpig.common.commands;
+package gpig.common.messages;
 
 import gpig.common.data.Detection;
 
@@ -10,5 +10,9 @@ public class DetectionNotification {
 
     public DetectionNotification(Detection detection) {
         this.detection = detection;
+    }
+
+    private DetectionNotification() {
+        detection = null;
     }
 }

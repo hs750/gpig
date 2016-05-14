@@ -1,4 +1,4 @@
-package gpig.common.commands;
+package gpig.common.messages;
 
 import gpig.common.data.Path;
 
@@ -11,5 +11,9 @@ public class SetPath {
 
     public SetPath(Path path) {
         this.path = path;
+    }
+
+    private SetPath() {
+        path = null;
     }
 }
