@@ -1,0 +1,12 @@
+package gpig.common.messages;
+
+public enum MessageType {
+    ADD_TO_PATH,
+    DELIVERY_ASSIGNMENT,
+    DELIVERY_NOTIFICATION,
+    DETECTION_NOTIFICATION,
+    SET_PATH,
+    HEARTBEAT_DC,
+    HEARTBEAT_DETECTION,
+    HEARTBEAT_DELIVERY,
+}

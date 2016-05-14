@@ -1,4 +1,4 @@
-package gpig.common.commands;
+package gpig.common.messages;
 
 import gpig.common.data.Assignment;
 
@@ -10,5 +10,9 @@ public class DeliveryNotification {
 
     public DeliveryNotification(Assignment assignment) {
         this.assignment = assignment;
+    }
+
+    private DeliveryNotification() {
+        assignment = null;
     }
 }
