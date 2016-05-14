@@ -14,7 +14,6 @@ import com.rabbitmq.client.ConnectionFactory;
  */
 public class OutgoingConnection {
 	private final String channelName;
-	private ConnectionFactory factory;
 	private Connection connection;
 	private Channel channel;
 
@@ -29,12 +28,11 @@ public class OutgoingConnection {
 	public OutgoingConnection(String outgoingChannelName, InetAddress address) throws IOException, TimeoutException {
 		channelName = outgoingChannelName;
 
-		factory = new ConnectionFactory();
+		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(address.getHostAddress());
 		connection = factory.newConnection();
 		channel = connection.createChannel();
 
-		//channel.queueDeclare(channelName, false, false, false, null);
 		channel.exchangeDeclare(channelName, "fanout");
 	}
 	

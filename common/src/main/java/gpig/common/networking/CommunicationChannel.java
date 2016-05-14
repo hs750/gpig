@@ -10,7 +10,7 @@ import java.util.concurrent.TimeoutException;
  *
  */
 public class CommunicationChannel {
-	IncomingConnection incommingConnection;
+	IncomingConnection incomingConnection;
 	OutgoingConnection outgoingConnection;
 	
 	/**
@@ -28,7 +28,7 @@ public class CommunicationChannel {
 	public CommunicationChannel(String outgoingChannelName, String incommingChannelName, InetAddress outgoingAddress, InetAddress incommingAddress, ChannelReceiver receiver){
 		try {
 			outgoingConnection = new OutgoingConnection(outgoingChannelName, outgoingAddress);
-			incommingConnection = new IncomingConnection(incommingChannelName, incommingAddress, receiver);
+			incomingConnection = new IncomingConnection(incommingChannelName, incommingAddress, receiver);
 		} catch (IOException | TimeoutException e) {
 			System.err.println("Unable to establish network connection");
 			e.printStackTrace();
@@ -48,7 +48,7 @@ public class CommunicationChannel {
 	 */
 	public void closeConnections(){
 		outgoingConnection.closeChannel();
-		incommingConnection.closeChannel();
+		incomingConnection.closeChannel();
 	}
 	
 	
