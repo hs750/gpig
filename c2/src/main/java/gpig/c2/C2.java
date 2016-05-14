@@ -12,12 +12,20 @@ public class C2 {
     public static void main(String... args) throws IOException {
         System.out.println("Starting C2");
         
+<<<<<<< Upstream, based on origin/master
         C2Config conf = C2Config.getConfig(C2Config.class);
         
         MessageReceiver msgFromDCs = new MessageReceiver();
         CommunicationChannel c2dcChannel = new CommunicationChannel(conf.c2dcChannel, msgFromDCs);
         MessageSender msgToDCs = new MessageSender(c2dcChannel);
         
+=======
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                GUI.createAndShowGUI();
+            }
+        });
+>>>>>>> a4b514d The most basic GUI.
     }
 
 }
