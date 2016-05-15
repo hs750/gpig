@@ -1,3 +1,21 @@
 {
-	"app": "DC"
+	"app": "DC",
+	"dcc2Channel": {
+		"out": "DC-C2",
+		"in": "C2-DC",
+		"outAddr": "localhost",
+		"inAddr": "localhost"
+	},
+	"dcdtChannel": {
+		"out": "DC-DT",
+		"in": "DT-DC",
+		"outAddr": "localhost",
+		"inAddr": "localhost"
+	},
+	"dcdeChannel": {
+		"out": "DC-DE",
+		"in": "DE-DC",
+		"outAddr": "localhost",
+		"inAddr": "localhost" 
+	}
 }

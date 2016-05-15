@@ -1,7 +1,8 @@
 package gpig.c2.config;
 
 import gpig.common.config.CommonConfig;
+import gpig.common.config.CommunicationChannelConfig;
 
 public class C2Config extends CommonConfig {
-    // Currently no C2 specific configuration
+    public CommunicationChannelConfig c2dcChannel;
 }

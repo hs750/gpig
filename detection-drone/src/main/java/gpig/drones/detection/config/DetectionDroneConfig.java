@@ -1,7 +1,8 @@
 package gpig.drones.detection.config;
 
 import gpig.common.config.CommonConfig;
+import gpig.common.config.CommunicationChannelConfig;
 
 public class DetectionDroneConfig extends CommonConfig {
-    // Currently no Detection Drone specific configuration
+    public CommunicationChannelConfig dtdcChannel;
 }

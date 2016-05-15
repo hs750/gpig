@@ -1,4 +1,4 @@
-def mainClass = 'gpig.mdc.MDC'
+def mainClass = 'gpig.dc.DeploymentCentre'
 
 mainClassName = mainClass
 

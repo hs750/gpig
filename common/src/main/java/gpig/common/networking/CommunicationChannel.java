@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
 
+import gpig.common.config.CommunicationChannelConfig;
+
 /**
  * A bi-directional communicaiton channel
  *
@@ -33,6 +35,15 @@ public class CommunicationChannel {
 			System.err.println("Unable to establish network connection");
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Create a communication channel
+	 * @param config channel configuration settings
+	 * @param reciever A {@link ChannelReceiver} that will receive messages from this network connection
+	 */
+	public CommunicationChannel(CommunicationChannelConfig config, ChannelReceiver reciever){
+	    this(config.out, config.in, config.outAddr, config.outAddr, reciever);
 	}
 	
 	/**

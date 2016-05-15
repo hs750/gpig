@@ -1,3 +1,10 @@
 {
-	"app": "delivery-drone"
+	"app": "delivery-drone",
+	"dedcChannel": {
+		"out": "DE-DC",
+		"in": "DC-DE",
+		"outAddr": "localhost",
+		"inAddr": "localhost" 
+	}
+	
 }

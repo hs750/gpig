@@ -1,3 +1,10 @@
 {
-	"app": "C2"
+	"app": "C2",
+	"c2dcChannel": {
+		"out": "C2-DC",
+		"in": "DC-C2",
+		"outAddr": "localhost",
+		"inAddr": "localhost"
+	}
+	
 }
