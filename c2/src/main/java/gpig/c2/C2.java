@@ -29,7 +29,7 @@ public class C2 {
     public void run() {
         //create and update the gui in the event dispatch thread
         javax.swing.SwingUtilities.invokeLater(() -> {
-            gui = new GUI(config.dcLocations);
+            gui = new GUI(config.victimDetections,config.dcLocations);
             gui.createAndShowGUI();
         });
     }
