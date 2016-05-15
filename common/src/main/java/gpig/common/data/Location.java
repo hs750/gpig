@@ -70,8 +70,15 @@ public class Location {
         @Override
         public Location deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
             JsonNode node = p.getCodec().readTree(p);
-            double latitude = node.get("lat").doubleValue();
-            double longitude = node.get("lon").doubleValue();
+            JsonNode latitudeNode = node.get("lat");
+            JsonNode longitudeNode = node.get("lon");
+
+            if (!latitudeNode.isNumber()) throw new IllegalArgumentException("Latitude was non-numeric");
+            if (!longitudeNode.isNumber()) throw new IllegalArgumentException("Longitude was non-numeric");
+
+            double latitude = node.get("lat").asDouble();
+            double longitude = node.get("lon").asDouble();
+
             return new Location(latitude, longitude);
         }
     }
