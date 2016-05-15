@@ -7,6 +7,9 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+/**
+ *	Shows the background map
+ */
 public class MapPanel extends JPanel {
 
 	  private Image img;

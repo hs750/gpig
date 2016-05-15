@@ -9,16 +9,20 @@ import gpig.common.data.Location;
  */
 public class LatLongToXYConverter {
 	
+	//latlong to utm converter
 	private CoordinateConversion coordinateConversion;
 	
+	//required to determine the scales
 	private double imageWidth;
 	private double imageHeight;
 	private Location mapTopLeftCorner;
 	private Location mapBottomRightCorner;
 	
+	//utm coordinates of both map corners
 	private int[] topLeftUTM;
 	private int[] bottomRightUTM;
 	
+	//number of pixels per unit of utm
 	private double horizontalScale;
 	private double verticalScale;
 	

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+/**
+ *	Shows detections
+ */
 public class DetectionsPanel extends JPanel {
 
 	  private Image detectionImg;
@@ -31,10 +34,10 @@ public class DetectionsPanel extends JPanel {
 	    
 		  for(Point detection : detections)
 		  {
-			  System.out.println("detection x=" + (int)detection.getX());
-			  System.out.println("detection y=" + (int)detection.getY());
+			  //System.out.println("detection x=" + (int)detection.getX());
+			  //System.out.println("detection y=" + (int)detection.getY());
 			  
-			  
+			  //scale and centre the detection image
 			  g.drawImage(detectionImg,
 					  (int)detection.getX() - 10,
 					  (int)detection.getY() - 10,

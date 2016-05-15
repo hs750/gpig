@@ -16,8 +16,8 @@ public class AdapterInbound {
 	public ArrayList<Detection> getDetections(){
 		
 		detections = new ArrayList();
-		detections.add(new Detection(new Location(53.956380, -1.069473), new Person(PersonType.CIVILIAN)));
-		detections.add(new Detection(new Location(53.965154, -1.083100), new Person(PersonType.CIVILIAN)));
+		detections.add(new Detection(new Location(53.955130, -1.070496), new Person(PersonType.CIVILIAN)));
+		detections.add(new Detection(new Location(53.965110, -1.083042), new Person(PersonType.CIVILIAN)));
 		return detections;
 	}
 
