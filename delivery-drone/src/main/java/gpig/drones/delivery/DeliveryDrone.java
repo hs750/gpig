@@ -9,15 +9,21 @@ import gpig.drones.delivery.config.DeliveryDroneConfig;
 
 public class DeliveryDrone {
 
-    public static void main(String... args) throws IOException {
+    public DeliveryDrone(DeliveryDroneConfig config) {
         System.out.println("Starting delivery drone");
-        
-        DeliveryDroneConfig conf = DeliveryDroneConfig.getConfig(DeliveryDroneConfig.class);
-        
+
         MessageReceiver msgFromDC = new MessageReceiver();
-        CommunicationChannel dtdcChannel = new CommunicationChannel(conf.dedcChannel, msgFromDC);
+        CommunicationChannel dtdcChannel = new CommunicationChannel(config.dedcChannel, msgFromDC);
         MessageSender msgToDC = new MessageSender(dtdcChannel);
-        
     }
 
+    public void run() {
+
+    }
+
+    public static void main(String... args) throws IOException {
+        DeliveryDroneConfig conf = DeliveryDroneConfig.getConfig(DeliveryDroneConfig.class);
+        DeliveryDrone drone = new DeliveryDrone(conf);
+        drone.run();
+    }
 }

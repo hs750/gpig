@@ -9,15 +9,21 @@ import gpig.drones.detection.config.DetectionDroneConfig;
 
 public class DetectionDrone {
 
-    public static void main(String... args) throws IOException {
+    public DetectionDrone(DetectionDroneConfig config) {
         System.out.println("Starting detection drone");
-        
-        DetectionDroneConfig conf = DetectionDroneConfig.getConfig(DetectionDroneConfig.class);
-        
+
         MessageReceiver msgFromDC = new MessageReceiver();
-        CommunicationChannel dtdcChannel = new CommunicationChannel(conf.dtdcChannel, msgFromDC);
+        CommunicationChannel dtdcChannel = new CommunicationChannel(config.dtdcChannel, msgFromDC);
         MessageSender msgToDC = new MessageSender(dtdcChannel);
-        
+    }
+
+    public void run() {
+    }
+
+    public static void main(String... args) throws IOException {
+        DetectionDroneConfig conf = DetectionDroneConfig.getConfig(DetectionDroneConfig.class);
+        DetectionDrone drone = new DetectionDrone(conf);
+        drone.run();
     }
 
 }
