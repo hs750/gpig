@@ -23,6 +23,7 @@ public class MapPanel extends JPanel {
 	    setMaximumSize(size);
 	    setSize(size);
 	    setLayout(null);
+	    setBounds(0, 0, size.width, size.width);
 	  }
 
 	  public void paintComponent(Graphics g) {

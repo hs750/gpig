@@ -26,7 +26,7 @@ public class GUI {
 
         JFrame frame = new JFrame("MainMapFrame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(589, 528);
+        //frame.setSize(589, 528);
         frame.setResizable(false);
         
         Image map = new ImageIcon("src/main/resources/YorkMap.png").getImage();
@@ -42,11 +42,24 @@ public class GUI {
         	detectionsAsPoints.add(latLongToXYConverter.convertLocationToPoint(detection.location));
  
         mapPanel = new MapPanel(map);
-        detectionPanel = new DetectionsPanel(new ImageIcon("src/main/resources/detection.png").getImage(),detectionsAsPoints);
+        detectionPanel = new DetectionsPanel(
+        		new Dimension(mapWidth,mapHeight),
+        		new ImageIcon("src/main/resources/detection.png").getImage(),
+        		detectionsAsPoints);
 
-        frame.getContentPane().add(mapPanel);
-        frame.getContentPane().add(detectionPanel);
-        //frame.pack();
+        
+        JLayeredPane mapLayeredPane = new JLayeredPane();
+        mapLayeredPane.setPreferredSize(new Dimension(mapWidth,mapHeight));
+        
+        //put the map in the bottom most layer
+        mapLayeredPane.add(mapPanel,new Integer(10),0);
+        mapLayeredPane.add(detectionPanel,new Integer(10),0);
+        
+        
+        frame.getContentPane().add(mapLayeredPane);
+        //frame.getContentPane().add(mapPanel);
+        //frame.getContentPane().add(detectionPanel);
+        frame.pack();
         frame.setVisible(true);
         
         frame.setLocationRelativeTo(null);

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -11,14 +12,19 @@ import javax.swing.JPanel;
 
 public class DetectionsPanel extends JPanel {
 
-	  private Image img;
+	  private Image detectionImg;
 	  private ArrayList<Point> detections;
 
-	  public DetectionsPanel(Image img, ArrayList<Point> detections) {
-	    this.img = img;
+	  public DetectionsPanel(Dimension size, Image detectionImg, ArrayList<Point> detections) {
+	    this.detectionImg = detectionImg;
 	    this.detections = detections;
-	    this.setOpaque(true);
-	    this.setSize(589, 528);
+	    setPreferredSize(size);
+	    setMinimumSize(size);
+	    setMaximumSize(size);
+	    setSize(size);
+	    setLayout(null);
+	    setBounds(0, 0, size.width, size.width);
+	    this.setOpaque(false);
 	  }
 
 	  public void paintComponent(Graphics g) {
@@ -28,21 +34,19 @@ public class DetectionsPanel extends JPanel {
 			  System.out.println("detection x=" + (int)detection.getX());
 			  System.out.println("detection y=" + (int)detection.getY());
 			  
-			  g.drawImage(img,
-			  (int)detection.getX(),
-			  (int)detection.getY(),
-			  null);
 			  
-			  /*g.drawImage(img,
-					  (int)detection.getX() - 3,
-					  (int)detection.getY() - 3,
-					  (int)detection.getX() + 3,
-					  (int)detection.getY() + 3,
+			  g.drawImage(detectionImg,
+					  (int)detection.getX() - 10,
+					  (int)detection.getY() - 10,
+					  (int)detection.getX() + 10,
+					  (int)detection.getY() + 10,
 					  0,
 					  0,
-					  img.getWidth(null),
-					  img.getHeight(null),
-					  null);*/
+					  detectionImg.getWidth(null),
+					  detectionImg.getHeight(null),
+					  null);
+			  
+			  //g.drawRect((int)detection.getX(), (int)detection.getY(), 10, 10);
 		  }
 			  
 		  
@@ -50,3 +54,4 @@ public class DetectionsPanel extends JPanel {
 	  }
 
 }
+
