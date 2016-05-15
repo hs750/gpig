@@ -2,6 +2,7 @@ package gpig.c2.gui;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -30,9 +31,9 @@ public class GUI {
 	private LatLongToXYConverter latLongToXYConverter;
 	private AdapterInbound adapterInbound;
 	
-	//resource paths
-	private String mapPath = "src/main/resources/YorkMap.png";
-	private String detectionPath = "src/main/resources/detection.png";
+	//resource URLs
+	private URL mapPath = GUI.class.getResource("/YorkMap.png");
+	private URL detectionPath = GUI.class.getResource("/detection.png");
 	
 	
 
@@ -57,8 +58,9 @@ public class GUI {
         ArrayList<Point> detectionsAsPoints = new ArrayList<Point>();
         
         //get the detections and convert them to xy coordinates
-        for(Detection detection : adapterInbound.getDetections())
+        for(Detection detection : adapterInbound.getDetections()){
         	detectionsAsPoints.add(latLongToXYConverter.convertLocationToPoint(detection.location));
+        }
  
         mapPanel = new MapPanel(map);
         detectionPanel = new DetectionsPanel(
