@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
 
 import gpig.common.config.CommunicationChannelConfig;
+import gpig.common.util.Log;
 
 /**
  * A bi-directional communicaiton channel
@@ -19,20 +20,20 @@ public class CommunicationChannel {
 	 * Create a new communication channel
 	 * 
 	 * @param outgoingChannelName The name of the outbound communication channel
-	 * @param incommingChannelName The name of the inbound communication channel
+	 * @param incomingChannelName The name of the inbound communication channel
 	 * @param outgoingAddress The ip address of the outbound communication channel
-	 * @param incommingAddress The ip address of the outbound communication channel
+	 * @param incomingAddress The ip address of the outbound communication channel
 	 * @param receiver A {@link ChannelReceiver} that will receive messages from this network connection
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 * @throws TimeoutException
 	 */
-	public CommunicationChannel(String outgoingChannelName, String incommingChannelName, InetAddress outgoingAddress, InetAddress incommingAddress, ChannelReceiver receiver){
+	public CommunicationChannel(String outgoingChannelName, String incomingChannelName, InetAddress outgoingAddress, InetAddress incomingAddress, ChannelReceiver receiver){
 		try {
 			outgoingConnection = new OutgoingConnection(outgoingChannelName, outgoingAddress);
-			incomingConnection = new IncomingConnection(incommingChannelName, incommingAddress, receiver);
+			incomingConnection = new IncomingConnection(incomingChannelName, incomingAddress, receiver);
 		} catch (IOException | TimeoutException e) {
-			System.err.println("Unable to establish network connection");
+			Log.error("Unable to establish network connection");
 			e.printStackTrace();
 		}
 	}

@@ -5,30 +5,36 @@ import java.io.IOException;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
+import gpig.common.util.Log;
 import gpig.dc.config.DCConfig;
 
 public class DeploymentCentre {
 
-    public static void main(String... args) throws IOException {
-        System.out.println("Starting mobile deployment centre");
-        
-        DCConfig conf = DCConfig.getConfig(DCConfig.class);
-        
+    public DeploymentCentre(DCConfig config) {
+        Log.info("Starting mobile deployment centre");
+
         // C2-DC communication
         MessageReceiver msgFromC2 = new MessageReceiver();
-        CommunicationChannel dcc2Channel = new CommunicationChannel(conf.dcc2Channel, msgFromC2);
+        CommunicationChannel dcc2Channel = new CommunicationChannel(config.dcc2Channel, msgFromC2);
         MessageSender msgToC2 = new MessageSender(dcc2Channel);
-   
-        // DC-DetectionDrone communication 
+
+        // DC-DetectionDrone communication
         MessageReceiver msgFromDts = new MessageReceiver();
-        CommunicationChannel dcdtChannel = new CommunicationChannel(conf.dcdtChannel, msgFromDts);
+        CommunicationChannel dcdtChannel = new CommunicationChannel(config.dcdtChannel, msgFromDts);
         MessageSender msgToDts = new MessageSender(dcdtChannel);
-        
+
         // DC-DeliveryDrone communication
         MessageReceiver msgFromDes = new MessageReceiver();
-        CommunicationChannel dcdeChannel = new CommunicationChannel(conf.dcdeChannel, msgFromDes);
+        CommunicationChannel dcdeChannel = new CommunicationChannel(config.dcdeChannel, msgFromDes);
         MessageSender msgToDes = new MessageSender(dcdeChannel);
-        
     }
 
+    public void run() {
+    }
+
+    public static void main(String... args) throws IOException {
+        DCConfig conf = DCConfig.getConfig(DCConfig.class);
+        DeploymentCentre dc = new DeploymentCentre(conf);
+        dc.run();
+    }
 }
