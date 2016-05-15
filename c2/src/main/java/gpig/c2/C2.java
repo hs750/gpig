@@ -12,9 +12,12 @@ import gpig.common.util.Log;
 
 public class C2 {
 	private GUI gui;
+	private C2Config config;
 
     public C2(C2Config config) {
         Log.info("Starting C2");
+   
+        this.config = config;
 
         MessageReceiver msgFromDCs = new MessageReceiver();
         CommunicationChannel c2dcChannel = new CommunicationChannel(config.c2dcChannel, msgFromDCs);
@@ -26,7 +29,7 @@ public class C2 {
     public void run() {
         //create and update the gui in the event dispatch thread
         javax.swing.SwingUtilities.invokeLater(() -> {
-            gui = new GUI();
+            gui = new GUI(config.dcLocations);
             gui.createAndShowGUI();
         });
     }

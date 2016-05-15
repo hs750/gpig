@@ -9,12 +9,16 @@ import javax.swing.*;
 
 import gpig.common.data.Detection;
 import gpig.common.data.Location;
+import gpig.common.config.LocationsConfig;
+import gpig.common.util.Log;
 
 /**
  * The main GUI class.
  * GUI rendering entry point.
  */
 public class GUI {
+	
+	private LocationsConfig dcLocationsConfig;
 	
 	private MapPanel mapPanel;//the panel with the background map
 	private DetectionsPanel detectionPanel;//the panel with the detection locations
@@ -35,7 +39,9 @@ public class GUI {
 	private URL mapPath = GUI.class.getResource("/YorkMap.png");
 	private URL detectionPath = GUI.class.getResource("/detection.png");
 	
-	
+	public GUI(LocationsConfig dcLocationsConfig){
+		this.dcLocationsConfig = dcLocationsConfig;
+	}
 
     /**
      * GUI rendering entry point.
@@ -54,12 +60,16 @@ public class GUI {
         
         //set up required conversion and the inbound data feed
         latLongToXYConverter = new LatLongToXYConverter(mapWidth, mapHeight, mapTopLeftCorner, mapBottomRightCorner);
-        adapterInbound = new AdapterInbound();
-        ArrayList<Point> detectionsAsPoints = new ArrayList<Point>();
+        adapterInbound = new AdapterInbound(dcLocationsConfig);
         
+        ArrayList<Point> detectionsAsPoints = new ArrayList<Point>();
         //get the detections and convert them to xy coordinates
         for(Detection detection : adapterInbound.getDetections()){
         	detectionsAsPoints.add(latLongToXYConverter.convertLocationToPoint(detection.location));
+        }
+        
+        for(Location location : adapterInbound.GetPredefinedDCLocations()){
+        	Log.debug(""+location.latitude());
         }
  
         mapPanel = new MapPanel(map);
