@@ -8,12 +8,13 @@ import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
 
 import gpig.c2.gui.GUI;
+import gpig.common.util.Log;
 
 public class C2 {
 	private GUI gui;
 
     public C2(C2Config config) {
-        System.out.println("Starting C2");
+        Log.info("Starting C2");
 
         MessageReceiver msgFromDCs = new MessageReceiver();
         CommunicationChannel c2dcChannel = new CommunicationChannel(config.c2dcChannel, msgFromDCs);

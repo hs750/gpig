@@ -7,6 +7,7 @@ import java.util.concurrent.TimeoutException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import gpig.common.util.Log;
 
 /**
  * An outgoing network connection.
@@ -59,6 +60,6 @@ public class OutgoingConnection {
 		} catch (IOException | TimeoutException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Closed outgoing channel " + channelName);
+		Log.info("Closed outgoing channel {}", channelName);
 	}
 }

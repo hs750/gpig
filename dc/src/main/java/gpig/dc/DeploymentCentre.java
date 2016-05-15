@@ -5,12 +5,13 @@ import java.io.IOException;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
+import gpig.common.util.Log;
 import gpig.dc.config.DCConfig;
 
 public class DeploymentCentre {
 
     public DeploymentCentre(DCConfig config) {
-        System.out.println("Starting mobile deployment centre");
+        Log.info("Starting mobile deployment centre");
 
         // C2-DC communication
         MessageReceiver msgFromC2 = new MessageReceiver();

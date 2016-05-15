@@ -5,12 +5,13 @@ import java.io.IOException;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
+import gpig.common.util.Log;
 import gpig.drones.delivery.config.DeliveryDroneConfig;
 
 public class DeliveryDrone {
 
     public DeliveryDrone(DeliveryDroneConfig config) {
-        System.out.println("Starting delivery drone");
+        Log.info("Starting delivery drone");
 
         MessageReceiver msgFromDC = new MessageReceiver();
         CommunicationChannel dtdcChannel = new CommunicationChannel(config.dedcChannel, msgFromDC);

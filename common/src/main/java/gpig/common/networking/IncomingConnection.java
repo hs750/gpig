@@ -11,6 +11,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
+import gpig.common.util.Log;
 
 /**
  * An incoming network connection
@@ -24,14 +25,14 @@ public class IncomingConnection{
 	/**
 	 * A new incoming network connection
 	 * 
-	 * @param incommingChannelName the name of the incoming connection
+	 * @param incomingChannelName the name of the incoming connection
 	 * @param address the address of the incoming connection
 	 * @param receiver A {@link ChannelReceiver} which will receive messages from this conneciton
 	 * @throws IOException 
 	 * @throws TimeoutException
 	 */
-	public IncomingConnection(String incommingChannelName, InetAddress address, ChannelReceiver receiver) throws IOException, TimeoutException {
-		channelName = incommingChannelName;
+	public IncomingConnection(String incomingChannelName, InetAddress address, ChannelReceiver receiver) throws IOException, TimeoutException {
+		channelName = incomingChannelName;
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(address.getHostAddress());
 		connection = factory.newConnection();
@@ -45,15 +46,15 @@ public class IncomingConnection{
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body) throws IOException {
 				String message = new String(body, "UTF-8");
-				receiver.messageRecieved(message);
+				receiver.messageReceived(message);
 			};
 		};
 		
-		System.out.println("Ready to receive messages on channel " + channelName);
+		Log.info("Ready to receive messages on channel {}", channelName);
 		try {
 			channel.basicConsume(queueName, true, consumer);
 		} catch (IOException e) {
-			System.err.println("Unable to read channel " + channelName);
+			Log.error("Unable to read channel {}", channelName);
 			e.printStackTrace();
 		}
 	}
@@ -68,6 +69,6 @@ public class IncomingConnection{
 		} catch (IOException | TimeoutException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Closed incomming channel " + channelName);
+		Log.info("Closed incoming channel {}", channelName);
 	}
 }

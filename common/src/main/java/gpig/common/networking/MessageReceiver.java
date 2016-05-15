@@ -22,6 +22,7 @@ import gpig.common.messages.handlers.DeploymentCentreHeatbeatHandler;
 import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.messages.handlers.DetectionNotificationHandler;
 import gpig.common.messages.handlers.SetPathHandler;
+import gpig.common.util.Log;
 
 public class MessageReceiver implements ChannelReceiver{
     private ArrayList<AddToPathHandler> addToPathHandlers;
@@ -46,7 +47,7 @@ public class MessageReceiver implements ChannelReceiver{
     
 
     @Override
-    public void messageRecieved(String message) {
+    public void messageReceived(String message) {
         ObjectMapper mapper = new ObjectMapper();
         String[] splitMessage = message.split(MessageSender.MESSAGE_DELIMITER, 2);
         MessageType type = MessageType.valueOf(splitMessage[0]);
@@ -102,7 +103,7 @@ public class MessageReceiver implements ChannelReceiver{
                 break;
             }
         } catch (IOException e) {
-            System.out.println("Error on receiving message: " + message);
+            Log.error("Error on receiving message: {}", message);
             e.printStackTrace();
         }
     }
