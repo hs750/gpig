@@ -6,6 +6,11 @@ import java.util.logging.Logger;
 public class Log {
     private static final Logger log = Logger.getAnonymousLogger();
 
+    static {
+        System.setProperty("java.util.logging.SimpleFormatter.format",
+                "%1$tT [%4$s] %5$s%6$s%n");
+    }
+
     public static void debug(String s) {
         log.fine(s);
     }
