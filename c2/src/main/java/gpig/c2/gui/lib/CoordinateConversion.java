@@ -1,4 +1,4 @@
-package gpig.c2.gui;
+package gpig.c2.gui.lib;
 
 import java.util.Hashtable;
 import java.util.Map;

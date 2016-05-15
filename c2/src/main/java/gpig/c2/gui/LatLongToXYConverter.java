@@ -2,6 +2,7 @@ package gpig.c2.gui;
 
 import java.awt.Point;
 
+import gpig.c2.gui.lib.CoordinateConversion;
 import gpig.common.data.Location;
 
 /**
