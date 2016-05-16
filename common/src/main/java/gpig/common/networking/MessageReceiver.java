@@ -16,9 +16,9 @@ import gpig.common.messages.MessageType;
 import gpig.common.messages.SetPath;
 import gpig.common.messages.handlers.AddToPathHandler;
 import gpig.common.messages.handlers.DeliveryAssignmentHandler;
-import gpig.common.messages.handlers.DeliveryDroneHeartbeadHandler;
+import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
 import gpig.common.messages.handlers.DeliveryNotificationHandler;
-import gpig.common.messages.handlers.DeploymentCentreHeatbeatHandler;
+import gpig.common.messages.handlers.DeploymentCentreHeartbeatHandler;
 import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.messages.handlers.DetectionNotificationHandler;
 import gpig.common.messages.handlers.SetPathHandler;
@@ -27,9 +27,9 @@ import gpig.common.util.Log;
 public class MessageReceiver implements ChannelReceiver{
     private ArrayList<AddToPathHandler> addToPathHandlers;
     private ArrayList<DeliveryAssignmentHandler> deliveryAssignmentHandlers;
-    private ArrayList<DeliveryDroneHeartbeadHandler> deliveryDroneHeartbeatHandlers;
+    private ArrayList<DeliveryDroneHeartbeatHandler> deliveryDroneHeartbeatHandlers;
     private ArrayList<DeliveryNotificationHandler> deliveryNotificationHandlers;
-    private ArrayList<DeploymentCentreHeatbeatHandler> deploymentCentreHeartbeatHandlers;
+    private ArrayList<DeploymentCentreHeartbeatHandler> deploymentCentreHeartbeatHandlers;
     private ArrayList<DetectionDroneHeartbeatHandler> detectionDroneHeartbeatHandlers;
     private ArrayList<DetectionNotificationHandler> detectionNotificationHandlers;
     private ArrayList<SetPathHandler> setPathHandlers;
@@ -116,7 +116,7 @@ public class MessageReceiver implements ChannelReceiver{
         deliveryAssignmentHandlers.add(handler);
     }
     
-    public void addHandler(DeliveryDroneHeartbeadHandler handler){
+    public void addHandler(DeliveryDroneHeartbeatHandler handler){
         deliveryDroneHeartbeatHandlers.add(handler);
     }
     
@@ -124,7 +124,7 @@ public class MessageReceiver implements ChannelReceiver{
         deliveryNotificationHandlers.add(handler);
     }
     
-    public void addHandler(DeploymentCentreHeatbeatHandler handler){
+    public void addHandler(DeploymentCentreHeartbeatHandler handler){
         deploymentCentreHeartbeatHandlers.add(handler);
     }
     
