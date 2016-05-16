@@ -27,6 +27,10 @@ public class DeploymentCentre {
         MessageReceiver msgFromDes = new MessageReceiver();
         CommunicationChannel dcdeChannel = new CommunicationChannel(config.dcdeChannel, msgFromDes);
         MessageSender msgToDes = new MessageSender(dcdeChannel);
+        
+        DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts);
+        msgFromDts.addHandler(dtdd);
+        
     }
 
     public void run() {
