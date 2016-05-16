@@ -1,7 +1,14 @@
 package gpig.common.messages;
 
-public class DetectionDroneHeartbeat {
+import java.util.UUID;
 
+public class DetectionDroneHeartbeat {
+    public final Boolean deployed;
+    public final UUID origin;
+    
     private DetectionDroneHeartbeat() {
+        deployed = null;
+        origin = null;
     }
+
 }
