@@ -13,10 +13,6 @@ subprojects {
     }
 }
 
-configure([project(':c2'), project(':dc'), project(':delivery-drone'), project(':detection-drone')]) {
-    apply plugin: 'application'
-}
-
 task copyJars(type: Copy, dependsOn: subprojects.jar) {
     from(subprojects.jar)
     into project.file('build')

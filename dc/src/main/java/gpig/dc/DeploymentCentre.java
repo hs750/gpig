@@ -33,7 +33,13 @@ public class DeploymentCentre {
     }
 
     public static void main(String... args) throws IOException {
-        DCConfig conf = DCConfig.getConfig(DCConfig.class);
+        if (args.length != 1) {
+            throw new IOException("Did not specify a config path");
+        }
+
+        String configPath = args[0];
+        DCConfig conf = DCConfig.getConfig(configPath, DCConfig.class);
+
         DeploymentCentre dc = new DeploymentCentre(conf);
         dc.run();
     }
