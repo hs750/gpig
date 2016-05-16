@@ -13,6 +13,7 @@ import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.DetectionDroneHeartbeat;
 import gpig.common.messages.SetPath;
 import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
+import gpig.common.movement.RecoveryStrategy;
 import gpig.common.networking.MessageSender;
 import gpig.common.units.Kilometres;
 
@@ -23,10 +24,12 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
 
     private LinkedHashMap<UUID, DetectionDroneHeartbeat> allDrones;
     private MessageSender messager;
+    private RecoveryStrategy recoveryStrategy;
 
-    public DetectionDroneDispatcher(MessageSender messager) {
+    public DetectionDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy) {
         this.messager = messager;
         allDrones = new LinkedHashMap<>();
+        this.recoveryStrategy = recoveryStrategy;
     }
 
     public void setCurrentLocation(Location location) {
@@ -65,14 +68,10 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
 
     public synchronized void recoverDrones() {
         deployable = false;
-        Waypoint w = new Waypoint(currentLocation);
-        ArrayList<Waypoint> wps = new ArrayList<>();
-        wps.add(w);
-        Path p = new Path(wps);
 
         for (DetectionDroneHeartbeat drone : allDrones.values()) {
             if (drone.state != DroneState.UNDEPLOYED) {
-                SetPath sp = new SetPath(p, drone.origin);
+                SetPath sp = new SetPath(recoveryStrategy.getPath(currentLocation), drone.origin);
                 messager.send(sp);
             }
         }
