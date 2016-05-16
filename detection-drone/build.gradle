@@ -1,7 +1,5 @@
 def mainClass = 'gpig.drones.detection.DetectionDrone'
 
-mainClassName = mainClass
-
 dependencies {
     compile project(':common')
 }
@@ -9,5 +7,14 @@ dependencies {
 jar {
     manifest {
         attributes 'Main-Class': mainClass
+    }
+}
+
+task (runApp, type: JavaExec) {
+    main mainClass
+    classpath sourceSets.main.runtimeClasspath
+
+    if (project.hasProperty('conf')) {
+        args project.property('conf')
     }
 }

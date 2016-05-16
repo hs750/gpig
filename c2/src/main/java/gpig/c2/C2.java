@@ -32,7 +32,13 @@ public class C2 {
     }
 
     public static void main(String... args) throws IOException {
-        C2Config conf = C2Config.getConfig(C2Config.class);
+        if (args.length != 1) {
+            throw new IOException("Did not specify a config path");
+        }
+
+        String configPath = args[0];
+        C2Config conf = C2Config.getConfig(configPath, C2Config.class);
+
         C2 c2 = new C2(conf);
         c2.run();
     }

@@ -23,7 +23,13 @@ public class DeliveryDrone {
     }
 
     public static void main(String... args) throws IOException {
-        DeliveryDroneConfig conf = DeliveryDroneConfig.getConfig(DeliveryDroneConfig.class);
+        if (args.length != 1) {
+            throw new IOException("Did not specify a config path");
+        }
+
+        String configPath = args[0];
+        DeliveryDroneConfig conf = DeliveryDroneConfig.getConfig(configPath, DeliveryDroneConfig.class);
+
         DeliveryDrone drone = new DeliveryDrone(conf);
         drone.run();
     }

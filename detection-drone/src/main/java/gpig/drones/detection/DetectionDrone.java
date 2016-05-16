@@ -22,7 +22,13 @@ public class DetectionDrone {
     }
 
     public static void main(String... args) throws IOException {
-        DetectionDroneConfig conf = DetectionDroneConfig.getConfig(DetectionDroneConfig.class);
+        if (args.length != 1) {
+            throw new IOException("Did not specify a config path");
+        }
+
+        String configPath = args[0];
+        DetectionDroneConfig conf = DetectionDroneConfig.getConfig(configPath, DetectionDroneConfig.class);
+
         DetectionDrone drone = new DetectionDrone(conf);
         drone.run();
     }
