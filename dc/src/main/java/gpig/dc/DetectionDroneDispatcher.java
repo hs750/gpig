@@ -106,7 +106,7 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
                 }
             }
             
-            UUID assignee = (UUID) inactiveDrones.iterator().next();
+            UUID assignee = getNextInactiveDrone();
             
             SetPath sp = new SetPath(searchPaths.get(0), assignee);
             messager.send(sp);
@@ -116,17 +116,29 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
                 deployable = false;
             }
             
-            inactiveDrones.remove(assignee);
+            activateDrone(assignee);
         }
+    }
+    
+    private synchronized void activateDrone(UUID drone){
+        inactiveDrones.remove(drone);
+    }
+    
+    private synchronized UUID getNextInactiveDrone(){
+        return (UUID) inactiveDrones.iterator().next();
+    }
+    
+    private synchronized void deactivateDrone(UUID drone){
+        inactiveDrones.add(drone);
     }
 
     @Override
     public void handle(DetectionDroneHeartbeat message) {
         allDrones.put(message.origin, message);
         if (message.deployed) {
-            inactiveDrones.remove(message.origin);
+            activateDrone(message.origin);
         } else {
-            inactiveDrones.add(message.origin);
+            deactivateDrone(message.origin);
         }
 
     }
