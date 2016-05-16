@@ -36,9 +36,36 @@ public class Location {
         return location.getLongitude();
     }
 
+    /**
+     * 
+     * @param that
+     * @return The distance from this location to that location
+     */
     public Kilometres distanceFrom(Location that) {
         double km = LatLngTool.distance(location, that.location, LengthUnit.KILOMETER);
         return kilometres(km);
+    }
+
+    /**
+     * 
+     * @param that
+     * @return The bearing of that location from this location
+     */
+    public double bearingOf(Location that) {
+        double b = LatLngTool.initialBearing(location, that.location);
+        return b;
+    }
+
+    /**
+     * 
+     * @param bearing
+     * @param distance
+     * @return The location from this location given a bearing and distance
+     */
+    public Location locationAt(double bearing, Kilometres distance) {
+        LatLng l = LatLngTool.travel(location, bearing, distance.value(), LengthUnit.KILOMETER);
+        Location loc = new Location(l.getLatitude(), l.getLongitude());
+        return loc;
     }
 
     @Override
@@ -58,7 +85,8 @@ public class Location {
 
     public static class LocationSerializer extends JsonSerializer<Location> {
         @Override
-        public void serialize(Location value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+        public void serialize(Location value, JsonGenerator gen, SerializerProvider serializers)
+                throws IOException, JsonProcessingException {
             gen.writeStartObject();
             gen.writeNumberField("lat", value.latitude());
             gen.writeNumberField("lon", value.longitude());
@@ -68,13 +96,16 @@ public class Location {
 
     public static class LocationDeserializer extends JsonDeserializer<Location> {
         @Override
-        public Location deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        public Location deserialize(JsonParser p, DeserializationContext ctxt)
+                throws IOException, JsonProcessingException {
             JsonNode node = p.getCodec().readTree(p);
             JsonNode latitudeNode = node.get("lat");
             JsonNode longitudeNode = node.get("lon");
 
-            if (!latitudeNode.isNumber()) throw new IllegalArgumentException("Latitude was non-numeric");
-            if (!longitudeNode.isNumber()) throw new IllegalArgumentException("Longitude was non-numeric");
+            if (!latitudeNode.isNumber())
+                throw new IllegalArgumentException("Latitude was non-numeric");
+            if (!longitudeNode.isNumber())
+                throw new IllegalArgumentException("Longitude was non-numeric");
 
             double latitude = node.get("lat").asDouble();
             double longitude = node.get("lon").asDouble();
