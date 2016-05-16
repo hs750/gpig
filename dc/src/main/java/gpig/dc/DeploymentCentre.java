@@ -2,6 +2,8 @@ package gpig.dc;
 
 import java.io.IOException;
 
+import gpig.common.data.Location;
+import gpig.common.movement.ImmediateReturn;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
@@ -28,7 +30,7 @@ public class DeploymentCentre {
         CommunicationChannel dcdeChannel = new CommunicationChannel(config.dcdeChannel, msgFromDes);
         MessageSender msgToDes = new MessageSender(dcdeChannel);
         
-        DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts);
+        DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(), new Location(0, 0)); //TODO create this object when a true locaiton is known.
         msgFromDts.addHandler(dtdd);
         
     }

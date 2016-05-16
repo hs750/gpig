@@ -26,21 +26,19 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
     private MessageSender messager;
     private RecoveryStrategy recoveryStrategy;
 
-    public DetectionDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy) {
+    public DetectionDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy, Location currentLocation) {
         this.messager = messager;
         allDrones = new LinkedHashMap<>();
         this.recoveryStrategy = recoveryStrategy;
+        this.currentLocation = currentLocation;
     }
 
     public void setCurrentLocation(Location location) {
         currentLocation = location;
     }
 
-    public void deployDrones() throws NullPointerException {
-        if (currentLocation == null) {
-            throw new NullPointerException("Unknown current location");
-        }
-        if (!deployable) {
+    public void deployDrones(){
+        if (deployable) {
             deployable = true;
             start();
         }
