@@ -82,6 +82,11 @@ public class Location {
     private Location() {
         location = null;
     }
+    
+    @Override
+    public String toString() {
+        return location.toString();
+    }
 
     public static class LocationSerializer extends JsonSerializer<Location> {
         @Override
