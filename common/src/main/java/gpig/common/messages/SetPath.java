@@ -1,5 +1,7 @@
 package gpig.common.messages;
 
+import java.util.UUID;
+
 import gpig.common.data.Path;
 
 /**
@@ -8,12 +10,15 @@ import gpig.common.data.Path;
  */
 public class SetPath {
     public final Path path;
-
-    public SetPath(Path path) {
+    public final UUID assignee;
+    
+    public SetPath(Path path, UUID assignee) {
         this.path = path;
+        this.assignee = assignee;
     }
 
     private SetPath() {
         path = null;
+        assignee = null;
     }
 }
