@@ -1,7 +1,9 @@
 package gpig.dc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.UUID;
 
 import gpig.common.data.DroneState;
@@ -50,10 +52,7 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
             Location l1 = currentLocation.locationAt(segment * 60, edgeDistance);
             Location l2 = currentLocation.locationAt((segment * 60 + 60) % 360, edgeDistance);
 
-            ArrayList<Waypoint> waypoints = new ArrayList<>();
-            waypoints.add(new Waypoint(l1)); // out bound
-            waypoints.add(new Waypoint(l2)); // second point
-            waypoints.add(new Waypoint(currentLocation)); // home
+            List<Waypoint> waypoints = Arrays.asList(new Waypoint(l1), new Waypoint(l2), new Waypoint(currentLocation));
 
             Path p = new Path(waypoints);
             deployments.add(p);
