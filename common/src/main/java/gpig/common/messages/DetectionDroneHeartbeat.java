@@ -2,17 +2,19 @@ package gpig.common.messages;
 
 import java.util.UUID;
 
+import gpig.common.data.DroneState;
+
 public class DetectionDroneHeartbeat {
-    public final Boolean deployed;
+    public final DroneState state;
     public final UUID origin;
     
-    public DetectionDroneHeartbeat(UUID origin, boolean deployed){
-        this.deployed = deployed;
+    public DetectionDroneHeartbeat(UUID origin, DroneState state){
+        this.state = state;
         this.origin = origin;
     }
     
     private DetectionDroneHeartbeat() {
-        deployed = null;
+        state = null;
         origin = null;
     }
 

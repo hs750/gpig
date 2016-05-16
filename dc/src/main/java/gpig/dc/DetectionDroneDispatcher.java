@@ -1,10 +1,10 @@
 package gpig.dc;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
+import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.data.Path.Waypoint;
@@ -19,22 +19,20 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
     private Location currentLocation;
     private boolean deployable = false;
 
-    private HashMap<UUID, DetectionDroneHeartbeat> allDrones;
-    private LinkedHashSet<UUID> inactiveDrones;
+    private LinkedHashMap<UUID, DetectionDroneHeartbeat> allDrones;
     private MessageSender messager;
-    
+
     public DetectionDroneDispatcher(MessageSender messager) {
         this.messager = messager;
-        allDrones = new HashMap<>();
-        inactiveDrones = new LinkedHashSet<>();
+        allDrones = new LinkedHashMap<>();
     }
 
     public void setCurrentLocation(Location location) {
         currentLocation = location;
     }
 
-    public void deployDrones() throws NullPointerException{
-        if(currentLocation == null){
+    public void deployDrones() throws NullPointerException {
+        if (currentLocation == null) {
             throw new NullPointerException("Unknown current location");
         }
         if (!deployable) {
@@ -66,26 +64,26 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
 
     }
 
-    public void recoverDrones() {
+    public synchronized void recoverDrones() {
         deployable = false;
         Waypoint w = new Waypoint(currentLocation);
         ArrayList<Waypoint> wps = new ArrayList<>();
         wps.add(w);
         Path p = new Path(wps);
-        
-        for(UUID drone : allDrones.keySet()){
-            if(!inactiveDrones.contains(drone)){
-                SetPath sp = new SetPath(p, drone);
+
+        for (DetectionDroneHeartbeat drone : allDrones.values()) {
+            if (drone.state != DroneState.UNDEPLOYED) {
+                SetPath sp = new SetPath(p, drone.origin);
                 messager.send(sp);
             }
         }
 
     }
 
-    public boolean allDronesRecovered() {
+    public synchronized boolean allDronesRecovered() {
         boolean recovered = true;
-        for (UUID drone : allDrones.keySet()) {
-            if (!inactiveDrones.contains(drone)) {
+        for (DetectionDroneHeartbeat drone : allDrones.values()) {
+            if (drone.state != DroneState.UNDEPLOYED) {
                 recovered = false;
             }
         }
@@ -98,48 +96,53 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
         ArrayList<Path> searchPaths = calculateSearchPattern();
         int searchsDeployed = 0;
         while (deployable) {
-            while(!inactiveDrones.iterator().hasNext()){
+            while (allDronesActive()) {
                 try {
-                    Thread.sleep(1000); //Wait for a drone to become available
+                    Thread.sleep(1000); // Wait for a drone to become available
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            
+
             UUID assignee = getNextInactiveDrone();
-            
+
             SetPath sp = new SetPath(searchPaths.get(0), assignee);
             messager.send(sp);
             searchsDeployed++;
-            
+
             if (searchsDeployed == searchPaths.size()) {
                 deployable = false;
             }
-            
+
             activateDrone(assignee);
         }
     }
-    
-    private synchronized void activateDrone(UUID drone){
-        inactiveDrones.remove(drone);
+
+    private synchronized boolean allDronesActive() {
+        for (DetectionDroneHeartbeat drone : allDrones.values()) {
+            if (drone.state == DroneState.UNDEPLOYED) {
+                return false;
+            }
+        }
+        return true;
     }
-    
-    private synchronized UUID getNextInactiveDrone(){
-        return (UUID) inactiveDrones.iterator().next();
+
+    private synchronized void activateDrone(UUID drone) {
+        allDrones.remove(drone); // remove the current heartbeat
     }
-    
-    private synchronized void deactivateDrone(UUID drone){
-        inactiveDrones.add(drone);
+
+    private synchronized UUID getNextInactiveDrone() {
+        for (DetectionDroneHeartbeat drone : allDrones.values()) {
+            if (drone.state == DroneState.UNDEPLOYED) {
+                return drone.origin;
+            }
+        }
+        return null;
     }
 
     @Override
-    public void handle(DetectionDroneHeartbeat message) {
+    public synchronized void handle(DetectionDroneHeartbeat message) {
         allDrones.put(message.origin, message);
-        if (message.deployed) {
-            activateDrone(message.origin);
-        } else {
-            deactivateDrone(message.origin);
-        }
 
     }
 
