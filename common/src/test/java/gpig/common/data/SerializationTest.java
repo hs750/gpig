@@ -40,7 +40,7 @@ public class SerializationTest {
         @JsonProperty("actorType") public ActorType actorType = ActorType.C2;
         @JsonProperty("assignment") public Assignment assignment = new Assignment(new Detection(locat, detectedPerson), deploymentCentreUUID);
         @JsonProperty("area") public CircularArea carea = area;
-        @JsonProperty("deploymentArea") public DeploymentArea deploymentArea = new DeploymentArea(locat);
+        @JsonProperty("deploymentArea") public DeploymentArea deploymentArea = new DeploymentArea(locat, Constants.DEPLOYMENT_SEARCH_RADIUS);
         @JsonProperty("detection") public Detection dec = new Detection(locat, detectedPerson);
         @JsonProperty("location") public Location loc = locat;
         @JsonProperty("path") public Path path = new Path(waypoints);
