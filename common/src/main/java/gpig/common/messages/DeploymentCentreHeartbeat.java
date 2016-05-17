@@ -1,7 +1,15 @@
 package gpig.common.messages;
 
-public class DeploymentCentreHeartbeat {
+import gpig.common.data.Location;
 
-    private DeploymentCentreHeartbeat() {
+import java.util.UUID;
+
+public class DeploymentCentreHeartbeat {
+    public final UUID origin;
+    public final Location location;
+
+    private DeploymentCentreHeartbeat(UUID origin, Location location) {
+        this.origin = origin;
+        this.location = location;
     }
 }

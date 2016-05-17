@@ -3,6 +3,7 @@ package gpig.c2;
 import java.io.IOException;
 
 import gpig.c2.config.C2Config;
+import gpig.c2.data.C2Data;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
@@ -22,6 +23,8 @@ public class C2 {
         MessageReceiver msgFromDCs = new MessageReceiver();
         CommunicationChannel c2dcChannel = new CommunicationChannel(config.c2dcChannel, msgFromDCs);
         MessageSender msgToDCs = new MessageSender(c2dcChannel);
+        C2Data c2data = new C2Data();
+        c2data.addAllHandlers(msgFromDCs);
 
         //data generation must come here
     }
