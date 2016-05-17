@@ -3,12 +3,14 @@ package gpig.dc;
 import java.io.IOException;
 
 import gpig.common.data.Location;
+import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.movement.ImmediateReturn;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
 import gpig.common.util.Log;
 import gpig.dc.config.DCConfig;
+import gpig.dc.dispatching.DeliveryDroneDispatcher;
 import gpig.dc.dispatching.DetectionDroneDispatcher;
 
 public class DeploymentCentre {
@@ -33,6 +35,9 @@ public class DeploymentCentre {
         
         DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(), new Location(0, 0)); //TODO create this object when a true locaiton is known.
         msgFromDts.addHandler(dtdd);
+        
+        DeliveryDroneDispatcher dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(), new Location(0,0)); //TODO create this object when a true locaiton is known.
+        msgFromDes.addHandler((DetectionDroneHeartbeatHandler) dedd);
         
     }
 
