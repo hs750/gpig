@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.data.Path.Waypoint;
@@ -18,7 +19,7 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
     private final Kilometres edgeDistance = new Kilometres(8.6);
 
     public DetectionDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
-            Location currentLocation) {
+            DeploymentArea currentLocation) {
         super(messager, recoveryStrategy, currentLocation);
     }
 
@@ -28,10 +29,10 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
         ArrayList<Path> deployments = new ArrayList<>();
 
         for (int segment = 0; segment < 6; segment++) {
-            Location l1 = currentLocation.locationAt(segment * 60, edgeDistance);
-            Location l2 = currentLocation.locationAt((segment * 60 + 60) % 360, edgeDistance);
+            Location l1 = getLocation().locationAt(segment * 60, edgeDistance);
+            Location l2 = getLocation().locationAt((segment * 60 + 60) % 360, edgeDistance);
 
-            List<Waypoint> waypoints = Arrays.asList(new Waypoint(l1), new Waypoint(l2), new Waypoint(currentLocation));
+            List<Waypoint> waypoints = Arrays.asList(new Waypoint(l1), new Waypoint(l2), new Waypoint(getLocation()));
 
             Path p = new Path(waypoints);
             deployments.add(p);

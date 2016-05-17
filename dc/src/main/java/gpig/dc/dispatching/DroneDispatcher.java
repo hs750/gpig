@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import gpig.common.data.DeploymentArea;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
@@ -15,7 +16,7 @@ import gpig.common.networking.MessageSender;
 import gpig.common.util.Log;
 
 public abstract class DroneDispatcher extends Thread {
-    protected Location currentLocation;
+    protected DeploymentArea currentLocation;
     protected boolean deployable = false;
     protected boolean deployed = false;
 
@@ -25,7 +26,7 @@ public abstract class DroneDispatcher extends Thread {
 
     private ConcurrentLinkedQueue<Path> tasks;
 
-    public DroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy, Location currentLocation) {
+    public DroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation) {
         this.messager = messager;
         allDrones = new LinkedHashMap<>();
         this.recoveryStrategy = recoveryStrategy;
@@ -33,7 +34,7 @@ public abstract class DroneDispatcher extends Thread {
         tasks = new ConcurrentLinkedQueue<>();
     }
 
-    public void setCurrentLocation(Location location) {
+    public void setCurrentLocation(DeploymentArea location) {
         currentLocation = location;
     }
 
@@ -52,7 +53,7 @@ public abstract class DroneDispatcher extends Thread {
 
         for (DroneHeartbeat drone : allDrones.values()) {
             if (drone.state != DroneState.UNDEPLOYED) {
-                SetPath sp = new SetPath(recoveryStrategy.getPath(currentLocation), drone.origin);
+                SetPath sp = new SetPath(recoveryStrategy.getPath(getLocation()), drone.origin);
                 messager.send(sp);
             }
         }
@@ -129,6 +130,10 @@ public abstract class DroneDispatcher extends Thread {
 
     protected void addTasks(Collection<Path> tasks) {
         this.tasks.addAll(tasks);
+    }
+    
+    protected Location getLocation(){
+        return currentLocation.deploymentArea.centre;
     }
 
     protected abstract void taskListEmpty();

@@ -3,6 +3,7 @@ package gpig.dc.dispatching;
 import java.util.Arrays;
 import java.util.List;
 
+import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.data.Path.Waypoint;
@@ -12,12 +13,13 @@ import gpig.common.messages.handlers.DeliveryAssignmentHandler;
 import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
 import gpig.common.movement.RecoveryStrategy;
 import gpig.common.networking.MessageSender;
+import gpig.common.util.Log;
 
 public class DeliveryDroneDispatcher extends DroneDispatcher
         implements DeliveryDroneHeartbeatHandler, DeliveryAssignmentHandler {
 
     public DeliveryDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
-            Location currentLocation) {
+            DeploymentArea currentLocation) {
         super(messager, recoveryStrategy, currentLocation);
     }
 
@@ -33,15 +35,25 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
     }
 
     private Path calculatePathToDelivery(Location deliveryLocation) {
-        List<Waypoint> wps = Arrays.asList(new Waypoint(deliveryLocation), new Waypoint(currentLocation));
-        Path p = new Path(wps);
-        return p;
+        if(currentLocation.deploymentArea.contains(deliveryLocation)){
+            List<Waypoint> wps = Arrays.asList(new Waypoint(deliveryLocation), new Waypoint(getLocation()));
+            Path p = new Path(wps);
+            return p;
+        }
+        
+        return null;
     }
 
     @Override
     public void handle(DeliveryAssignment message) {
-        Path p = calculatePathToDelivery(message.assignment.detection.location);
-        addTask(p);
+        Location l = message.assignment.detection.location;
+        Path p = calculatePathToDelivery(l);
+        if(p == null){
+            Log.warn("Unable to schedule delivery to %s", l);
+        }else{
+            Log.info("Delivery scheduled to %s", l);
+            addTask(p);
+        }
 
     }
 
