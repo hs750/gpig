@@ -4,18 +4,14 @@ import java.util.UUID;
 
 import gpig.common.data.DroneState;
 
-public class DetectionDroneHeartbeat {
-    public final DroneState state;
-    public final UUID origin;
-    
-    public DetectionDroneHeartbeat(UUID origin, DroneState state){
-        this.state = state;
-        this.origin = origin;
+public class DetectionDroneHeartbeat extends DroneHeartbeat{
+
+    public DetectionDroneHeartbeat(UUID origin, DroneState state) {
+        super(origin, state);
     }
-    
+
     private DetectionDroneHeartbeat() {
-        state = null;
-        origin = null;
+        super(null, null);
     }
 
 }
