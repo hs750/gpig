@@ -6,19 +6,38 @@ import gpig.common.data.Detection;
 import gpig.common.data.Location;
 import gpig.common.data.Person;
 import gpig.common.data.Person.PersonType;
+import gpig.common.config.DetectionsConfig;
+import gpig.common.config.LocationsConfig;
+import gpig.common.util.Log;
 
 /**
  * Used to get and provide data to the gui in the required format.
  */
 public class AdapterInbound {
-	private ArrayList<Detection> detections;
+	
+	private DetectionsConfig detectionsConfig;
+	private LocationsConfig dcLocationsConfig;
+	
+	public AdapterInbound(DetectionsConfig detectionsConfig, LocationsConfig dcLocationsConfig){
+		this.detectionsConfig = detectionsConfig;
+		this.dcLocationsConfig = dcLocationsConfig;
+		
+	}
 	
 	public ArrayList<Detection> getDetections(){
 		
-		detections = new ArrayList();
-		detections.add(new Detection(new Location(53.955130, -1.070496), new Person(PersonType.CIVILIAN)));
-		detections.add(new Detection(new Location(53.965110, -1.083042), new Person(PersonType.CIVILIAN)));
+		ArrayList<Detection> detections;
+		
+		detections = detectionsConfig.detections;
 		return detections;
+	}
+	
+	public ArrayList<Location> GetPredefinedDCLocations(){
+		ArrayList<Location> dcLocations;
+		
+		dcLocations = dcLocationsConfig.locations;
+		
+		return dcLocations;
 	}
 
 }
