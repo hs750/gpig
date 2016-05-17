@@ -2,11 +2,18 @@ package gpig.dc;
 
 import java.io.IOException;
 
+import gpig.common.data.Constants;
+import gpig.common.data.DeploymentArea;
+import gpig.common.data.Location;
+import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
+import gpig.common.movement.ImmediateReturn;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
 import gpig.common.util.Log;
 import gpig.dc.config.DCConfig;
+import gpig.dc.dispatching.DeliveryDroneDispatcher;
+import gpig.dc.dispatching.DetectionDroneDispatcher;
 
 public class DeploymentCentre {
 
@@ -27,6 +34,13 @@ public class DeploymentCentre {
         MessageReceiver msgFromDes = new MessageReceiver();
         CommunicationChannel dcdeChannel = new CommunicationChannel(config.dcdeChannel, msgFromDes);
         MessageSender msgToDes = new MessageSender(dcdeChannel);
+        
+        DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_SEARCH_RADIUS)); //TODO create this object when a true locaiton is known.
+        msgFromDts.addHandler(dtdd);
+        
+        DeliveryDroneDispatcher dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_DELIVERY_RADIUS)); //TODO create this object when a true locaiton is known.
+        msgFromDes.addHandler((DetectionDroneHeartbeatHandler) dedd);
+        
     }
 
     public void run() {
