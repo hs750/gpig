@@ -1,13 +1,15 @@
 package gpig.common.data;
 
+import gpig.common.units.Kilometres;
+
 /**
  * The circle which represents the circle covered by a single deployment centre.
  */
 public class DeploymentArea {
     public final CircularArea deploymentArea;
 
-    public DeploymentArea(Location center) {
-        this.deploymentArea = new CircularArea(center, Constants.DEPLOYMENT_RADIUS);
+    public DeploymentArea(Location center, Kilometres radius) {
+        this.deploymentArea = new CircularArea(center, radius);
     }
 
     private DeploymentArea() {
