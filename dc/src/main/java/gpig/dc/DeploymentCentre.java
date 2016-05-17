@@ -9,6 +9,7 @@ import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
 import gpig.common.util.Log;
 import gpig.dc.config.DCConfig;
+import gpig.dc.dispatching.DetectionDroneDispatcher;
 
 public class DeploymentCentre {
 

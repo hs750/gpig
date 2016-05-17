@@ -1,4 +1,4 @@
-package gpig.dc;
+package gpig.dc.dispatching;
 
 import java.util.ArrayList;
 import java.util.Arrays;
