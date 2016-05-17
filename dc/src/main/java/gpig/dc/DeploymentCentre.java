@@ -5,6 +5,7 @@ import java.io.IOException;
 import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
+import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
 import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.movement.ImmediateReturn;
 import gpig.common.networking.CommunicationChannel;
@@ -39,7 +40,7 @@ public class DeploymentCentre {
         msgFromDts.addHandler(dtdd);
         
         DeliveryDroneDispatcher dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_DELIVERY_RADIUS)); //TODO create this object when a true locaiton is known.
-        msgFromDes.addHandler((DetectionDroneHeartbeatHandler) dedd);
+        msgFromDes.addHandler((DeliveryDroneHeartbeatHandler) dedd);
 
         //Forward messages from drones to C2
         new DroneMessageForwarder(msgToC2, msgFromDts, msgFromDes);
