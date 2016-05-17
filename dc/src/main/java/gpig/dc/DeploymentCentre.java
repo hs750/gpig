@@ -40,6 +40,9 @@ public class DeploymentCentre {
         
         DeliveryDroneDispatcher dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_DELIVERY_RADIUS)); //TODO create this object when a true locaiton is known.
         msgFromDes.addHandler((DetectionDroneHeartbeatHandler) dedd);
+
+        //Forward messages from drones to C2
+        new DroneMessageForwarder(msgToC2, msgFromDts, msgFromDes);
         
     }
 
