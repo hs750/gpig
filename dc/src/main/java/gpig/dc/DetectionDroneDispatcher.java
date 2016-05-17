@@ -16,11 +16,13 @@ import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.movement.RecoveryStrategy;
 import gpig.common.networking.MessageSender;
 import gpig.common.units.Kilometres;
+import gpig.common.util.Log;
 
 public class DetectionDroneDispatcher extends Thread implements DetectionDroneHeartbeatHandler {
     private final Kilometres edgeDistance = new Kilometres(8.6);
     private Location currentLocation;
     private boolean deployable = false;
+    private boolean deployed = false;
 
     private LinkedHashMap<UUID, DetectionDroneHeartbeat> allDrones;
     private MessageSender messager;
@@ -38,7 +40,10 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
     }
 
     public void deployDrones(){
-        if (deployable) {
+        if(allDronesRecovered()){
+            deployed = false;
+        }
+        if (!deployable && !deployed) {
             deployable = true;
             start();
         }
@@ -104,6 +109,7 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
 
             SetPath sp = new SetPath(searchPaths.get(0), assignee);
             messager.send(sp);
+            Log.info("Displatched Drone: %s", assignee);
             searchsDeployed++;
 
             if (searchsDeployed == searchPaths.size()) {
@@ -139,7 +145,6 @@ public class DetectionDroneDispatcher extends Thread implements DetectionDroneHe
     @Override
     public synchronized void handle(DetectionDroneHeartbeat message) {
         allDrones.put(message.origin, message);
-
     }
 
 }
