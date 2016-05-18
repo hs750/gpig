@@ -26,6 +26,9 @@ public class C2 {
         C2Data c2data = new C2Data();
         c2data.addAllHandlers(msgFromDCs);
 
+        // Allocate DCs to deliver to detections
+        new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
+        
         //data generation must come here
     }
 

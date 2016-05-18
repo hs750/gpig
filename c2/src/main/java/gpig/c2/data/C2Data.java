@@ -37,4 +37,8 @@ public class C2Data {
     public List<Detection> getDetections() {
         return Collections.unmodifiableList(detections);
     }
+    
+    public Map<UUID, Location> getDCLocations(){
+        return Collections.unmodifiableMap(dcLocations);
+    }
 }
