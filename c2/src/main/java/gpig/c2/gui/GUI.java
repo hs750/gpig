@@ -40,29 +40,27 @@ public class GUI {
      */
     public void createAndShowGUI() {
 
-    	//the main frame
-        JFrame mainFrame = new JFrame("Vendor Lock-in");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setResizable(false);
-   
-		mainFrame.setSize(1200, 600);
+    	//the map frame
+        JFrame mapFrame = new JFrame("Vendor Lock-in");
+        mapFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mapFrame.setResizable(false);
+		mapFrame.setSize(600, 600);
 		
-		BorderLayout mainFrameLayout = new BorderLayout();
+		JFrame controlFrame = new JFrame("Details");
+		controlFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		controlFrame.setResizable(false);
+		controlFrame.setSize(400, 600);
+		controlFrame.setVisible(true);
 		
-        mainFrame.setLayout(mainFrameLayout);
         
-        JPanel mapPanel = new JPanel();
-        mapPanel.setSize(800, 600);
-        mapPanel.setMinimumSize(new Dimension(800, 600));
         MapApp map = new MapApp(this);
-        mapPanel.add(map);
-        mainFrame.add(mapPanel,BorderLayout.WEST);
+        mapFrame.add(map);
+        
         
         map.init();
-
-        
-        mainFrame.setVisible(true);
-        mainFrame.setLocationRelativeTo(null);
+        mapFrame.setVisible(true);
+        mapFrame.setLocation(100,50);
+        controlFrame.setLocation(mapFrame.getLocation().x + mapFrame.getWidth() + controlFrame.getInsets().left*4, mapFrame.getLocation().y);
     }
     
 	public URL getDetectionPath() {
