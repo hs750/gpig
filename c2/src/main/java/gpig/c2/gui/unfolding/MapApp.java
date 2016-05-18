@@ -45,16 +45,16 @@ public class MapApp extends PApplet {
 	public void draw() {
 		
 		//add detections
-				for(Location location:gui.getDetectionLocations()){
-					ImageMarker imgMrk = new ImageMarker(location, loadImage(gui.getDetectionPath().toString()));
-					map.addMarker(imgMrk);
-				}
-				
-				//add dcs
-				for(Location location:gui.getDcLocations()){
-					ImageMarker imgMrk = new ImageMarker(location, loadImage(gui.getDcPath().toString()));
-					map.addMarker(imgMrk);
-				}
+		for(Location location:gui.getDetectionLocations()){
+			ImageMarker imgMrk = new ImageMarker(location, loadImage(gui.getDetectionPath().toString()));
+			map.addMarker(imgMrk);
+		}
+		
+		//add dcs
+		for(Location location:gui.getDcLocations()){
+			ImageMarker imgMrk = new ImageMarker(location, loadImage(gui.getDcPath().toString()));
+			map.addMarker(imgMrk);
+		}
 		
 		map.draw();
 	}
