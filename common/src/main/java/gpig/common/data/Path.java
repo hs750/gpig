@@ -22,6 +22,10 @@ public class Path implements Iterable<Path.Waypoint> {
         this.waypoints = waypoints;
     }
 
+    public Waypoint get(int i) {
+        return waypoints.get(i);
+    }
+
     public void addWaypoint(Waypoint waypoint) {
         waypoints.add(waypoint);
     }
@@ -36,6 +40,10 @@ public class Path implements Iterable<Path.Waypoint> {
                 .findFirst();
 
         return loc.isPresent();
+    }
+
+    public int length() {
+        return waypoints.size();
     }
 
     @Override

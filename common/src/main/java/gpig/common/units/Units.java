@@ -1,19 +1,19 @@
 package gpig.common.units;
 
-public class Units {
-    public static Kilometres kilometres(double value) {
-        return new Kilometres(value);
+public interface Units {
+    static Kilometres kilometres(double n) {
+        return new Kilometres(n);
     }
 
-    public static Miles miles(double value) {
-        return new Miles(value);
+    static Miles miles(double n) {
+        return new Miles(n);
     }
 
-    public static KMPH kilometresPerHour(double value) {
-        return new KMPH(value);
+    static KMPH kilometresPerHour(double n) {
+        return new KMPH(n);
     }
 
-    public static MPH milesPerHour(double value) {
-        return new MPH(value);
+    static MPH milesPerHour(double n) {
+        return new MPH(n);
     }
 }

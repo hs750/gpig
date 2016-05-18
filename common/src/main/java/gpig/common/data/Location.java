@@ -63,7 +63,8 @@ public class Location {
      * @return The location from this location given a bearing and distance
      */
     public Location locationAt(double bearing, Kilometres distance) {
-        LatLng l = LatLngTool.travel(location, bearing, distance.value(), LengthUnit.KILOMETER);
+        double normalizedBearing = LatLngTool.normalizeBearing(bearing);
+        LatLng l = LatLngTool.travel(location, normalizedBearing, distance.value(), LengthUnit.KILOMETER);
         Location loc = new Location(l.getLatitude(), l.getLongitude());
         return loc;
     }

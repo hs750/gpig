@@ -18,6 +18,14 @@ public class Kilometres implements Comparable<Kilometres> {
         return kilometres;
     }
 
+    public Kilometres add(Kilometres o) {
+        return new Kilometres(kilometres + o.kilometres);
+    }
+
+    public Kilometres minus(Kilometres o) {
+        return new Kilometres(kilometres - o.kilometres);
+    }
+
     public Miles inMiles() {
         return new Miles(kilometres * MILES_CONVERSION_FACTOR);
     }
