@@ -1,12 +1,12 @@
 package gpig.dc;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
 import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
-import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.movement.ImmediateReturn;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
@@ -15,11 +15,13 @@ import gpig.common.util.Log;
 import gpig.dc.config.DCConfig;
 import gpig.dc.dispatching.DeliveryDroneDispatcher;
 import gpig.dc.dispatching.DetectionDroneDispatcher;
+import gpig.dc.dispatching.DroneRecaller;
 
 public class DeploymentCentre {
-
+    UUID thisDC;
     public DeploymentCentre(DCConfig config) {
-        Log.info("Starting mobile deployment centre");
+        thisDC = UUID.randomUUID();
+        Log.info("Starting mobile deployment centre: %s", thisDC);
 
         // C2-DC communication
         MessageReceiver msgFromC2 = new MessageReceiver();
@@ -44,6 +46,9 @@ public class DeploymentCentre {
 
         //Forward messages from drones to C2
         new DroneMessageForwarder(msgToC2, msgFromDts, msgFromDes);
+        
+        // Recover Drones
+        new DroneRecaller(thisDC, msgFromC2, dtdd, dedd);
         
     }
 
