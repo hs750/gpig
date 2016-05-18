@@ -30,6 +30,7 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
         this.database = database;
         dcMessenger.addHandler(this);
         this.dcMessageSender = dcMessageSender;
+        unallocatedDeliveries = new ConcurrentLinkedQueue<>();
         start();
     }
 
