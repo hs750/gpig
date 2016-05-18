@@ -49,10 +49,11 @@ public class GUI {
 		
 		BorderLayout mainFrameLayout = new BorderLayout();
 		
-        mainFrame.setLayout(new BorderLayout());
+        mainFrame.setLayout(mainFrameLayout);
         
         JPanel mapPanel = new JPanel();
         mapPanel.setSize(800, 600);
+        mapPanel.setMinimumSize(new Dimension(800, 600));
         MapApp map = new MapApp(this);
         mapPanel.add(map);
         mainFrame.add(mapPanel,BorderLayout.WEST);
