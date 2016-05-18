@@ -24,7 +24,24 @@ public class AdapterInbound {
 		
 	}
 	
-	public ArrayList<Detection> getDetections(){
+	/**
+	 * @return List of predefined detection locations.
+	 */
+	public ArrayList<Location> getDetectionLocationsPredefined(){
+		
+		ArrayList<Location> locations = new ArrayList<Location>();
+		
+		for(Detection detection : detectionsConfig.detections){
+			locations.add(detection.location);
+		}
+		return locations;
+	}
+
+	
+	/**
+	 * @return The list of predefined detections.
+	 */
+	public ArrayList<Detection> getDetectionsPredefined(){
 		
 		ArrayList<Detection> detections;
 		
@@ -32,12 +49,18 @@ public class AdapterInbound {
 		return detections;
 	}
 	
-	public ArrayList<Location> GetPredefinedDCLocations(){
+	
+	/**
+	 * @return The list of predefined deployment center locations
+	 */
+	public ArrayList<Location> getDCLocationsPredefined(){
 		ArrayList<Location> dcLocations;
 		
 		dcLocations = dcLocationsConfig.locations;
 		
 		return dcLocations;
 	}
+	
+	
 
 }
