@@ -8,8 +8,13 @@ public class DeploymentCentreHeartbeat {
     public final UUID origin;
     public final Location location;
 
-    private DeploymentCentreHeartbeat(UUID origin, Location location) {
+    public DeploymentCentreHeartbeat(UUID origin, Location location) {
         this.origin = origin;
         this.location = location;
+    }
+    
+    private DeploymentCentreHeartbeat(){
+        origin = null;
+        location = null;
     }
 }

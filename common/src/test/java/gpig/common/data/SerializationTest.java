@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +20,7 @@ public class SerializationTest {
 
     private static Location locat = new Location(0.0, 0.0);
     private static Person detectedPerson = new Person(Person.PersonType.CIVILIAN);
-    private static Detection detection = new Detection(locat, detectedPerson);
+    private static Detection detection = new Detection(locat, detectedPerson, new File("file"), new Date());
     private static UUID deploymentCentreUUID = UUID.randomUUID();
     private static CircularArea area = new CircularArea(locat, kilometres(2));
     private static List<Path.Waypoint> waypoints = new ArrayList<Path.Waypoint>() {{
@@ -38,10 +40,10 @@ public class SerializationTest {
 
     public static class SerializationTestClass {
         @JsonProperty("actorType") public ActorType actorType = ActorType.C2;
-        @JsonProperty("assignment") public Assignment assignment = new Assignment(new Detection(locat, detectedPerson), deploymentCentreUUID);
+        @JsonProperty("assignment") public Assignment assignment = new Assignment(new Detection(locat, detectedPerson, new File("file"), new Date()), deploymentCentreUUID);
         @JsonProperty("area") public CircularArea carea = area;
         @JsonProperty("deploymentArea") public DeploymentArea deploymentArea = new DeploymentArea(locat, Constants.DEPLOYMENT_SEARCH_RADIUS);
-        @JsonProperty("detection") public Detection dec = new Detection(locat, detectedPerson);
+        @JsonProperty("detection") public Detection dec = new Detection(locat, detectedPerson, new File("file"), new Date());
         @JsonProperty("location") public Location loc = locat;
         @JsonProperty("path") public Path path = new Path(waypoints);
         @JsonProperty("waypoint") public Path.Waypoint waypoint = new Path.Waypoint(locat);
