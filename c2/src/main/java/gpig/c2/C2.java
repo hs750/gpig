@@ -8,11 +8,12 @@ import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
 
-import gpig.c2.gui.GUI;
+import gpig.c2.gui.*;
 import gpig.common.util.Log;
 
 public class C2 {
 	private GUI gui;
+	private GUIAdapterInbound guiAdapterInbound;
 	private C2Config config;
 
     public C2(C2Config config) {
@@ -26,16 +27,17 @@ public class C2 {
         C2Data c2data = new C2Data();
         c2data.addAllHandlers(msgFromDCs);
 
+        guiAdapterInbound = new GUIAdapterInbound(config.victimDetections,config.dcLocations, c2data);
+        
         // Allocate DCs to deliver to detections
         new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
         
-        //data generation must come here
     }
 
     public void run() {
         //create and update the gui in the event dispatch thread
         javax.swing.SwingUtilities.invokeLater(() -> {
-            gui = new GUI(config.victimDetections,config.dcLocations);
+            gui = new GUI(guiAdapterInbound);
             gui.createAndShowGUI();
         });
     }

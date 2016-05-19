@@ -1,12 +1,17 @@
 package gpig.c2.gui;
 
+import processing.core.PApplet;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 import javax.swing.*;
 
+import com.rabbitmq.tools.Tracer.Logger;
+
+import gpig.common.data.ActorType;
 import gpig.common.data.Detection;
 import gpig.common.data.Location;
 import gpig.common.config.DetectionsConfig;
@@ -21,46 +26,48 @@ import gpig.c2.gui.unfolding.MapApp;
  */
 public class GUI {
 	
-	private DetectionsConfig detectionsConfig;
-	private LocationsConfig dcLocationsConfig;
-	private AdapterInbound adapterInbound;	
+	private AppletRunner appletRunner;
+	private GUIAdapterInbound adapterInbound;	
 	
 	//resource URLs
 	private URL detectionPath = GUI.class.getResource("/Detection.png");
 	private URL dcPath = GUI.class.getResource("/DC.png");
 	
-	public GUI(DetectionsConfig detectionsConfig, LocationsConfig dcLocationsConfig){
-		this.detectionsConfig = detectionsConfig;
-		this.dcLocationsConfig = dcLocationsConfig;
-		this.adapterInbound = new AdapterInbound(detectionsConfig, dcLocationsConfig);
+	JFrame detailsFrame;
+	
+	public GUI(GUIAdapterInbound GUIAdapterInbound){
+		this.adapterInbound = GUIAdapterInbound;
+		
+		appletRunner = new AppletRunner(this);
+		appletRunner.start();
 	}
 
     /**
      * GUI rendering entry point.
      */
     public void createAndShowGUI() {
-
-    	//the map frame
-        JFrame mapFrame = new JFrame("Vendor Lock-in");
-        mapFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mapFrame.setResizable(false);
-		mapFrame.setSize(600, 600);
 		
-		JFrame controlFrame = new JFrame("Details");
-		controlFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		controlFrame.setResizable(false);
-		controlFrame.setSize(400, 600);
-		controlFrame.setVisible(true);
-		
-        
-        MapApp map = new MapApp(this);
-        mapFrame.add(map);
-        
-        
-        map.init();
-        mapFrame.setVisible(true);
-        mapFrame.setLocation(100,50);
-        controlFrame.setLocation(mapFrame.getLocation().x + mapFrame.getWidth() + controlFrame.getInsets().left*4, mapFrame.getLocation().y);
+		detailsFrame = new JFrame("Details");
+		detailsFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		detailsFrame.setResizable(false);
+		detailsFrame.setSize(400, 600);
+		detailsFrame.setVisible(true);
+            }
+    
+    public void displayActorInfo(UUID id, ActorType actorType){
+    	//detailsFrame.removeAll();
+    	
+    	switch(actorType){
+    	case PERSON:
+    		Detection detection = adapterInbound.getDetectionByID(id);
+   		
+    		
+    		detailsFrame.getContentPane().add(new PersonInfoPanel(detection,detectionPath, detailsFrame.getSize()));
+    		detailsFrame.revalidate();
+    		detailsFrame.repaint();
+    		//System.out.println(":)");
+    	}
+    	
     }
     
 	public URL getDetectionPath() {
@@ -71,25 +78,27 @@ public class GUI {
 		return dcPath;
 	}
 
-	public ArrayList<de.fhpotsdam.unfolding.geo.Location> getDetectionLocations() {
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDetectionLocations() {
 		
-		ArrayList<de.fhpotsdam.unfolding.geo.Location> unfLocations = new ArrayList<de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
-		for(Location location:adapterInbound.getDetectionLocationsPredefined()){
-			unfLocations.add( new de.fhpotsdam.unfolding.geo.Location(location.latitude(),location.longitude()));
+		for(Detection detection:adapterInbound.getDetectionsPredefined()){
+			unfLocations.put(detection.person.id,
+					new de.fhpotsdam.unfolding.geo.Location(detection.location.latitude(),detection.location.longitude()));
 		}
 		
 		
 		return unfLocations;
 	}
 
-	public ArrayList<de.fhpotsdam.unfolding.geo.Location> getDcLocations() {
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDcLocations() {
 
 
-		ArrayList<de.fhpotsdam.unfolding.geo.Location> unfLocations = new ArrayList<de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
 		for(Location location:adapterInbound.getDCLocationsPredefined()){
-			unfLocations.add( new de.fhpotsdam.unfolding.geo.Location(location.latitude(),location.longitude()));
+			unfLocations.put(UUID.randomUUID(),
+					new de.fhpotsdam.unfolding.geo.Location(location.latitude(),location.longitude()));
 		}
 
 		return unfLocations;
