@@ -22,28 +22,27 @@
 	
 	"victimDetections":{
 		"detections": [
-		
-			 {
-			      "location" : {
-			        "lat" : 53.955130,
-			        "lon" : -1.070496
-			      },
-			      "person" : {
-			        "id" : "835fa402-d9a5-47cb-987c-0e8c2ed74e79",
-			        "type" : "CIVILIAN"
-			      }
-	    	},
-	    	
-	    	{
-			      "location" : {
-			        "lat" : 53.965110,
-			        "lon" : -1.083042
-			      },
-			      "person" : {
-			        "id" : "7e786953-2129-4dcc-a406-0978f47eeaa1",
-			        "type" : "CIVILIAN"
-			      }
-	    	}
+			      {
+			       "person" : {
+			        	"id" : "835fa402-d9a5-47cb-987c-0e8c2ed74e79",
+			        	"type" : "CIVILIAN",
+			        	"location" : {
+			        		"lat" : 53.955130,
+			        		"lon" : -1.070496
+			       		 }
+			      	}
+			       },
+
+			       {
+			       "person" : {
+			         	"id" : "7e786953-2129-4dcc-a406-0978f47eeaa1",
+			         	"type" : "CIVILIAN",
+			       		"location" : {
+			       	 		"lat" : 53.965110,
+			       			"lon" : -1.083042
+			        	}
+			       }
+			     }
 	    ]	
 		
 	}

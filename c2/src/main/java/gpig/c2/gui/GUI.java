@@ -104,7 +104,7 @@ public class GUI {
 		
 		for(Detection detection:adapterInbound.getDetectionsPredefined()){
 			unfLocations.put(detection.person.id,
-					new de.fhpotsdam.unfolding.geo.Location(detection.location.latitude(),detection.location.longitude()));
+					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 		}
 		
 		

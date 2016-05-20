@@ -22,8 +22,8 @@ public class PersonInfoPanel extends InfoPanel{
 		//Set parent field contents
 		actorIdL.setText(""+detection.person.id);
 		actorTypeL.setText("Flood Victim");
-		actorLatL.setText(""+String.format ("%.6f", detection.location.latitude()));
-		actorLonL.setText(""+String.format ("%.6f", detection.location.longitude()));
+		actorLatL.setText(""+String.format ("%.6f", detection.person.location.latitude()));
+		actorLonL.setText(""+String.format ("%.6f", detection.person.location.longitude()));
 	}
 	
 	public void paintComponent(Graphics g){
