@@ -11,6 +11,7 @@ import gpig.common.messages.DeliveryNotification;
 import gpig.common.messages.DeploymentCentreHeartbeat;
 import gpig.common.messages.DetectionDroneHeartbeat;
 import gpig.common.messages.DetectionNotification;
+import gpig.common.messages.FailCommand;
 import gpig.common.messages.MessageType;
 import gpig.common.messages.SetPath;
 
@@ -52,6 +53,10 @@ public class MessageSender {
 
     public boolean send(SetPath message) {
         return send(message, MessageType.SET_PATH);
+    }
+    
+    public boolean send(FailCommand message){
+        return send(message, MessageType.FAIL_COMMAND);
     }
 
     private boolean send(Object message, MessageType type) {

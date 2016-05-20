@@ -13,6 +13,7 @@ import gpig.common.messages.DeliveryNotification;
 import gpig.common.messages.DeploymentCentreHeartbeat;
 import gpig.common.messages.DetectionDroneHeartbeat;
 import gpig.common.messages.DetectionNotification;
+import gpig.common.messages.FailCommand;
 import gpig.common.messages.MessageType;
 import gpig.common.messages.SetPath;
 import gpig.common.messages.handlers.AddToPathHandler;
@@ -22,6 +23,7 @@ import gpig.common.messages.handlers.DeliveryNotificationHandler;
 import gpig.common.messages.handlers.DeploymentCentreHeartbeatHandler;
 import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.messages.handlers.DetectionNotificationHandler;
+import gpig.common.messages.handlers.FailCommandHandler;
 import gpig.common.messages.handlers.SetPathHandler;
 import gpig.common.util.Log;
 
@@ -34,6 +36,7 @@ public class MessageReceiver implements ChannelReceiver{
     private ArrayList<DetectionDroneHeartbeatHandler> detectionDroneHeartbeatHandlers;
     private ArrayList<DetectionNotificationHandler> detectionNotificationHandlers;
     private ArrayList<SetPathHandler> setPathHandlers;
+    private ArrayList<FailCommandHandler> failCommandHandlers;
     
     public MessageReceiver() {
         addToPathHandlers = new ArrayList<>();
@@ -44,6 +47,7 @@ public class MessageReceiver implements ChannelReceiver{
         detectionDroneHeartbeatHandlers = new ArrayList<>();
         detectionNotificationHandlers = new ArrayList<>();
         setPathHandlers = new ArrayList<>();
+        failCommandHandlers = new ArrayList<>();
     }
     
 
@@ -104,6 +108,12 @@ public class MessageReceiver implements ChannelReceiver{
                     handler.handle(sp);
                 });
                 break;
+            case FAIL_COMMAND:
+                FailCommand fc = mapper.readValue(splitMessage[1], FailCommand.class);
+                failCommandHandlers.forEach((handler) -> {
+                    handler.handle(fc);
+                });
+                break;
             }
         } catch (IOException e) {
             Log.error("Error on receiving message: {}", message);
@@ -143,5 +153,8 @@ public class MessageReceiver implements ChannelReceiver{
         setPathHandlers.add(handler);
     }
     
+    public void addHandler(FailCommandHandler handler){
+        failCommandHandlers.add(handler);
+    }
     
 }

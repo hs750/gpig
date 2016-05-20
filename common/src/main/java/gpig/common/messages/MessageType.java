@@ -9,4 +9,5 @@ public enum MessageType {
     HEARTBEAT_DC,
     HEARTBEAT_DETECTION,
     HEARTBEAT_DELIVERY,
+    FAIL_COMMAND
 }
