@@ -50,11 +50,11 @@ public class IncomingConnection{
 			};
 		};
 		
-		Log.info("Ready to receive messages on channel {}", channelName);
+		Log.info("Ready to receive messages on channel %s", channelName);
 		try {
 			channel.basicConsume(queueName, true, consumer);
 		} catch (IOException e) {
-			Log.error("Unable to read channel {}", channelName);
+			Log.error("Unable to read channel %s", channelName);
 			e.printStackTrace();
 		}
 	}
@@ -69,6 +69,6 @@ public class IncomingConnection{
 		} catch (IOException | TimeoutException e) {
 			e.printStackTrace();
 		}
-		Log.info("Closed incoming channel {}", channelName);
+		Log.info("Closed incoming channel %s", channelName);
 	}
 }

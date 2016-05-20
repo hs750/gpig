@@ -116,7 +116,7 @@ public class MessageReceiver implements ChannelReceiver{
                 break;
             }
         } catch (IOException e) {
-            Log.error("Error on receiving message: {}", message);
+            Log.error("Error on receiving message: %s", message);
             e.printStackTrace();
         }
     }

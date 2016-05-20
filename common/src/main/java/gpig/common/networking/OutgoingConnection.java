@@ -60,6 +60,6 @@ public class OutgoingConnection {
 		} catch (IOException | TimeoutException e) {
 			e.printStackTrace();
 		}
-		Log.info("Closed outgoing channel {}", channelName);
+		Log.info("Closed outgoing channel %s", channelName);
 	}
 }
