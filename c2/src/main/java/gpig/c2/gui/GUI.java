@@ -50,22 +50,30 @@ public class GUI {
 		detailsFrame = new JFrame("Details");
 		detailsFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		detailsFrame.setResizable(false);
+		detailsFrame.getContentPane().setBackground(new Color(153, 153, 255));
 		detailsFrame.setSize(400, 600);
 		detailsFrame.setVisible(true);
             }
     
     public void displayActorInfo(UUID id, ActorType actorType){
-    	//detailsFrame.removeAll();
+    	detailsFrame.getContentPane().removeAll();
     	
     	switch(actorType){
     	case PERSON:
-    		Detection detection = adapterInbound.getDetectionByID(id);
+    		Detection detection = adapterInbound.getPredefinedDetectionByID(id);
    		
-    		
-    		detailsFrame.getContentPane().add(new PersonInfoPanel(detection,detectionPath, detailsFrame.getSize()));
+    		detailsFrame.getContentPane().add(new PersonInfoPanel(detection,ActorType.PERSON,detectionPath,detailsFrame.getSize()));
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
-    		//System.out.println(":)");
+    		break;
+    		
+    	case DEPLOYMENT_CENTRE:
+    		Location location = adapterInbound.getPredefinedDCLocationByID(id);
+   		
+    		detailsFrame.getContentPane().add(new DCInfoPanel(id,location,ActorType.DEPLOYMENT_CENTRE,dcPath,detailsFrame.getSize()));
+    		detailsFrame.revalidate();
+    		detailsFrame.repaint();
+    		break;
     	}
     	
     }
@@ -95,10 +103,11 @@ public class GUI {
 
 
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,Location> adapterData = adapterInbound.getDCLocationsPredefined();
 		
-		for(Location location:adapterInbound.getDCLocationsPredefined()){
-			unfLocations.put(UUID.randomUUID(),
-					new de.fhpotsdam.unfolding.geo.Location(location.latitude(),location.longitude()));
+		for(UUID id : adapterData.keySet()){
+			unfLocations.put(id,
+					new de.fhpotsdam.unfolding.geo.Location(adapterData.get(id).latitude(),adapterData.get(id).longitude()));
 		}
 
 		return unfLocations;

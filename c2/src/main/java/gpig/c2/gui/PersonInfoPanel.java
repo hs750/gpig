@@ -1,52 +1,29 @@
 package gpig.c2.gui;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.Line2D;
 import java.net.URL;
 
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
+import gpig.common.data.ActorType;
 import gpig.common.data.Detection;
 
-public class PersonInfoPanel extends JPanel{
+
+/**
+ *	Displays information about a person
+ */
+public class PersonInfoPanel extends InfoPanel{
 	
 	private Detection detection;
-	private URL imageURL;
 	
-	public PersonInfoPanel(Detection detection, URL imageURL, Dimension size) {
-		super();
+	public PersonInfoPanel(Detection detection, ActorType actorType, URL imageURL, Dimension size) {
+		super(actorType,imageURL, size);
 		this.detection = detection;
-		this.imageURL = imageURL;
-		
-		this.setSize(size);
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-	
-		Font font = new Font("Console", Font.BOLD, 15);
-		
-		JLabel img = new JLabel();
-		img.setIcon(new ImageIcon(imageURL));
-		JLabel id = new JLabel("ID: "+detection.person.id);
-		JLabel type = new JLabel("Type: "+detection.person.type);
-		JLabel lat = new JLabel("Latitude: "+detection.location.latitude());
-		JLabel lon = new JLabel("Longtitude: "+detection.location.longitude());
-		
-		id.setFont(font);
-		type.setFont(font);
-		lat.setFont(font);
-		lon.setFont(font);
-		
-		add(img);
-		add(id);
-		add(type);
-		add(lat);
-		add(lon);
-		
+
+		//Set parent field contents
+		actorIdL.setText(""+detection.person.id);
+		actorTypeL.setText("Flood Victim");
+		actorLatL.setText(""+String.format ("%.6f", detection.location.latitude()));
+		actorLonL.setText(""+String.format ("%.6f", detection.location.longitude()));
 	}
 	
 	public void paintComponent(Graphics g){
