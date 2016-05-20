@@ -2,8 +2,13 @@ package gpig.c2.gui.unfolding;
 
 import processing.core.*;
 
-import java.net.URL;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.util.UUID;
+
+import javax.swing.JFrame;
+
 import java.util.HashMap;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -23,35 +28,54 @@ public class MapApp extends PApplet {
 	private GUI gui;
 	private UnfoldingMap map;
 	
-	//used to reset the mouse position if it gets misaligned
-	private AbstractMapProvider provider0;
-	
+	//different providers that can be switched between
+	//at runtime
 	private AbstractMapProvider provider1;
 	private AbstractMapProvider provider2;
 	private AbstractMapProvider provider3;
 	
+	//map size
+	private int w;
+	private int h;
 	
-	private Location berlinLocation = new Location(53.955130f, -1.070496f);
-	private Location veniceLocation = new Location(53.965110f, -1.083042f);
-
+	private int imageMarkersWidth;
+	private int imageMarkersHeight;
+	
 	public MapApp(GUI gui) {
 		this.gui = gui;
 	}
 	
-	
-	
 	public void setup() {
 		
-		size(600, 600, OPENGL);
+		// The screen size
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        // Task bar and other obstruction sizes
+        // Papplet impl of insets is wrong - taskbar is not included
+        Insets scnMax = frame.getInsets(); 
+        
+        scnMax.set(scnMax.top, scnMax.left, gui.getBottomInset(), scnMax.right);
+        this.w = (int)(screenSize.width / 3 * 2 - scnMax.right - scnMax.left); // 2/3 for map
+        this.h = screenSize.height - scnMax.bottom - scnMax.top; // full height
+        
+        //height is used as width to keep the markers square
+        this.imageMarkersWidth = height/28;
+        this.imageMarkersHeight = height/28;
+        
+        //the default applet's frame
+        //frame.setLocation(scnMax.right, scnMax.top);
+        frame.setLocation(0,0);
+        
+        frame.setExtendedState(JFrame.MAXIMIZED_VERT);
+        size(this.w, this.h, OPENGL);
+        
 		
-		 provider1 = new Microsoft.RoadProvider();
-		 provider2 = new Microsoft.AerialProvider();
-		 provider3 = new Microsoft.HybridProvider();
-		 
-		 provider0 = new Google.GoogleMapProvider();
+		provider1 = new Microsoft.RoadProvider();
+		provider2 = new Microsoft.AerialProvider();
+		provider3 = new Microsoft.HybridProvider();
 		
 		Location centerLocation = new Location(53.957847, -1.083012f);
-		map = new UnfoldingMap(this,new Google.GoogleMapProvider());
+		map = new UnfoldingMap(this,new Microsoft.RoadProvider());
 		//map = new UnfoldingMap(this,new Google.GoogleMapProvider());
 		map.zoomAndPanTo(10, centerLocation);
 		//map.setPanningRestriction(centerLocation, 30f);
@@ -69,7 +93,13 @@ public class MapApp extends PApplet {
 		idmap = gui.getDetectionLocations();
 		
 		for(UUID id : idmap.keySet()){
-			ImageMarker imgMrk = new ImageMarker(id, idmap.get(id),ActorType.PERSON, loadImage(gui.getDetectionPath().toString()));
+			ImageMarker imgMrk = new ImageMarker(
+					imageMarkersWidth,
+					imageMarkersHeight,
+					id,
+					idmap.get(id),ActorType.PERSON,
+					loadImage(gui.getDetectionPath().toString())
+					);
 			map.addMarker(imgMrk);
 		}
 		
@@ -77,7 +107,15 @@ public class MapApp extends PApplet {
 		idmap = gui.getDcLocations();
 		
 		for(UUID id : idmap.keySet()){
-			ImageMarker imgMrk = new ImageMarker(id, idmap.get(id), ActorType.DEPLOYMENT_CENTRE, loadImage(gui.getDcPath().toString()));
+			
+			
+			ImageMarker imgMrk = new ImageMarker(
+					imageMarkersWidth,
+					imageMarkersHeight,
+					id, idmap.get(id),
+					ActorType.DEPLOYMENT_CENTRE,
+					loadImage(gui.getDcPath().toString())
+					);
 			map.addMarker(imgMrk);
 		}
 		
@@ -90,8 +128,7 @@ public class MapApp extends PApplet {
 	// event handlers
 	public void mouseClicked(){
 		
-		
-		
+		//display actor info based on the clicked marker if any
 		Marker hitMarker = map.getFirstHitMarker(mouseX, mouseY);
 	    
 		if (hitMarker != null && ImageMarker.class.equals(hitMarker.getClass())) {
@@ -101,6 +138,9 @@ public class MapApp extends PApplet {
 	    }
 	}
 	
+	/* 
+	 * Switch between map providers at runtime
+	 */
 	public void keyPressed() {
 	    if (key == '1') {
 	        map.mapDisplay.setProvider(provider1);
@@ -108,8 +148,6 @@ public class MapApp extends PApplet {
 	        map.mapDisplay.setProvider(provider2);
 	    } else if (key == '3') {
 	        map.mapDisplay.setProvider(provider3);
-	    } else if (key == '0') {
-	        map.mapDisplay.setProvider(provider0);
 	    }
 	}
 }

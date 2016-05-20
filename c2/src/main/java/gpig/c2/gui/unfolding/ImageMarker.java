@@ -19,12 +19,16 @@ public class ImageMarker extends AbstractMarker {
 	private PImage img;
 	private UUID actorId;
 	private ActorType actorType;
+	private int markerWidth;
+	private int markerHeight;
 
-	public ImageMarker(UUID id, Location location, ActorType actorType, PImage img) {
+	public ImageMarker(int markerWidth, int markerHeight, UUID id, Location location, ActorType actorType, PImage img) {
 		super(location);
 		this.img = img;
 		this.actorId = id;
 		this.actorType = actorType;
+		this.markerWidth = markerWidth;
+		this.markerHeight = markerHeight;
 	}
 
 	@Override
@@ -33,15 +37,14 @@ public class ImageMarker extends AbstractMarker {
 		pg.imageMode(PConstants.CORNER);
 		//center the image drawing on the coordinates
 		//pg.image(img, x, y, 30, 30);
-		pg.image(img, x-15, y-15, 30, 30);
+		pg.image(img, x-markerWidth/2, y-markerHeight/2, markerWidth, markerHeight);
 		pg.popStyle();
 	}
 
 	@Override
 	protected boolean isInside(float checkX, float checkY, float x, float y) {
 		boolean inside = false;
-		if( checkX > x - 15 && checkX < x + 15 && checkY > y - 15 && checkY < y + 15){
-			//System.out.println("CheckX: " + checkX + " CheckY: " + checkY + " x " + x +" y: " + y);
+		if( checkX > x - markerWidth/2 && checkX < x + markerWidth/2 && checkY > y - markerHeight/2 && checkY < y + markerHeight/2){
 			inside = true;
 		}
 		

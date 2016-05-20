@@ -46,12 +46,24 @@ public class GUI {
      * GUI rendering entry point.
      */
     public void createAndShowGUI() {
+    	
+    	// The screen size
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        detailsFrame = new JFrame("Details");
+        
+        // Task bar and other obstruction sizes
+        Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(detailsFrame.getGraphicsConfiguration());
+        int width = (int)(screenSize.width / 3 - scnMax.left - scnMax.right); // 1/3 for details
+        int height = screenSize.height - scnMax.top - scnMax.bottom; // full height
 		
-		detailsFrame = new JFrame("Details");
+		
 		detailsFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		detailsFrame.setResizable(false);
 		detailsFrame.getContentPane().setBackground(new Color(153, 153, 255));
-		detailsFrame.setSize(400, 600);
+		detailsFrame.setLocation(screenSize.width-screenSize.width/3, 0);
+		detailsFrame.setSize(width, height);
+		detailsFrame.setExtendedState(JFrame.MAXIMIZED_VERT);
 		detailsFrame.setVisible(true);
             }
     
@@ -111,6 +123,11 @@ public class GUI {
 		}
 
 		return unfLocations;
+	}
+	
+	public int getBottomInset(){
+		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(detailsFrame.getGraphicsConfiguration());
+		return scnMax.bottom;
 	}
 	
 	
