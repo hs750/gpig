@@ -3,6 +3,7 @@ package gpig.common.networking;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gpig.common.messages.AddToPath;
 import gpig.common.messages.DeliveryAssignment;
 import gpig.common.messages.DeliveryDroneHeartbeat;
@@ -55,6 +56,8 @@ public class MessageSender {
 
     private boolean send(Object message, MessageType type) {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
         String typeString = type.name();
         try {
             String messageString = mapper.writeValueAsString(message);

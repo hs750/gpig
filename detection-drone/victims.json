@@ -1,0 +1,38 @@
+{
+  "people" : [ {
+    "id" : "8ded1b39-2cee-4c2a-9233-32b360a209fc",
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 1.0,
+      "lon" : 2.0
+    }
+  }, {
+    "id" : "e9300ece-fbca-45f1-be4c-be4ac08993b7",
+    "type" : "OTHER",
+    "location" : {
+      "lat" : 1.0,
+      "lon" : 2.0
+    }
+  }, {
+    "id" : "92e85d5d-35ef-48dc-92ec-d5eb50a0e3bb",
+    "type" : "RESCUE_TEAM",
+    "location" : {
+      "lat" : 1.0,
+      "lon" : 2.0
+    }
+  }, {
+    "id" : "f678e751-b552-4467-a93d-31194ea5f035",
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 1.0,
+      "lon" : 2.0
+    }
+  }, {
+    "id" : "e40290d5-11c3-4e50-bd34-f8e5c25f8981",
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 1.0,
+      "lon" : 2.0
+    }
+  } ]
+}

@@ -46,7 +46,7 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
 
     @Override
     public void handle(DeliveryAssignment message) {
-        Location l = message.assignment.detection.location;
+        Location l = message.assignment.detection.person.location;
         Path p = calculatePathToDelivery(l);
         if(p == null){
             Log.warn("Unable to schedule delivery to %s", l);

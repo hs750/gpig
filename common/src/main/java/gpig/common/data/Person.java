@@ -9,10 +9,12 @@ import java.util.UUID;
 public class Person {
     public final UUID id;
     public final PersonType type;
+    public final Location location;
 
-    public Person(PersonType personType) {
+    public Person(PersonType personType, Location location) {
         this.id = java.util.UUID.randomUUID();
         this.type = personType;
+        this.location = location;
     }
 
     public enum PersonType {
@@ -24,5 +26,6 @@ public class Person {
     private Person() {
         id = null;
         type = null;
+        location = null;
     }
 }

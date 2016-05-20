@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 
 import static gpig.common.units.Units.kilometres;
 
-public class WaypointBasedMovement {
+public class WaypointBasedMovement implements MovementBehaviour {
     private Location currentLocation;
     private InTraversalPath path;
     private LocalDateTime lastUpdateTime;
@@ -29,7 +29,7 @@ public class WaypointBasedMovement {
         path = new InTraversalPath(newPath);
     }
 
-    public Location location() {
+    public Location currentLocation() {
         return currentLocation;
     }
 

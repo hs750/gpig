@@ -52,7 +52,7 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                 UUID closestDC = null;
 
                 for (Entry<UUID, Location> DCs : dcs.entrySet()) {
-                    Kilometres dist = DCs.getValue().distanceFrom(message.detection.location);
+                    Kilometres dist = DCs.getValue().distanceFrom(message.detection.person.location);
                     if (dist.value() <= Constants.DEPLOYMENT_DELIVERY_RADIUS.value()) {
                         if (dist.value() < closestDCDist.value()) {
                             closestDC = DCs.getKey();
@@ -64,11 +64,11 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                     Assignment a = new Assignment(message.detection, closestDC);
                     DeliveryAssignment da = new DeliveryAssignment(a);
                     dcMessageSender.send(da);
-                    Log.info("Delivery to %s assigned to %s", message.detection.location.toString(), closestDC);
+                    Log.info("Delivery to %s assigned to %s", message.detection.person.location.toString(), closestDC);
                 } else {
                     // Attempt delivery assignment later.
                     unallocatedDeliveries.add(message);
-                    Log.warn("Unable to assign delivery to %s", message.detection.location.toString());
+                    Log.warn("Unable to assign delivery to %s", message.detection.person.location.toString());
                 }
             } else {
                 // Wait for detections to need servicing.

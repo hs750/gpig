@@ -70,7 +70,7 @@ public class GUI {
         ArrayList<Point> detectionsAsPoints = new ArrayList<Point>();
         //get the detections and convert them to xy coordinates
         for(Detection detection : adapterInbound.getDetections()){
-        	detectionsAsPoints.add(latLongToXYConverter.convertLocationToPoint(detection.location));
+        	detectionsAsPoints.add(latLongToXYConverter.convertLocationToPoint(detection.person.location));
         }
         
         ArrayList<Point> dcLocationsAsPoints = new ArrayList<Point>();

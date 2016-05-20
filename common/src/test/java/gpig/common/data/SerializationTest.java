@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,8 +21,8 @@ import static gpig.common.units.Units.kilometres;
 public class SerializationTest {
 
     private static Location locat = new Location(0.0, 0.0);
-    private static Person detectedPerson = new Person(Person.PersonType.CIVILIAN);
-    private static Detection detection = new Detection(locat, detectedPerson, new File("file"), new Date());
+    private static Person detectedPerson = new Person(Person.PersonType.CIVILIAN, locat);
+    private static Detection detection = new Detection(detectedPerson, new File("file"), LocalDateTime.now());
     private static UUID deploymentCentreUUID = UUID.randomUUID();
     private static CircularArea area = new CircularArea(locat, kilometres(2));
     private static List<Path.Waypoint> waypoints = new ArrayList<Path.Waypoint>() {{
@@ -32,6 +34,7 @@ public class SerializationTest {
     @Test
     public void serializationTest() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         String s = mapper.writeValueAsString(new SerializationTestClass());
         System.out.println(s);
@@ -40,10 +43,10 @@ public class SerializationTest {
 
     public static class SerializationTestClass {
         @JsonProperty("actorType") public ActorType actorType = ActorType.C2;
-        @JsonProperty("assignment") public Assignment assignment = new Assignment(new Detection(locat, detectedPerson, new File("file"), new Date()), deploymentCentreUUID);
+        @JsonProperty("assignment") public Assignment assignment = new Assignment(detection, deploymentCentreUUID);
         @JsonProperty("area") public CircularArea carea = area;
         @JsonProperty("deploymentArea") public DeploymentArea deploymentArea = new DeploymentArea(locat, Constants.DEPLOYMENT_SEARCH_RADIUS);
-        @JsonProperty("detection") public Detection dec = new Detection(locat, detectedPerson, new File("file"), new Date());
+        @JsonProperty("detection") public Detection dec = detection;
         @JsonProperty("location") public Location loc = locat;
         @JsonProperty("path") public Path path = new Path(waypoints);
         @JsonProperty("waypoint") public Path.Waypoint waypoint = new Path.Waypoint(locat);

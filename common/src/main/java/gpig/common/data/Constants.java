@@ -12,5 +12,7 @@ public class Constants {
     public final static Kilometres DEPLOYMENT_SEARCH_RADIUS = kilometres(10.0);
     public final static Kilometres DEPLOYMENT_DELIVERY_RADIUS = kilometres(10.0);
 
+    public final static Kilometres DETECTION_RADIUS = kilometres(2.5);
+
     public final static double SPEED_SCALING_FACTOR = 1.0;
 }

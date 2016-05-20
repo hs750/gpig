@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gpig.common.messages.AddToPath;
 import gpig.common.messages.DeliveryAssignment;
 import gpig.common.messages.DeliveryDroneHeartbeat;
@@ -49,6 +50,8 @@ public class MessageReceiver implements ChannelReceiver{
     @Override
     public void messageReceived(String message) {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
         String[] splitMessage = message.split(MessageSender.MESSAGE_DELIMITER, 2);
         MessageType type = MessageType.valueOf(splitMessage[0]);
         try {

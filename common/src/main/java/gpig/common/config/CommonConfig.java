@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gpig.common.util.Log;
 
 /**
@@ -37,6 +38,8 @@ public abstract class CommonConfig {
         Log.info("Using config: %s", configFile.getAbsolutePath());
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
         C conf = mapper.readValue(configFile, clazz);
         return conf;
     }

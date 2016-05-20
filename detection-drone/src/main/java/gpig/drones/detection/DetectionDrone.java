@@ -1,7 +1,12 @@
 package gpig.drones.detection;
 
+import java.io.File;
 import java.io.IOException;
 
+import gpig.common.data.Constants;
+import gpig.common.data.Location;
+import gpig.common.movement.MovementBehaviour;
+import gpig.common.movement.WaypointBasedMovement;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
@@ -10,15 +15,22 @@ import gpig.drones.detection.config.DetectionDroneConfig;
 
 public class DetectionDrone {
 
-    public DetectionDrone(DetectionDroneConfig config) {
+    MovementBehaviour movementBehaviour;
+    DetectionBehaviour detectionBehaviour;
+
+    DetectionDrone(DetectionDroneConfig config) throws IOException {
         Log.info("Starting detection drone");
 
         MessageReceiver msgFromDC = new MessageReceiver();
         CommunicationChannel dtdcChannel = new CommunicationChannel(config.dtdcChannel, msgFromDC);
         MessageSender msgToDC = new MessageSender(dtdcChannel);
+
+        // TODO: Actual initial location
+        movementBehaviour = new WaypointBasedMovement(new Location(0.0, 0.0), Constants.DETECTION_DRONE_SPEED);
+        detectionBehaviour = new DetectionsFromConfig(new File("victims.json"));
     }
 
-    public void run() {
+    void run() {
     }
 
     public static void main(String... args) throws IOException {
