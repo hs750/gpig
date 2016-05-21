@@ -134,10 +134,16 @@ public class MapApp extends PApplet {
 		if (hitMarker != null && ImageMarker.class.equals(hitMarker.getClass())) {
 			ImageMarker theMarker = (ImageMarker) hitMarker;
 
-	        gui.displayActorInfo(theMarker.getActorId(), theMarker.getActorType());
+			
+			javax.swing.SwingUtilities.invokeLater(() -> {
+				gui.displayActorInfo(theMarker.getActorId(), theMarker.getActorType());
+			 });
 	    }else{
 	    	//send the selected coordinates
+	    	
+	    	javax.swing.SwingUtilities.invokeLater(() -> {
 	    	gui.updateSelectedCoordinates(map.getLocation(mouseX, mouseY));
+	    	});
 	    }
 	}
 	
