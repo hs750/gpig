@@ -7,11 +7,14 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -27,6 +30,9 @@ import gpig.common.data.Location;
  */
 public class ControlPanel extends JPanel{
 
+	protected GUI gui;
+	
+	protected Color backgroundColour;
 	protected Font fieldNameFont;
 	protected Font fieldContentsFont;
 	protected GridBagConstraints c;
@@ -39,15 +45,22 @@ public class ControlPanel extends JPanel{
 	protected JLabel selectedLatL;
 	protected JLabel selectedLonL;
 	
+	//control buttons
+	protected JButton deployB;
+	protected JButton reDeployB;
 	
-	public ControlPanel(Dimension size) {
+	
+	public ControlPanel(GUI gui,Dimension size) {
 		super();
+		
+		this.gui = gui;
+		this.backgroundColour = new Color(153, 153, 255);
 		this.setSize(size);
 		this.setMinimumSize(size);
 		this.setMaximumSize(size);
 		this.setPreferredSize(size);
 		this.setLayout(new GridBagLayout());
-		this.setBackground(new Color(153, 153, 255));
+		this.setBackground(backgroundColour);
 		this.setBorder(new MatteBorder(0,0,1,0,Color.BLACK));
 		
 		fieldNameFont = new Font("Console", Font.BOLD, 15);
@@ -60,8 +73,6 @@ public class ControlPanel extends JPanel{
 		
 		c = new GridBagConstraints();		
 		
-
-		
 		//Field names
 		selectedLatLN = new JLabel("Selected Latitude: ");
 		selectedLonLN = new JLabel("Selected Longtitude: ");
@@ -69,6 +80,42 @@ public class ControlPanel extends JPanel{
 		//Field contents
 		selectedLatL = new JLabel("None");
 		selectedLonL = new JLabel("None");
+		
+		//buttons
+		deployB = new JButton("Deploy to");
+		reDeployB = new JButton("Redeploy to");
+		
+		deployB.setEnabled(false);
+		reDeployB.setEnabled(false);
+		
+		deployB.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+			    deployB.setEnabled(false);
+			    
+			    gui.requestDeploy(
+			    		new Location(
+			    				Double.parseDouble(selectedLatL.getText()),
+			    				Double.parseDouble(selectedLonL.getText())
+			    				));
+			  } 
+			});
+		
+		reDeployB.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  reDeployB.setEnabled(false);
+			    
+			    gui.requestRedeploy(
+			    		new Location(
+			    				Double.parseDouble(selectedLatL.getText()),
+			    				Double.parseDouble(selectedLonL.getText())
+			    				));
+			  } 
+			});
+		
+		
+		//butons formatting
+		deployB.setBackground(backgroundColour);
+		reDeployB.setBackground(backgroundColour);
 		
 		//fonts
 		selectedLatLN.setFont(fieldNameFont);
@@ -88,7 +135,6 @@ public class ControlPanel extends JPanel{
 		
 		c.fill = GridBagConstraints.VERTICAL;
 		c.anchor = GridBagConstraints.WEST;
-		//cst.weightx = 0.7;
 		c.weighty = 0.5;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridx = 1;
@@ -97,7 +143,6 @@ public class ControlPanel extends JPanel{
 		
 		c.fill = GridBagConstraints.VERTICAL;
 		c.anchor = GridBagConstraints.WEST;
-		//cst.weightx = 0.3;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 0;
@@ -106,18 +151,46 @@ public class ControlPanel extends JPanel{
 		
 		c.fill = GridBagConstraints.VERTICAL;
 		c.anchor = GridBagConstraints.WEST;
-		//cst.weightx = 0.7;
 		c.weighty = 0.5;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridx = 1;
 		c.gridy = 1;
 		add(selectedLonL,c);
 		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.anchor = GridBagConstraints.CENTER;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 2;
+		add(deployB,c);
+		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.anchor = GridBagConstraints.CENTER;
+		c.weighty = 0.5;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.gridx = 1;
+		c.gridy = 2;
+		add(reDeployB,c);
+		
 	}
 	
 	public void selectLocation(Location location){
 		selectedLatL.setText(""+String.format ("%.6f", location.latitude()));
 		selectedLonL.setText(""+String.format ("%.6f", location.longitude()));
+	}
+	
+	public void enableDeployment(){
+		deployB.setEnabled(true);
+	}
+	public void enableRedeployment(){
+		reDeployB.setEnabled(true);
+	}
+	public void disableDeployment(){
+		deployB.setEnabled(false);
+	}
+	public void disableRedeployment(){
+		reDeployB.setEnabled(false);
 	}
 	
 	public void paintComponent(Graphics g){

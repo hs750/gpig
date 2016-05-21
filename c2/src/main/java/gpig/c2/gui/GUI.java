@@ -28,6 +28,7 @@ public class GUI {
 	
 	private AppletRunner appletRunner;
 	private GUIAdapterInbound adapterInbound;
+	private GUIAdapterOutbound adapterOutbound;
 	
 	//resource URLs
 	private URL detectionPath = GUI.class.getResource("/Detection.png");
@@ -40,8 +41,9 @@ public class GUI {
 	private Dimension infoPanelSize;
 	private Dimension controlPanelSize;
 	
-	public GUI(GUIAdapterInbound GUIAdapterInbound){
-		this.adapterInbound = GUIAdapterInbound;
+	public GUI(GUIAdapterInbound adapterInbound, GUIAdapterOutbound adapterOutbound){
+		this.adapterInbound = adapterInbound;
+		this.adapterOutbound = adapterOutbound;
 		
 		appletRunner = new AppletRunner(this);
 		appletRunner.start();
@@ -51,6 +53,22 @@ public class GUI {
      * GUI rendering entry point.
      */
     public void createAndShowGUI() {
+    	
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     	// The screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -62,8 +80,8 @@ public class GUI {
         int width = (int)(screenSize.width / 3 - scnMax.left - scnMax.right); // 1/3 for details
         int height = screenSize.height - scnMax.top - scnMax.bottom; // full height
         
-        infoPanelSize = new Dimension(width, (height/3)*2);
-        controlPanelSize = new Dimension(width, height/3);
+        infoPanelSize = new Dimension(width, (height/5)*4);
+        controlPanelSize = new Dimension(width, height/5);
         
 		
 		detailsFrame.setLayout(new BorderLayout());
@@ -74,7 +92,7 @@ public class GUI {
 		detailsFrame.setSize(width, height);
 		detailsFrame.setExtendedState(JFrame.MAXIMIZED_VERT);
 		
-		controlPanel = new ControlPanel(controlPanelSize);
+		controlPanel = new ControlPanel(this,controlPanelSize);
 		detailsFrame.add(controlPanel,BorderLayout.NORTH);
 		detailsFrame.revalidate();
 		detailsFrame.repaint();
@@ -110,10 +128,26 @@ public class GUI {
     	
     }
     
+    //control panel methods
     public void updateSelectedCoordinates(de.fhpotsdam.unfolding.geo.Location geoLocation){
     	controlPanel.selectLocation(new Location(geoLocation.getLat(), geoLocation.getLon()));
+    	
+    	if(adapterInbound.canDeploy()){
+    		controlPanel.enableDeployment();
+    	}else{
+    		controlPanel.enableRedeployment();
+    	}
+    	
 		detailsFrame.revalidate();
 		detailsFrame.repaint();
+    }
+    
+    public void requestDeploy(Location location){
+    	adapterOutbound.DeployRedeploy(location);
+    }
+    
+    public void requestRedeploy(Location location){
+    	adapterOutbound.DeployRedeploy(location);
     }
     
 	public URL getDetectionPath() {

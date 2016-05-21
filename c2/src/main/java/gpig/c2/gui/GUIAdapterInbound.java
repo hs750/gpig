@@ -62,6 +62,13 @@ public class GUIAdapterInbound {
 	}
 	
 	
+	//tell the gui if there are any free dcs for deployment
+	public boolean canDeploy(){
+		return ( c2Data.getNumberOfUndeployedDCs() > 0);
+	}
+	
+	
+	
 	//predefined data from config
 
 	//get detection data from config by detection id
