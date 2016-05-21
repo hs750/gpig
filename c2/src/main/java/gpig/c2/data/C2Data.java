@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class C2Data {
+	private int numberOfDCs = 2;
+	private int numberOfUndeployedDCs = 2;
     private List<Assignment> assignments;
     private ConcurrentHashMap<UUID, DroneState> deliveryDronesState;
     private ConcurrentHashMap<UUID, Location> dcLocations;
@@ -41,4 +43,24 @@ public class C2Data {
     public Map<UUID, Location> getDCLocations(){
         return Collections.unmodifiableMap(dcLocations);
     }
+
+	public synchronized int getNumberOfDCs() {
+		return numberOfDCs;
+	}
+	
+	public synchronized int getNumberOfUndeployedDCs() {
+		return numberOfUndeployedDCs;
+	}
+
+	public synchronized void setNumberOfDCs(int numberOfDCs) {
+		this.numberOfDCs = numberOfDCs;
+	}
+
+	public synchronized void setNumberOfUndeployedDCs(int numberOfUndeployedDCs) {
+		this.numberOfUndeployedDCs = numberOfUndeployedDCs;
+	}
+	
+	
+    
+    
 }
