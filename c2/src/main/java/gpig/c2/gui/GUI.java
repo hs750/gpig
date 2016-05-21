@@ -27,13 +27,18 @@ import gpig.c2.gui.unfolding.MapApp;
 public class GUI {
 	
 	private AppletRunner appletRunner;
-	private GUIAdapterInbound adapterInbound;	
+	private GUIAdapterInbound adapterInbound;
 	
 	//resource URLs
 	private URL detectionPath = GUI.class.getResource("/Detection.png");
 	private URL dcPath = GUI.class.getResource("/DC.png");
 	
-	JFrame detailsFrame;
+	private JFrame detailsFrame;
+	private ControlPanel controlPanel;
+	private InfoPanel infoPanel;
+	
+	private Dimension infoPanelSize;
+	private Dimension controlPanelSize;
 	
 	public GUI(GUIAdapterInbound GUIAdapterInbound){
 		this.adapterInbound = GUIAdapterInbound;
@@ -56,25 +61,39 @@ public class GUI {
         Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(detailsFrame.getGraphicsConfiguration());
         int width = (int)(screenSize.width / 3 - scnMax.left - scnMax.right); // 1/3 for details
         int height = screenSize.height - scnMax.top - scnMax.bottom; // full height
+        
+        infoPanelSize = new Dimension(width, (height/3)*2);
+        controlPanelSize = new Dimension(width, height/3);
+        
 		
-		
+		detailsFrame.setLayout(new BorderLayout());
 		detailsFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		detailsFrame.setResizable(false);
 		detailsFrame.getContentPane().setBackground(new Color(153, 153, 255));
 		detailsFrame.setLocation(screenSize.width-screenSize.width/3, 0);
 		detailsFrame.setSize(width, height);
 		detailsFrame.setExtendedState(JFrame.MAXIMIZED_VERT);
+		
+		controlPanel = new ControlPanel(controlPanelSize);
+		detailsFrame.add(controlPanel,BorderLayout.NORTH);
+		detailsFrame.revalidate();
+		detailsFrame.repaint();
+		
 		detailsFrame.setVisible(true);
-            }
+    }
     
-    public void displayActorInfo(UUID id, ActorType actorType){
-    	detailsFrame.getContentPane().removeAll();
+    public void displayActorInfo(UUID id, ActorType actorType){  	
+    	
+		if(infoPanel != null){
+			detailsFrame.remove(infoPanel);
+		}
     	
     	switch(actorType){
     	case PERSON:
     		Detection detection = adapterInbound.getPredefinedDetectionByID(id);
    		
-    		detailsFrame.getContentPane().add(new PersonInfoPanel(detection,ActorType.PERSON,detectionPath,detailsFrame.getSize()));
+    		infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,detectionPath,infoPanelSize);
+    		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
     		break;
@@ -82,12 +101,19 @@ public class GUI {
     	case DEPLOYMENT_CENTRE:
     		Location location = adapterInbound.getPredefinedDCLocationByID(id);
    		
-    		detailsFrame.getContentPane().add(new DCInfoPanel(id,location,ActorType.DEPLOYMENT_CENTRE,dcPath,detailsFrame.getSize()));
+    		infoPanel = new DCInfoPanel(id,location,ActorType.DEPLOYMENT_CENTRE,dcPath,infoPanelSize);
+    		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
     		break;
     	}
     	
+    }
+    
+    public void updateSelectedCoordinates(de.fhpotsdam.unfolding.geo.Location geoLocation){
+    	controlPanel.selectLocation(new Location(geoLocation.getLat(), geoLocation.getLon()));
+		detailsFrame.revalidate();
+		detailsFrame.repaint();
     }
     
 	public URL getDetectionPath() {

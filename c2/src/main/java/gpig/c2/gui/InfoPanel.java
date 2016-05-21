@@ -53,6 +53,9 @@ public class InfoPanel extends JPanel{
 		this.actorType = actorType;
 		this.actorImageURL = actorImageURL;
 		this.setSize(size);
+		this.setMinimumSize(size);
+		this.setMaximumSize(size);
+		this.setPreferredSize(size);
 		this.setLayout(new GridBagLayout());
 		this.setBackground(new Color(153, 153, 255));
 		

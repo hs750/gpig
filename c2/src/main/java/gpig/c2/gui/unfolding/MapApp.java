@@ -122,7 +122,7 @@ public class MapApp extends PApplet {
 		map.draw();
 		Location location = map.getLocation(mouseX, mouseY);
 	    fill(0);
-	    text(location.getLat() + ", " + location.getLon(), mouseX, mouseY);
+	    text(String.format ("%.6f", location.getLat()) + ", " + String.format ("%.6f", location.getLon()), mouseX, mouseY);
 	}
 	
 	// event handlers
@@ -135,6 +135,9 @@ public class MapApp extends PApplet {
 			ImageMarker theMarker = (ImageMarker) hitMarker;
 
 	        gui.displayActorInfo(theMarker.getActorId(), theMarker.getActorType());
+	    }else{
+	    	//send the selected coordinates
+	    	gui.updateSelectedCoordinates(map.getLocation(mouseX, mouseY));
 	    }
 	}
 	
