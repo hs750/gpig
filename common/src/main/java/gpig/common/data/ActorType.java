@@ -5,4 +5,5 @@ public enum ActorType {
     DEPLOYMENT_CENTRE,
     DEPLOYMENT_DRONE,
     DETECTION_DRONE,
+    PERSON
 }
