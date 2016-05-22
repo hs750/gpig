@@ -132,7 +132,7 @@ public class GUIAdapterInbound {
 	//get delivery drone location data from c2 by drone id
 	public Location getDeliveryDroneLocationByID(UUID id) {
 		
-		return c2Data.getDetectionDronesLocation().get(id);
+		return c2Data.getDeliveryDronesLocation().get(id);
 	}
 	
 	//get detection drone state data from c2 by drone id

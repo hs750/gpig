@@ -13,6 +13,7 @@ import com.rabbitmq.tools.Tracer.Logger;
 
 import gpig.common.data.ActorType;
 import gpig.common.data.Detection;
+import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.config.DetectionsConfig;
 import gpig.common.config.LocationsConfig;
@@ -120,20 +121,42 @@ public class GUI {
     		Detection detection = adapterInbound.getDetectionByID(id);
    		
     		if(adapterInbound.hasBeenDeliveredTo(id)){
-    			infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    			infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
     		}else{
-    			infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    			infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
     		}
     		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
     		break;
+    	
     		
     	case DEPLOYMENT_CENTRE:
-    		Location location = adapterInbound.getDCLocationByID(id);
+    		Location dcLocation = adapterInbound.getDCLocationByID(id);
    		
-    		infoPanel = new DCInfoPanel(id,location,ActorType.DEPLOYMENT_CENTRE,dcURL,infoPanelSize);
+    		infoPanel = new DCInfoPanel(id,dcLocation,ActorType.DEPLOYMENT_CENTRE,dcURL,infoPanelSize);
+    		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
+    		detailsFrame.revalidate();
+    		detailsFrame.repaint();
+    		break;
+    		
+    		
+    	case DETECTION_DRONE:
+    		Location dtdLocation = adapterInbound.getDetectionDroneLocationByID(id);
+    		DroneState dtdState = adapterInbound.getDetectionDroneStateByID(id);
+   		
+    		infoPanel = new DetectionDroneInfoPanel(id,dtdLocation,dtdState,ActorType.DETECTION_DRONE,detectionDroneNormalURL,infoPanelSize);
+    		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
+    		detailsFrame.revalidate();
+    		detailsFrame.repaint();
+    		break;
+    		
+    	case DELIVERY_DRONE:
+    		Location dldLocation = adapterInbound.getDeliveryDroneLocationByID(id);
+    		DroneState dldState = adapterInbound.getDeliveryDroneStateByID(id);
+    		
+    		infoPanel = new DeliveryDroneInfoPanel(id,dldLocation,dldState,ActorType.DELIVERY_DRONE,deliveryDroneNormalURL,infoPanelSize);
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();

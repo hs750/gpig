@@ -14,14 +14,23 @@ import gpig.common.data.Detection;
 public class PersonInfoPanel extends InfoPanel{
 	
 	private Detection detection;
+	private Boolean deliveredTo;
 	
-	public PersonInfoPanel(Detection detection, ActorType actorType, URL imageURL, Dimension size) {
+	public PersonInfoPanel(Detection detection, boolean deliveredTo, ActorType actorType, URL imageURL, Dimension size) {
 		super(actorType,imageURL, size);
 		this.detection = detection;
-
+		this.deliveredTo = deliveredTo;
+		
 		//Set parent field contents
 		actorIdL.setText(""+detection.person.id);
 		actorTypeL.setText("Flood Victim");
+		
+		if(deliveredTo){
+			actorStateL.setText("DELIVERED TO");
+		}else{
+			actorStateL.setText("NOT DELIVERED TO");
+		}
+		
 		actorLatL.setText(""+String.format ("%.6f", detection.person.location.latitude()));
 		actorLonL.setText(""+String.format ("%.6f", detection.person.location.longitude()));
 	}
