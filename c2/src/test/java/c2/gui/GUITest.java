@@ -171,6 +171,9 @@ public class GUITest extends Thread{
         
         Person person1 = new Person(PersonType.CIVILIAN, det1Current);
         Person person2 = new Person(PersonType.CIVILIAN, det2Current);
+        person1.id = detectionsIDs.get(0);
+        person2.id = detectionsIDs.get(1);
+        
         detections.add(new Detection(person1,null,null));
         detections.add(new Detection(person2,null,null));
         

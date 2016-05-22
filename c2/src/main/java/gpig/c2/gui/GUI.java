@@ -119,7 +119,12 @@ public class GUI {
     	case PERSON:
     		Detection detection = adapterInbound.getDetectionByID(id);
    		
-    		infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		if(adapterInbound.hasBeenDeliveredTo(id)){
+    			infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		}else{
+    			infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		}
+    		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();

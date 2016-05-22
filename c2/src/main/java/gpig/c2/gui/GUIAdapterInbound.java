@@ -147,10 +147,31 @@ public class GUIAdapterInbound {
 		return c2Data.getDeliveryDronesState().get(id);
 	}
 	
+
+	//has this detection been delivered to already
+	public boolean hasBeenDeliveredTo(UUID id){
+		boolean result = false;
+		
+		List<Assignment> allAssignments = c2Data.getAssignments();
+		
+		for(Assignment assignment : allAssignments){
+			if( assignment.status == AssignmentStatus.DELIVERED && assignment.detection.person.id == id){
+				result = true;
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
+	
 	//tell the gui if there are any free dcs for deployment
 	public boolean canDeploy(){
 		return ( c2Data.getNumberOfUndeployedDCs() > 0);
 	}
+	
+	
+	
 	
 	
 	

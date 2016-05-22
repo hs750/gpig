@@ -7,7 +7,7 @@ import java.util.UUID;
  * contexts - e.g. a detection, an assignment, etc.
  */
 public class Person {
-    public final UUID id;
+    public UUID id;
     public final PersonType type;
     public final Location location;
 
