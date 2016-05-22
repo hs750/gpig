@@ -159,11 +159,26 @@ public class GUI {
     	adapterOutbound.DeployRedeploy(location);
     }
 
-	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDetectionLocations() {
+    
+    //initial draw data for unfoding maps
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDetectionLocationsUndelivered() {
 		
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
-		for(Detection detection:adapterInbound.getDetectionsPredefined()){
+		for(Detection detection:adapterInbound.getUndeliveredDetections()){
+			unfLocations.put(detection.person.id,
+					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		}
+		
+		
+		return unfLocations;
+	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDetectionLocationsDelivered() {
+		
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		
+		for(Detection detection:adapterInbound.getDeliveredDetections()){
 			unfLocations.put(detection.person.id,
 					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 		}
@@ -176,7 +191,35 @@ public class GUI {
 
 
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
-		HashMap<UUID,Location> adapterData = adapterInbound.getDCLocationsPredefined();
+		HashMap<UUID,Location> adapterData = adapterInbound.getDCLocations();
+		
+		for(UUID id : adapterData.keySet()){
+			unfLocations.put(id,
+					new de.fhpotsdam.unfolding.geo.Location(adapterData.get(id).latitude(),adapterData.get(id).longitude()));
+		}
+
+		return unfLocations;
+	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDeliveryDroneLocations() {
+
+
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,Location> adapterData = adapterInbound.getDeliveryDroneLocations();
+		
+		for(UUID id : adapterData.keySet()){
+			unfLocations.put(id,
+					new de.fhpotsdam.unfolding.geo.Location(adapterData.get(id).latitude(),adapterData.get(id).longitude()));
+		}
+
+		return unfLocations;
+	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDetectionDroneLocations() {
+
+
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,Location> adapterData = adapterInbound.getDetectionDroneLocations();
 		
 		for(UUID id : adapterData.keySet()){
 			unfLocations.put(id,

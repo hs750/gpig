@@ -18,6 +18,10 @@ public class C2Data {
     private ConcurrentHashMap<UUID, Location> dcLocations;
     private ConcurrentHashMap<UUID, DroneState> detectionDronesState;
     private List<Detection> detections;
+    
+    //should only be populated with locations of drones that have been deployed
+    private ConcurrentHashMap<UUID, Location> deliveryDronesLocation;
+    private ConcurrentHashMap<UUID, Location> detectionDronesLocation;
 
     public C2Data() {
         assignments = Collections.synchronizedList(new ArrayList<>());
@@ -25,6 +29,8 @@ public class C2Data {
         dcLocations = new ConcurrentHashMap<>();
         detectionDronesState = new ConcurrentHashMap<>();
         detections = Collections.synchronizedList(new ArrayList<>());
+        deliveryDronesLocation = new ConcurrentHashMap<>();
+        detectionDronesLocation = new ConcurrentHashMap<>();
     }
 
     public void addAllHandlers(MessageReceiver receiver) {
@@ -36,6 +42,10 @@ public class C2Data {
         receiver.addHandler(new C2DetectionNotificationHandler(detections));
     }
 
+    public List<Assignment> getAssignments() {
+        return Collections.unmodifiableList(assignments);
+    }
+    
     public List<Detection> getDetections() {
         return Collections.unmodifiableList(detections);
     }
@@ -43,6 +53,24 @@ public class C2Data {
     public Map<UUID, Location> getDCLocations(){
         return Collections.unmodifiableMap(dcLocations);
     }
+    
+    public Map<UUID, Location> getDeliveryDronesLocation(){
+        return Collections.unmodifiableMap(deliveryDronesLocation);
+    }
+    
+    public Map<UUID, Location> getDetectionDronesLocation(){
+        return Collections.unmodifiableMap(detectionDronesLocation);
+    }
+    
+    public Map<UUID, DroneState> getDeliveryDronesState(){
+        return Collections.unmodifiableMap(deliveryDronesState);
+    }
+    
+    public Map<UUID, DroneState> getDetectionDronesState(){
+        return Collections.unmodifiableMap(detectionDronesState);
+    }
+    
+    
 
 	public synchronized int getNumberOfDCs() {
 		return numberOfDCs;
