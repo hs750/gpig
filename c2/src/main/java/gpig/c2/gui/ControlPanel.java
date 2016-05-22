@@ -114,8 +114,8 @@ public class ControlPanel extends JPanel{
 		
 		
 		//butons formatting
-		deployB.setBackground(backgroundColour);
-		reDeployB.setBackground(backgroundColour);
+		//deployB.setBackground(backgroundColour);
+		//reDeployB.setBackground(backgroundColour);
 		
 		//fonts
 		selectedLatLN.setFont(fieldNameFont);

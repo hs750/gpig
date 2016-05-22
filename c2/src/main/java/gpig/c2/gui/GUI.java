@@ -62,6 +62,7 @@ public class GUI {
      */
     public void createAndShowGUI() {
     	
+    	/*
     	try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
@@ -76,7 +77,7 @@ public class GUI {
 		} catch (UnsupportedLookAndFeelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
     	
     	// The screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
