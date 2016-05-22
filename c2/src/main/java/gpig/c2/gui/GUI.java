@@ -117,7 +117,7 @@ public class GUI {
     	
     	switch(actorType){
     	case PERSON:
-    		Detection detection = adapterInbound.getPredefinedDetectionByID(id);
+    		Detection detection = adapterInbound.getDetectionByID(id);
    		
     		infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
@@ -126,7 +126,7 @@ public class GUI {
     		break;
     		
     	case DEPLOYMENT_CENTRE:
-    		Location location = adapterInbound.getPredefinedDCLocationByID(id);
+    		Location location = adapterInbound.getDCLocationByID(id);
    		
     		infoPanel = new DCInfoPanel(id,location,ActorType.DEPLOYMENT_CENTRE,dcURL,infoPanelSize);
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
@@ -269,6 +269,10 @@ public class GUI {
 
 	public URL getDeliveryDroneHardFailURL() {
 		return deliveryDroneHardFailURL;
+	}
+	
+	public void setAdapterInbound(GUIAdapterInbound adapterInbound) {
+		this.adapterInbound = adapterInbound;
 	}
 	
 }

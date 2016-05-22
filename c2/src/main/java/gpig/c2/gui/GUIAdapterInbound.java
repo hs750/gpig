@@ -70,8 +70,6 @@ public class GUIAdapterInbound {
 		ArrayList<Detection> deliveredDetections = new ArrayList<Detection>();
 		
 		List<Assignment> allAssignments = c2Data.getAssignments();
-		ArrayList<UUID> deliveredDetectionIDs = new ArrayList<UUID>();
-		
 		
 		for(Assignment assignment : allAssignments){
 			if( assignment.status == AssignmentStatus.DELIVERED){
