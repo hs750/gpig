@@ -98,7 +98,7 @@ public class MapApp extends PApplet {
 					imageMarkersHeight,
 					id,
 					idmap.get(id),ActorType.PERSON,
-					loadImage(gui.getDetectionPath().toString())
+					loadImage(gui.getUndeliveredDetectionURL().toString())
 					);
 			map.addMarker(imgMrk);
 		}
@@ -114,7 +114,7 @@ public class MapApp extends PApplet {
 					imageMarkersHeight,
 					id, idmap.get(id),
 					ActorType.DEPLOYMENT_CENTRE,
-					loadImage(gui.getDcPath().toString())
+					loadImage(gui.getDcURL().toString())
 					);
 			map.addMarker(imgMrk);
 		}

@@ -31,8 +31,16 @@ public class GUI {
 	private GUIAdapterOutbound adapterOutbound;
 	
 	//resource URLs
-	private URL detectionPath = GUI.class.getResource("/Detection.png");
-	private URL dcPath = GUI.class.getResource("/DC.png");
+	private URL undeliveredDetectionURL = GUI.class.getResource("/DetectionUndelivered.png");
+	private URL deliveredDetectionURL = GUI.class.getResource("/DetectionDelivered.png");
+	private URL dcURL = GUI.class.getResource("/DC.png");
+	private URL detectionDroneNormalURL = GUI.class.getResource("/DetectionDroneNormal.png");
+	private URL deliveryDroneNormalURL = GUI.class.getResource("/DeliveryDroneNormal.png");
+	private URL detectionDroneSoftFailURL = GUI.class.getResource("/DetectionDroneSoftFail.png");
+	private URL deliveryDroneSoftFailURL = GUI.class.getResource("/DelivereryDroneSoftFail.png");
+	private URL detectionDroneHardFailURL = GUI.class.getResource("/DetectionDroneHardFail.png");
+	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
+	
 	
 	private JFrame detailsFrame;
 	private ControlPanel controlPanel;
@@ -110,7 +118,7 @@ public class GUI {
     	case PERSON:
     		Detection detection = adapterInbound.getPredefinedDetectionByID(id);
    		
-    		infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,detectionPath,infoPanelSize);
+    		infoPanel = new PersonInfoPanel(detection,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
@@ -119,7 +127,7 @@ public class GUI {
     	case DEPLOYMENT_CENTRE:
     		Location location = adapterInbound.getPredefinedDCLocationByID(id);
    		
-    		infoPanel = new DCInfoPanel(id,location,ActorType.DEPLOYMENT_CENTRE,dcPath,infoPanelSize);
+    		infoPanel = new DCInfoPanel(id,location,ActorType.DEPLOYMENT_CENTRE,dcURL,infoPanelSize);
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
@@ -149,14 +157,6 @@ public class GUI {
     public void requestRedeploy(Location location){
     	adapterOutbound.DeployRedeploy(location);
     }
-    
-	public URL getDetectionPath() {
-		return detectionPath;
-	}
-
-	public URL getDcPath() {
-		return dcPath;
-	}
 
 	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDetectionLocations() {
 		
@@ -189,6 +189,42 @@ public class GUI {
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(detailsFrame.getGraphicsConfiguration());
 		return scnMax.bottom;
 	}
+
+	//image url getters
+	public URL getDcURL() {
+		return dcURL;
+	}
 	
+	public URL getUndeliveredDetectionURL() {
+		return undeliveredDetectionURL;
+	}
+	
+	public URL getDeliveredDetectionURL() {
+		return deliveredDetectionURL;
+	}
+
+	public URL getDetectionDroneNormalURL() {
+		return detectionDroneNormalURL;
+	}
+
+	public URL getDeliveryDroneNormalURL() {
+		return deliveryDroneNormalURL;
+	}
+
+	public URL getDetectionDroneSoftFailURL() {
+		return detectionDroneSoftFailURL;
+	}
+
+	public URL getDeliveryDroneSoftFailURL() {
+		return deliveryDroneSoftFailURL;
+	}
+
+	public URL getDetectionDroneHardFailURL() {
+		return detectionDroneHardFailURL;
+	}
+
+	public URL getDeliveryDroneHardFailURL() {
+		return deliveryDroneHardFailURL;
+	}
 	
 }
