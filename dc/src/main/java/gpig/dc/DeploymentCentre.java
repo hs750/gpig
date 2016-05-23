@@ -58,7 +58,8 @@ public class DeploymentCentre {
         // Recover Drones
         new DroneRecaller(id, msgFromC2, dtdd, dedd);
 
-        new DCPathHandler(this);
+        DCPathHandler pathHandler = new DCPathHandler(this);
+        msgFromC2.addHandler(pathHandler);
     }
 
     public void run() {
