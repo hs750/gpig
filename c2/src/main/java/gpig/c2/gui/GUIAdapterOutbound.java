@@ -1,4 +1,6 @@
 package gpig.c2.gui;
+import java.util.UUID;
+
 import gpig.c2.C2;
 import gpig.common.data.Location;
 
@@ -13,7 +15,17 @@ public class GUIAdapterOutbound {
 		this.c2 = c2;
 	}
 
-	public void DeployRedeploy(Location location){
-		c2.DeployRedeployDC(location);
+	public void requestDeployRedeploy(Location location){
+		c2.deployRedeployDC(location);
 	}
+	
+    public void requestBatteryFailure(UUID id){
+    	c2.failBattery(id);
+    }
+    public void requestCommsFailure(UUID id){
+    	c2.failComms(id);
+    }
+    public void requestEngineFailure(UUID id){
+    	c2.failEngine(id);
+    }
 }

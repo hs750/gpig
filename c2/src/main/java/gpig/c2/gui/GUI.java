@@ -38,7 +38,7 @@ public class GUI {
 	private URL detectionDroneNormalURL = GUI.class.getResource("/DetectionDroneNormal.png");
 	private URL deliveryDroneNormalURL = GUI.class.getResource("/DeliveryDroneNormal.png");
 	private URL detectionDroneSoftFailURL = GUI.class.getResource("/DetectionDroneSoftFail.png");
-	private URL deliveryDroneSoftFailURL = GUI.class.getResource("/DelivereryDroneSoftFail.png");
+	private URL deliveryDroneSoftFailURL = GUI.class.getResource("/DeliveryDroneSoftFail.png");
 	private URL detectionDroneHardFailURL = GUI.class.getResource("/DetectionDroneHardFail.png");
 	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
 	
@@ -49,6 +49,9 @@ public class GUI {
 	
 	private Dimension infoPanelSize;
 	private Dimension controlPanelSize;
+	
+	private UUID currentlySelectedActorID = null;
+	private ActorType currentlySelectedActorType = null;
 	
 	public GUI(GUIAdapterInbound adapterInbound, GUIAdapterOutbound adapterOutbound){
 		this.adapterInbound = adapterInbound;
@@ -112,6 +115,41 @@ public class GUI {
     
     public void displayActorInfo(UUID id, ActorType actorType){  	
     	
+    	//failure buttons info
+    	currentlySelectedActorID = id;
+    	currentlySelectedActorType = actorType;
+ 
+   	
+    	if(actorType == ActorType.DELIVERY_DRONE){
+    		DroneState state = adapterInbound.getDeliveryDroneStateByID(id);
+    		if(state != DroneState.FAULTY && state != DroneState.CRASHED){
+    			controlPanel.enableBatteryFailure();
+    			controlPanel.enableCommsFailure();
+    			controlPanel.enableEngineFailure();
+    		}else{
+    			controlPanel.disableBatteryFailure();
+    			controlPanel.disableCommsFailure();
+    			controlPanel.disableEngineFailure();
+        	}
+    	}else if(actorType == ActorType.DETECTION_DRONE){
+	    		DroneState state = adapterInbound.getDetectionDroneStateByID(id);
+	    		if(state != DroneState.FAULTY && state != DroneState.CRASHED){
+	    			controlPanel.enableBatteryFailure();
+	    			controlPanel.enableCommsFailure();
+	    			controlPanel.enableEngineFailure();
+	    		}
+	    		else{
+	    			controlPanel.disableBatteryFailure();
+	    			controlPanel.disableCommsFailure();
+	    			controlPanel.disableEngineFailure();
+	        	}
+    	}
+    	
+		controlPanel.revalidate();
+		controlPanel.repaint();
+    	
+    	
+    	
 		if(infoPanel != null){
 			detailsFrame.remove(infoPanel);
 		}
@@ -146,7 +184,18 @@ public class GUI {
     		Location dtdLocation = adapterInbound.getDetectionDroneLocationByID(id);
     		DroneState dtdState = adapterInbound.getDetectionDroneStateByID(id);
    		
-    		infoPanel = new DetectionDroneInfoPanel(id,dtdLocation,dtdState,ActorType.DETECTION_DRONE,detectionDroneNormalURL,infoPanelSize);
+    		switch(dtdState){
+    		case FAULTY:
+    			infoPanel = new DetectionDroneInfoPanel(id,dtdLocation,dtdState,ActorType.DETECTION_DRONE,detectionDroneSoftFailURL,infoPanelSize);
+    			break;
+    		case CRASHED:
+    			infoPanel = new DetectionDroneInfoPanel(id,dtdLocation,dtdState,ActorType.DETECTION_DRONE,detectionDroneHardFailURL,infoPanelSize);
+    			break;
+    		default:
+    			infoPanel = new DetectionDroneInfoPanel(id,dtdLocation,dtdState,ActorType.DETECTION_DRONE,detectionDroneNormalURL,infoPanelSize);
+    			break;
+    		}
+    		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
@@ -156,13 +205,30 @@ public class GUI {
     		Location dldLocation = adapterInbound.getDeliveryDroneLocationByID(id);
     		DroneState dldState = adapterInbound.getDeliveryDroneStateByID(id);
     		
-    		infoPanel = new DeliveryDroneInfoPanel(id,dldLocation,dldState,ActorType.DELIVERY_DRONE,deliveryDroneNormalURL,infoPanelSize);
+    		switch(dldState){
+    		case FAULTY:
+    			infoPanel = new DeliveryDroneInfoPanel(id,dldLocation,dldState,ActorType.DELIVERY_DRONE,deliveryDroneSoftFailURL,infoPanelSize);
+    			break;
+    		case CRASHED:
+    			infoPanel = new DeliveryDroneInfoPanel(id,dldLocation,dldState,ActorType.DELIVERY_DRONE,deliveryDroneHardFailURL,infoPanelSize);
+    			break;
+    		default:
+    			infoPanel = new DeliveryDroneInfoPanel(id,dldLocation,dldState,ActorType.DELIVERY_DRONE,deliveryDroneNormalURL,infoPanelSize);
+    			break;
+    		}
+    		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
     		detailsFrame.revalidate();
     		detailsFrame.repaint();
     		break;
     	}
     	
+    }
+    
+    public void updateActorInfo(){
+    	if(currentlySelectedActorID != null && currentlySelectedActorType != null){   		
+    		displayActorInfo(currentlySelectedActorID, currentlySelectedActorType);
+    	}
     }
     
     //control panel methods
@@ -179,12 +245,24 @@ public class GUI {
 		detailsFrame.repaint();
     }
     
+    
+    //button action methods
     public void requestDeploy(Location location){
-    	adapterOutbound.DeployRedeploy(location);
+    	adapterOutbound.requestDeployRedeploy(location);
     }
     
     public void requestRedeploy(Location location){
-    	adapterOutbound.DeployRedeploy(location);
+    	adapterOutbound.requestDeployRedeploy(location);
+    }
+    
+    public void requestBatteryFailure(){
+    	adapterOutbound.requestBatteryFailure(currentlySelectedActorID);
+    }
+    public void requestCommsFailure(){
+    	adapterOutbound.requestCommsFailure(currentlySelectedActorID);
+    }
+    public void requestEngineFailure(){
+    	adapterOutbound.requestEngineFailure(currentlySelectedActorID);
     }
 
     
@@ -248,6 +326,62 @@ public class GUI {
 
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		HashMap<UUID,Location> adapterData = adapterInbound.getDetectionDroneLocations();
+		
+		for(UUID id : adapterData.keySet()){
+			unfLocations.put(id,
+					new de.fhpotsdam.unfolding.geo.Location(adapterData.get(id).latitude(),adapterData.get(id).longitude()));
+		}
+
+		return unfLocations;
+	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getFaultyDeliveryDroneLocations() {
+
+
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,Location> adapterData = adapterInbound.getFaultyDeliveryDroneLocations();
+		
+		for(UUID id : adapterData.keySet()){
+			unfLocations.put(id,
+					new de.fhpotsdam.unfolding.geo.Location(adapterData.get(id).latitude(),adapterData.get(id).longitude()));
+		}
+
+		return unfLocations;
+	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getFaultyDetectionDroneLocations() {
+
+
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,Location> adapterData = adapterInbound.getFaultyDetectionDroneLocations();
+		
+		for(UUID id : adapterData.keySet()){
+			unfLocations.put(id,
+					new de.fhpotsdam.unfolding.geo.Location(adapterData.get(id).latitude(),adapterData.get(id).longitude()));
+		}
+
+		return unfLocations;
+	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getCrashedDeliveryDroneLocations() {
+
+
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,Location> adapterData = adapterInbound.getCrashedDeliveryDroneLocations();
+		
+		for(UUID id : adapterData.keySet()){
+			unfLocations.put(id,
+					new de.fhpotsdam.unfolding.geo.Location(adapterData.get(id).latitude(),adapterData.get(id).longitude()));
+		}
+
+		return unfLocations;
+	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getCrashedDetectionDroneLocations() {
+
+
+		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+		HashMap<UUID,Location> adapterData = adapterInbound.getCrashedDetectionDroneLocations();
 		
 		for(UUID id : adapterData.keySet()){
 			unfLocations.put(id,

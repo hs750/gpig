@@ -1,11 +1,15 @@
 package gpig.c2;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import gpig.c2.config.C2Config;
 import gpig.c2.data.C2Data;
 import gpig.common.data.Location;
+import gpig.common.messages.FailCommand;
+import gpig.common.messages.FailCommand.FailType;
 import gpig.common.networking.CommunicationChannel;
+import gpig.common.networking.FallibleMessageSender;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
 
@@ -16,6 +20,7 @@ public class C2 {
 	private GUI gui;
 	private GUIAdapterInbound guiAdapterInbound;
 	private GUIAdapterOutbound guiAdapterOutbound;
+	private MessageSender msgToDCs;
 	
 	private C2Config config;
 	private C2Data c2data;
@@ -27,7 +32,7 @@ public class C2 {
 
         MessageReceiver msgFromDCs = new MessageReceiver();
         CommunicationChannel c2dcChannel = new CommunicationChannel(config.c2dcChannel, msgFromDCs);
-        MessageSender msgToDCs = new MessageSender(c2dcChannel);
+        msgToDCs = new MessageSender(c2dcChannel);
         c2data = new C2Data();
         c2data.addAllHandlers(msgFromDCs);
 
@@ -47,8 +52,9 @@ public class C2 {
         });
     }
     
+    //GUI called methods
     //needs to send a deploy request to a dc
-    public void DeployRedeployDC(Location location){
+    public void deployRedeployDC(Location location){
     	
     	if(c2data.getNumberOfUndeployedDCs() > 0){
     		//deployment
@@ -61,6 +67,18 @@ public class C2 {
     		//send deployment request
     	}
     	
+    }
+    
+    //need to send requests to dcs here
+    public void failBattery(UUID id){
+    	 msgToDCs.send(new FailCommand(id, 51));
+    	
+    }
+    public void failComms(UUID id){
+    	msgToDCs.send(new FailCommand(id, FailType.COMMS));
+    }
+    public void failEngine(UUID id){
+    	msgToDCs.send(new FailCommand(id, FailType.FATAL));
     }
 
     public static void main(String... args) throws IOException {

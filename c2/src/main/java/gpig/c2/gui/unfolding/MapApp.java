@@ -148,6 +148,34 @@ public class MapApp extends PApplet {
 			map.addMarker(imgMrk);
 		}
 		
+		idmap = gui.getFaultyDetectionDroneLocations();
+		for(UUID id : idmap.keySet()){
+			
+			
+			ImageMarker imgMrk = new ImageMarker(
+					imageMarkersWidth,
+					imageMarkersHeight,
+					id, idmap.get(id),
+					ActorType.DETECTION_DRONE,
+					loadImage(gui.getDetectionDroneSoftFailURL().toString())
+					);
+			map.addMarker(imgMrk);
+		}
+		
+		idmap = gui.getCrashedDetectionDroneLocations();
+		for(UUID id : idmap.keySet()){
+			
+			
+			ImageMarker imgMrk = new ImageMarker(
+					imageMarkersWidth,
+					imageMarkersHeight,
+					id, idmap.get(id),
+					ActorType.DETECTION_DRONE,
+					loadImage(gui.getDetectionDroneHardFailURL().toString())
+					);
+			map.addMarker(imgMrk);
+		}
+		
 		idmap = gui.getDeliveryDroneLocations();
 		for(UUID id : idmap.keySet()){
 			
@@ -162,10 +190,41 @@ public class MapApp extends PApplet {
 			map.addMarker(imgMrk);
 		}
 		
+		idmap = gui.getFaultyDeliveryDroneLocations();
+		for(UUID id : idmap.keySet()){
+			
+			
+			ImageMarker imgMrk = new ImageMarker(
+					imageMarkersWidth,
+					imageMarkersHeight,
+					id, idmap.get(id),
+					ActorType.DELIVERY_DRONE,
+					loadImage(gui.getDeliveryDroneSoftFailURL().toString())
+					);
+			map.addMarker(imgMrk);
+		}
+		
+		idmap = gui.getCrashedDeliveryDroneLocations();
+		for(UUID id : idmap.keySet()){
+			
+			
+			ImageMarker imgMrk = new ImageMarker(
+					imageMarkersWidth,
+					imageMarkersHeight,
+					id, idmap.get(id),
+					ActorType.DELIVERY_DRONE,
+					loadImage(gui.getDeliveryDroneHardFailURL().toString())
+					);
+			map.addMarker(imgMrk);
+		}
+		
 		
 		map.draw();
+		
+		gui.updateActorInfo();
+		
 		Location location = map.getLocation(mouseX, mouseY);
-	    fill(0);
+		fill(0);
 	    text(String.format ("%.6f", location.getLat()) + ", " + String.format ("%.6f", location.getLon()), mouseX, mouseY);
 	}
 	

@@ -69,8 +69,6 @@ public class C2Data {
     public Map<UUID, DroneState> getDetectionDronesState(){
         return Collections.unmodifiableMap(detectionDronesState);
     }
-    
-    
 
 	public synchronized int getNumberOfDCs() {
 		return numberOfDCs;
@@ -116,8 +114,5 @@ public class C2Data {
 	public void setDetectionDronesLocation(ConcurrentHashMap<UUID, Location> detectionDronesLocation) {
 		this.detectionDronesLocation = detectionDronesLocation;
 	}
-	
-	
-    
-    
+   
 }
