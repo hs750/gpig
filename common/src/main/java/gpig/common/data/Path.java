@@ -1,10 +1,16 @@
 package gpig.common.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import gpig.common.units.Kilometres;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static gpig.common.units.Units.kilometres;
 
 /**
  * Represents a list of waypoints forming a path which should be traversed
@@ -20,6 +26,16 @@ public class Path implements Iterable<Path.Waypoint> {
 
     public Path(List<Waypoint> waypoints) {
         this.waypoints = waypoints;
+    }
+
+    public Path(Waypoint... waypoints) {
+        this.waypoints = Arrays.asList(waypoints);
+    }
+
+    public Path(Location... locations) {
+        this.waypoints = Arrays.asList(locations).stream()
+                .map(Waypoint::new)
+                .collect(Collectors.toList());
     }
 
     public Waypoint get(int i) {
@@ -40,6 +56,28 @@ public class Path implements Iterable<Path.Waypoint> {
                 .findFirst();
 
         return loc.isPresent();
+    }
+
+    public Path subPathUntilEnd(int startIndex) {
+        return new Path(waypoints.subList(startIndex, waypoints.size()-1));
+    }
+
+    public Path subPath(int startIndex, int endIndex) {
+        return new Path(waypoints.subList(startIndex, endIndex));
+    }
+
+    public Kilometres totalDistance() {
+        List<Kilometres> edgeLengths = IntStream.range(1, waypoints.size())
+                .mapToObj(i -> new Line(waypoints.get(i-1), waypoints.get(i)))
+                .map(Line::length)
+                .collect(Collectors.toList());
+
+        Kilometres distance = kilometres(0);
+        for (Kilometres edgeLength : edgeLengths) {
+            distance = distance.add(edgeLength);
+        }
+
+        return distance;
     }
 
     public int length() {
@@ -66,5 +104,19 @@ public class Path implements Iterable<Path.Waypoint> {
 
     private Path() {
         waypoints = null;
+    }
+
+    private class Line {
+        private final Location start;
+        private final Location end;
+
+        public Line(Waypoint start, Waypoint end) {
+            this.start = start.location;
+            this.end = end.location;
+        }
+
+        public Kilometres length() {
+            return start.distanceFrom(end);
+        }
     }
 }
