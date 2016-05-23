@@ -96,6 +96,70 @@ public class GUIAdapterInbound {
 	}
 	
 	
+	public HashMap<UUID,Location> getFaultyDeliveryDroneLocations(){
+		
+		HashMap<UUID,Location> faultyDeliveryDroneLocations = new HashMap<UUID,Location>();
+		HashMap<UUID,Location> deliveryDroneLocations = new HashMap<UUID,Location>(c2Data.getDeliveryDronesLocation());
+		HashMap<UUID,DroneState> deliveryDroneStates = new HashMap<UUID,DroneState>(c2Data.getDeliveryDronesState());
+		
+		
+		for(UUID id : deliveryDroneStates.keySet()){
+			if(deliveryDroneStates.get(id) == DroneState.FAULTY){
+				faultyDeliveryDroneLocations.put(id, deliveryDroneLocations.get(id));
+			}
+		}
+		
+		return faultyDeliveryDroneLocations;
+	}
+	
+	public HashMap<UUID,Location> getFaultyDetectionDroneLocations(){
+		
+		HashMap<UUID,Location> faultyDetectionDroneLocations = new HashMap<UUID,Location>();
+		HashMap<UUID,Location> detectionDroneLocations = new HashMap<UUID,Location>(c2Data.getDetectionDronesLocation());
+		HashMap<UUID,DroneState> detectionDroneStates = new HashMap<UUID,DroneState>(c2Data.getDetectionDronesState());
+		
+		
+		for(UUID id : detectionDroneStates.keySet()){
+			if(detectionDroneStates.get(id) == DroneState.FAULTY){
+				faultyDetectionDroneLocations.put(id, detectionDroneLocations.get(id));
+			}
+		}
+		
+		return faultyDetectionDroneLocations;
+	}
+	
+
+	public HashMap<UUID,Location> getCrashedDeliveryDroneLocations(){
+		
+		HashMap<UUID,Location> crashedDeliveryDroneLocations = new HashMap<UUID,Location>();
+		HashMap<UUID,Location> deliveryDroneLocations = new HashMap<UUID,Location>(c2Data.getDeliveryDronesLocation());
+		HashMap<UUID,DroneState> deliveryDroneStates = new HashMap<UUID,DroneState>(c2Data.getDeliveryDronesState());
+		
+		
+		for(UUID id : deliveryDroneStates.keySet()){
+			if(deliveryDroneStates.get(id) == DroneState.CRASHED){
+				crashedDeliveryDroneLocations.put(id, deliveryDroneLocations.get(id));
+			}
+		}
+		
+		return crashedDeliveryDroneLocations;
+	}
+	
+	public HashMap<UUID,Location> getCrashedDetectionDroneLocations(){
+		
+		HashMap<UUID,Location> crashedDetectionDroneLocations = new HashMap<UUID,Location>();
+		HashMap<UUID,Location> detectionDroneLocations = new HashMap<UUID,Location>(c2Data.getDetectionDronesLocation());
+		HashMap<UUID,DroneState> detectionDroneStates = new HashMap<UUID,DroneState>(c2Data.getDetectionDronesState());
+		
+		
+		for(UUID id : detectionDroneStates.keySet()){
+			if(detectionDroneStates.get(id) == DroneState.CRASHED){
+				crashedDetectionDroneLocations.put(id, detectionDroneLocations.get(id));
+			}
+		}
+		
+		return crashedDetectionDroneLocations;
+	}
 	//individual live data from c2
 	
 	//get detection data from c2 by detection id

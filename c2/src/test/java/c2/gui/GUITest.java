@@ -229,6 +229,16 @@ public class GUITest extends Thread{
         gui.setAdapterInbound(new GUIAdapterInbound(c2Config.victimDetections,c2Config.dcLocations, mockC2Data));
 	    
 	    
+        //fail drones
+        deliveryDronesState.put(deliveryDronesIDs.get(0), DroneState.FAULTY);
+        deliveryDronesState.put(deliveryDronesIDs.get(1), DroneState.CRASHED);
+        
+        detectionDronesState.put(detectionDronesIDs.get(0), DroneState.FAULTY);
+        detectionDronesState.put(detectionDronesIDs.get(1), DroneState.CRASHED);
+        
+        mockC2Data.setDeliveryDronesState(deliveryDronesState);
+        mockC2Data.setDetectionDronesState(detectionDronesState);
+        gui.setAdapterInbound(new GUIAdapterInbound(c2Config.victimDetections,c2Config.dcLocations, mockC2Data));
         
     }
 	

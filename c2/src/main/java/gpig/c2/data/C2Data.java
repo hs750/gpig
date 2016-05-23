@@ -18,7 +18,6 @@ public class C2Data {
     private ConcurrentHashMap<UUID, Location> dcLocations;
     private ConcurrentHashMap<UUID, DroneState> detectionDronesState;
     private List<Detection> detections;
-    private ConcurrentHashMap<UUID, Location> crashLandings;
     
     //should only be populated with locations of drones that have been deployed
     private ConcurrentHashMap<UUID, Location> deliveryDronesLocation;
@@ -32,7 +31,6 @@ public class C2Data {
         detections = Collections.synchronizedList(new ArrayList<>());
         deliveryDronesLocation = new ConcurrentHashMap<>();
         detectionDronesLocation = new ConcurrentHashMap<>();
-        crashLandings = new ConcurrentHashMap<>();
     }
 
     public void addAllHandlers(MessageReceiver receiver) {
@@ -71,10 +69,6 @@ public class C2Data {
     public Map<UUID, DroneState> getDetectionDronesState(){
         return Collections.unmodifiableMap(detectionDronesState);
     }
-
-	public synchronized Map<UUID, Location> getCrashLandings() {
-		return Collections.unmodifiableMap(crashLandings);
-	}
 
 	public synchronized int getNumberOfDCs() {
 		return numberOfDCs;
@@ -120,12 +114,5 @@ public class C2Data {
 	public void setDetectionDronesLocation(ConcurrentHashMap<UUID, Location> detectionDronesLocation) {
 		this.detectionDronesLocation = detectionDronesLocation;
 	}
-	
-	public synchronized void setCrashLandings(ConcurrentHashMap<UUID, Location> crashLandings) {
-		this.crashLandings = crashLandings;
-	}
-	
-	
-    
-    
+   
 }
