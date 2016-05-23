@@ -50,23 +50,23 @@ public class C2Data {
         return Collections.unmodifiableList(detections);
     }
     
-    public synchronized Map<UUID, Location> getDCLocations(){
+    public Map<UUID, Location> getDCLocations(){
         return Collections.unmodifiableMap(dcLocations);
     }
     
-    public synchronized Map<UUID, Location> getDeliveryDronesLocation(){
+    public Map<UUID, Location> getDeliveryDronesLocation(){
         return Collections.unmodifiableMap(deliveryDronesLocation);
     }
     
-    public synchronized Map<UUID, Location> getDetectionDronesLocation(){
+    public Map<UUID, Location> getDetectionDronesLocation(){
         return Collections.unmodifiableMap(detectionDronesLocation);
     }
     
-    public synchronized Map<UUID, DroneState> getDeliveryDronesState(){
+    public Map<UUID, DroneState> getDeliveryDronesState(){
         return Collections.unmodifiableMap(deliveryDronesState);
     }
     
-    public synchronized Map<UUID, DroneState> getDetectionDronesState(){
+    public Map<UUID, DroneState> getDetectionDronesState(){
         return Collections.unmodifiableMap(detectionDronesState);
     }
     
@@ -93,15 +93,15 @@ public class C2Data {
 		this.assignments = assignments;
 	}
 
-	public synchronized void setDeliveryDronesState(ConcurrentHashMap<UUID, DroneState> deliveryDronesState) {
+	public void setDeliveryDronesState(ConcurrentHashMap<UUID, DroneState> deliveryDronesState) {
 		this.deliveryDronesState = deliveryDronesState;
 	}
 
-	public synchronized void setDcLocations(ConcurrentHashMap<UUID, Location> dcLocations) {
+	public void setDcLocations(ConcurrentHashMap<UUID, Location> dcLocations) {
 		this.dcLocations = dcLocations;
 	}
 
-	public synchronized void setDetectionDronesState(ConcurrentHashMap<UUID, DroneState> detectionDronesState) {
+	public void setDetectionDronesState(ConcurrentHashMap<UUID, DroneState> detectionDronesState) {
 		this.detectionDronesState = detectionDronesState;
 	}
 
@@ -109,11 +109,11 @@ public class C2Data {
 		this.detections = detections;
 	}
 
-	public synchronized void setDeliveryDronesLocation(ConcurrentHashMap<UUID, Location> deliveryDronesLocation) {
+	public void setDeliveryDronesLocation(ConcurrentHashMap<UUID, Location> deliveryDronesLocation) {
 		this.deliveryDronesLocation = deliveryDronesLocation;
 	}
 
-	public synchronized void setDetectionDronesLocation(ConcurrentHashMap<UUID, Location> detectionDronesLocation) {
+	public void setDetectionDronesLocation(ConcurrentHashMap<UUID, Location> detectionDronesLocation) {
 		this.detectionDronesLocation = detectionDronesLocation;
 	}
 	
