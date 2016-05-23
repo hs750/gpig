@@ -42,8 +42,9 @@ public class WaypointBasedMovement implements MovementBehaviour {
         }
 
         // Switch over to the failsafe path if the battery failsafe behaviour is triggered
-        if (failsafeBehaviour.isTriggered()) {
-            Path failsafePath = failsafeBehaviour.path().orElseThrow(() -> new IllegalStateException("Failsafe behaviour was triggered but did not provide a failsafe path"));
+        if (failsafeBehaviour.isTriggered(path.remainingPath())) {
+            Path failsafePath = failsafeBehaviour.path(path.remainingPath())
+                    .orElseThrow(() -> new IllegalStateException("Failsafe behaviour was triggered but did not provide a failsafe path"));
             setPath(failsafePath);
         }
 
@@ -136,6 +137,10 @@ public class WaypointBasedMovement implements MovementBehaviour {
 
         public boolean isAtEnd() {
             return currentWaypoint >= path.length();
+        }
+
+        public Path remainingPath() {
+            return path.subPathUntilEnd(currentWaypoint);
         }
     }
 

@@ -43,4 +43,8 @@ public class Battery {
     public boolean isRunDown() {
         return batteryPercentage < 0.01;
     }
+
+    public long estimatedRemainingSeconds() {
+        return ((long) (batteryDuration.getSeconds() * batteryPercentage));
+    }
 }

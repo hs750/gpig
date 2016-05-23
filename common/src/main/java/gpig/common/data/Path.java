@@ -58,6 +58,10 @@ public class Path implements Iterable<Path.Waypoint> {
         return loc.isPresent();
     }
 
+    public Path subPathUntilEnd(int startIndex) {
+        return new Path(waypoints.subList(startIndex, waypoints.size()-1));
+    }
+
     public Path subPath(int startIndex, int endIndex) {
         return new Path(waypoints.subList(startIndex, endIndex));
     }

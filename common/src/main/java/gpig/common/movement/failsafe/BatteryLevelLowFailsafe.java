@@ -17,13 +17,13 @@ public class BatteryLevelLowFailsafe implements BatteryFailsafeBehaviour {
     }
 
     @Override
-    public boolean isTriggered() {
+    public boolean isTriggered(Path remainingPath) {
         return battery.percentage() <= 40.0;
     }
 
     @Override
-    public Optional<Path> path() {
-        if (!isTriggered()) { return Optional.empty(); }
+    public Optional<Path> path(Path remainingPath) {
+        if (!isTriggered(remainingPath)) { return Optional.empty(); }
 
         Path toHome = new Path(homeLocation);
         return Optional.of(toHome);

@@ -5,6 +5,6 @@ import gpig.common.data.Path;
 import java.util.Optional;
 
 public interface BatteryFailsafeBehaviour {
-    boolean isTriggered();
-    Optional<Path> path();
+    boolean isTriggered(Path remainingPath);
+    Optional<Path> path(Path remainingPath);
 }
