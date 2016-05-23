@@ -18,4 +18,5 @@ public class Constants {
     
     public final static int DRONE_HEARTBEAT_INTERVAL = 1000; // milliseconds
     public final static int DRONE_HEARTBEAT_TIMEOUT = 5000; // milliseconds
+    
 }
