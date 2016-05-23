@@ -31,7 +31,6 @@ import gpig.common.data.Location;
 public class ControlPanel extends JPanel{
 
 	protected GUI gui;
-	
 	protected Color backgroundColour;
 	protected Font fieldNameFont;
 	protected Font fieldContentsFont;
@@ -48,6 +47,9 @@ public class ControlPanel extends JPanel{
 	//control buttons
 	protected JButton deployB;
 	protected JButton reDeployB;
+	protected JButton failBatteryB;
+	protected JButton failCommsB;
+	protected JButton failEngineB;
 	
 	
 	public ControlPanel(GUI gui,Dimension size) {
@@ -71,6 +73,8 @@ public class ControlPanel extends JPanel{
 	
 	private void addComponents(){
 		
+		double buttonWidth = this.getSize().getWidth()/4;
+		
 		c = new GridBagConstraints();		
 		
 		//Field names
@@ -84,9 +88,24 @@ public class ControlPanel extends JPanel{
 		//buttons
 		deployB = new JButton("Deploy to");
 		reDeployB = new JButton("Redeploy to");
+		failBatteryB = new JButton("Fail Battery");
+		failCommsB = new JButton("Fail Comms");
+		failEngineB = new JButton("Fail Engine");
+		
+		//cant make the buttons the same size
+		//deployB.setPreferredSize(failBatteryB.getPreferredSize());
+		deployB.setPreferredSize(new Dimension((int)buttonWidth,deployB.getHeight()));
+		reDeployB.setPreferredSize(new Dimension((int)buttonWidth,reDeployB.getHeight()));
+		failBatteryB.setPreferredSize(new Dimension((int)buttonWidth,failBatteryB.getHeight()));
+		failCommsB.setPreferredSize(new Dimension((int)buttonWidth,failCommsB.getHeight()));
+		failEngineB.setPreferredSize(new Dimension((int)buttonWidth,failEngineB.getHeight()));
+		
 		
 		deployB.setEnabled(false);
 		reDeployB.setEnabled(false);
+		failBatteryB.setEnabled(false);
+		failCommsB.setEnabled(false);
+		failEngineB.setEnabled(false);
 		
 		deployB.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
@@ -112,6 +131,37 @@ public class ControlPanel extends JPanel{
 			  } 
 			});
 		
+		failBatteryB.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  failBatteryB.setEnabled(false);
+				  failCommsB.setEnabled(false);
+				  failEngineB.setEnabled(false);
+				  
+			    gui.requestBatteryFailure();
+			  } 
+			});
+		
+		failCommsB.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  failBatteryB.setEnabled(false);
+				  failCommsB.setEnabled(false);
+				  failEngineB.setEnabled(false);
+			    
+			    gui.requestCommsFailure();
+			  } 
+			});
+		
+		failEngineB.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  failBatteryB.setEnabled(false);
+				  failCommsB.setEnabled(false);
+				  failEngineB.setEnabled(false);
+			    
+			    gui.requestEngineFailure();
+			  } 
+			});
+		
+
 		
 		//butons formatting
 		//deployB.setBackground(backgroundColour);
@@ -158,7 +208,7 @@ public class ControlPanel extends JPanel{
 		add(selectedLonL,c);
 		
 		c.fill = GridBagConstraints.VERTICAL;
-		c.anchor = GridBagConstraints.CENTER;
+		c.anchor = GridBagConstraints.EAST;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 0;
@@ -168,11 +218,34 @@ public class ControlPanel extends JPanel{
 		c.fill = GridBagConstraints.VERTICAL;
 		c.anchor = GridBagConstraints.CENTER;
 		c.weighty = 0.5;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.gridwidth = 1;
 		c.gridx = 1;
 		c.gridy = 2;
 		add(reDeployB,c);
 		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.anchor = GridBagConstraints.EAST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 3;
+		add(failBatteryB,c);
+		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 1;
+		c.gridy = 3;
+		add(failCommsB,c);
+		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 2;
+		c.gridy = 3;
+		add(failEngineB,c);
 	}
 	
 	public void selectLocation(Location location){
@@ -192,6 +265,29 @@ public class ControlPanel extends JPanel{
 	public void disableRedeployment(){
 		reDeployB.setEnabled(false);
 	}
+	
+	public void enableBatteryFailure(){
+		failBatteryB.setEnabled(true);
+	}
+	public void disableBatteryFailure(){
+		failBatteryB.setEnabled(false);
+	}
+	public void enableCommsFailure(){
+		failCommsB.setEnabled(true);
+	}
+	public void disableCommsFailure(){
+		failCommsB.setEnabled(false);
+	}
+	public void enableEngineFailure(){
+		failEngineB.setEnabled(true);
+	}
+	public void disableEngineFailure(){
+		failEngineB.setEnabled(false);
+	}
+	
+	
+	
+	
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);

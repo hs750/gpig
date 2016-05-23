@@ -1,6 +1,7 @@
 package gpig.c2;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import gpig.c2.config.C2Config;
 import gpig.c2.data.C2Data;
@@ -47,8 +48,9 @@ public class C2 {
         });
     }
     
+    //GUI called methods
     //needs to send a deploy request to a dc
-    public void DeployRedeployDC(Location location){
+    public void deployRedeployDC(Location location){
     	
     	if(c2data.getNumberOfUndeployedDCs() > 0){
     		//deployment
@@ -60,6 +62,17 @@ public class C2 {
     		//figure out the closest dc
     		//send deployment request
     	}
+    	
+    }
+    
+    //need to send requests to dcs here
+    public void failBattery(UUID id){
+    	
+    }
+    public void failComms(UUID id){
+    	
+    }
+    public void failEngine(UUID id){
     	
     }
 

@@ -50,6 +50,9 @@ public class GUI {
 	private Dimension infoPanelSize;
 	private Dimension controlPanelSize;
 	
+	private UUID currentlySelectedActorID = null;
+	private ActorType currentlySelectedActorType = null;
+	
 	public GUI(GUIAdapterInbound adapterInbound, GUIAdapterOutbound adapterOutbound){
 		this.adapterInbound = adapterInbound;
 		this.adapterOutbound = adapterOutbound;
@@ -111,6 +114,33 @@ public class GUI {
     }
     
     public void displayActorInfo(UUID id, ActorType actorType){  	
+    	
+    	//failure buttons info
+    	currentlySelectedActorID = id;
+    	currentlySelectedActorType = actorType;
+ 
+   	
+    	if(actorType == ActorType.DELIVERY_DRONE){
+    		DroneState state = adapterInbound.getDeliveryDroneStateByID(id);
+    		if(state != DroneState.FAULTY && state != DroneState.CRASHED){
+    			controlPanel.enableBatteryFailure();
+    			controlPanel.enableCommsFailure();
+    			controlPanel.enableEngineFailure();
+    		}
+    	}else if(actorType == ActorType.DETECTION_DRONE){
+	    		DroneState state = adapterInbound.getDeliveryDroneStateByID(id);
+	    		if(state != DroneState.FAULTY && state != DroneState.CRASHED){
+	    			controlPanel.enableBatteryFailure();
+	    			controlPanel.enableCommsFailure();
+	    			controlPanel.enableEngineFailure();
+	    		}
+    	}else{
+			controlPanel.disableBatteryFailure();
+			controlPanel.disableCommsFailure();
+			controlPanel.disableEngineFailure();
+    	}
+    	
+    	
     	
 		if(infoPanel != null){
 			detailsFrame.remove(infoPanel);
@@ -179,12 +209,24 @@ public class GUI {
 		detailsFrame.repaint();
     }
     
+    
+    //button action methods
     public void requestDeploy(Location location){
-    	adapterOutbound.DeployRedeploy(location);
+    	adapterOutbound.requestDeployRedeploy(location);
     }
     
     public void requestRedeploy(Location location){
-    	adapterOutbound.DeployRedeploy(location);
+    	adapterOutbound.requestDeployRedeploy(location);
+    }
+    
+    public void requestBatteryFailure(){
+    	adapterOutbound.requestBatteryFailure(currentlySelectedActorID);
+    }
+    public void requestCommsFailure(){
+    	adapterOutbound.requestCommsFailure(currentlySelectedActorID);
+    }
+    public void requestEngineFailure(){
+    	adapterOutbound.requestEngineFailure(currentlySelectedActorID);
     }
 
     

@@ -165,7 +165,7 @@ public class MapApp extends PApplet {
 		
 		map.draw();
 		Location location = map.getLocation(mouseX, mouseY);
-	    fill(0);
+		fill(0);
 	    text(String.format ("%.6f", location.getLat()) + ", " + String.format ("%.6f", location.getLon()), mouseX, mouseY);
 	}
 	
