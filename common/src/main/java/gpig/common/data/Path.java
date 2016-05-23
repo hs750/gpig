@@ -2,9 +2,11 @@ package gpig.common.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Represents a list of waypoints forming a path which should be traversed
@@ -20,6 +22,16 @@ public class Path implements Iterable<Path.Waypoint> {
 
     public Path(List<Waypoint> waypoints) {
         this.waypoints = waypoints;
+    }
+
+    public Path(Waypoint... waypoints) {
+        this.waypoints = Arrays.asList(waypoints);
+    }
+
+    public Path(Location... locations) {
+        this.waypoints = Arrays.asList(locations).stream()
+                .map(Waypoint::new)
+                .collect(Collectors.toList());
     }
 
     public Waypoint get(int i) {

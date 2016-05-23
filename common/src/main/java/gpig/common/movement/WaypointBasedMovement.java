@@ -17,12 +17,14 @@ public class WaypointBasedMovement implements MovementBehaviour {
     private InTraversalPath path;
     private LocalDateTime lastUpdateTime;
     private KMPH vehicleSpeed;
+    private BatteryFailsafeBehaviour failsafeBehaviour;
 
-    public WaypointBasedMovement(Location initialLocation, KMPH speed) {
+    public WaypointBasedMovement(Location initialLocation, KMPH speed, BatteryFailsafeBehaviour failsafeBehaviour) {
         this.currentLocation = initialLocation;
         this.vehicleSpeed = speed;
         this.path = null;
         this.lastUpdateTime = LocalDateTime.now();
+        this.failsafeBehaviour = failsafeBehaviour;
     }
 
     public void setPath(Path newPath) {
@@ -37,6 +39,12 @@ public class WaypointBasedMovement implements MovementBehaviour {
         if (path == null) {
             // No target, so the drone stays where it is
             return currentLocation;
+        }
+
+        // Switch over to the failsafe path if the battery failsafe behaviour is triggered
+        if (failsafeBehaviour.isTriggered()) {
+            Path failsafePath = failsafeBehaviour.path().orElseThrow(() -> new IllegalStateException("Failsafe behaviour was triggered but did not provide a failsafe path"));
+            setPath(failsafePath);
         }
 
         double speedScalingFactor = Constants.SPEED_SCALING_FACTOR;
