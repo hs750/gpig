@@ -6,23 +6,26 @@ import java.net.URL;
 import java.util.UUID;
 
 import gpig.common.data.ActorType;
+import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 
 /**
  *	Displays information about a DC
  */
-public class DCInfoPanel extends InfoPanel{
+public class DetectionDroneInfoPanel extends InfoPanel{
 	
 	private Location location;
+	private DroneState state;
 	
-	public DCInfoPanel(UUID id, Location location, ActorType actorType, URL imageURL, Dimension size) {
+	public DetectionDroneInfoPanel(UUID id, Location location, DroneState state, ActorType actorType, URL imageURL, Dimension size) {
 		super(actorType,imageURL, size);
 		this.location = location;
-
+		this.state = state;
+		
 		//Set parent field contents
 		actorIdL.setText(""+id);
-		actorTypeL.setText("Deployment Center");
-		actorStateL.setText("OPERATIONAL");
+		actorTypeL.setText("Detection Drone");
+		actorStateL.setText(""+state);		
 		actorLatL.setText(""+String.format ("%.6f", location.latitude()));
 		actorLonL.setText(""+String.format ("%.6f", location.longitude()));
 	}

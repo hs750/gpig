@@ -74,4 +74,14 @@ public class C2 {
         C2 c2 = new C2(conf);
         c2.run();
     }
+    
+    //methods used to mock c2data
+    public GUI getGUI(){
+    	return gui;
+    }
+    
+    public C2Config getC2Config(){
+    	return config;
+    }
+    
 }
