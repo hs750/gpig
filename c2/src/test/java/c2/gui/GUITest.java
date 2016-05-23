@@ -254,7 +254,7 @@ public class GUITest extends Thread{
         C2 c2 = new C2(conf);
         c2.run();
         
-        GUITest guiTest = new GUITest(c2,500);
+        GUITest guiTest = new GUITest(c2,1000);
         guiTest.run();
     }
 

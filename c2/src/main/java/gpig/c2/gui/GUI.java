@@ -126,7 +126,11 @@ public class GUI {
     			controlPanel.enableBatteryFailure();
     			controlPanel.enableCommsFailure();
     			controlPanel.enableEngineFailure();
-    		}
+    		}else{
+    			controlPanel.disableBatteryFailure();
+    			controlPanel.disableCommsFailure();
+    			controlPanel.disableEngineFailure();
+        	}
     	}else if(actorType == ActorType.DETECTION_DRONE){
 	    		DroneState state = adapterInbound.getDetectionDroneStateByID(id);
 	    		if(state != DroneState.FAULTY && state != DroneState.CRASHED){
@@ -134,11 +138,15 @@ public class GUI {
 	    			controlPanel.enableCommsFailure();
 	    			controlPanel.enableEngineFailure();
 	    		}
-    	}else{
-			controlPanel.disableBatteryFailure();
-			controlPanel.disableCommsFailure();
-			controlPanel.disableEngineFailure();
+	    		else{
+	    			controlPanel.disableBatteryFailure();
+	    			controlPanel.disableCommsFailure();
+	    			controlPanel.disableEngineFailure();
+	        	}
     	}
+    	
+		controlPanel.revalidate();
+		controlPanel.repaint();
     	
     	
     	
@@ -215,6 +223,12 @@ public class GUI {
     		break;
     	}
     	
+    }
+    
+    public void updateActorInfo(){
+    	if(currentlySelectedActorID != null && currentlySelectedActorType != null){   		
+    		displayActorInfo(currentlySelectedActorID, currentlySelectedActorType);
+    	}
     }
     
     //control panel methods
