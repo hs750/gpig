@@ -15,4 +15,7 @@ public class Constants {
     public final static Kilometres DETECTION_RADIUS = kilometres(2.5);
 
     public final static double SPEED_SCALING_FACTOR = 1.0;
+    
+    public final static int DRONE_HEARTBEAT_INTERVAL = 1000; // milliseconds
+    public final static int DRONE_HEARTBEAT_TIMEOUT = 5000; // milliseconds
 }

@@ -1,37 +1,54 @@
 package gpig.dc.dispatching;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
+import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.DroneHeartbeat;
 import gpig.common.messages.SetPath;
 import gpig.common.movement.RecoveryStrategy;
 import gpig.common.networking.MessageSender;
+import gpig.common.units.KMPH;
+import gpig.common.units.Kilometres;
 import gpig.common.util.Log;
 
 public abstract class DroneDispatcher extends Thread {
     protected DeploymentArea currentLocation;
     protected boolean deployable = false;
     protected boolean deployed = false;
+    private KMPH droneSpeed;
 
-    private LinkedHashMap<UUID, DroneHeartbeat> allDrones;
+    private Map<UUID, DroneHeartbeat> allDrones;
     private MessageSender messager;
     private RecoveryStrategy recoveryStrategy;
 
     private ConcurrentLinkedQueue<Path> tasks;
+    private ConcurrentHashMap<UUID, AllocatedTask> allocatedTasks;
 
-    public DroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation) {
+    public DroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation, KMPH droneSpeed) {
         this.messager = messager;
-        allDrones = new LinkedHashMap<>();
+        allDrones = Collections.synchronizedMap(new LinkedHashMap<>());
         this.recoveryStrategy = recoveryStrategy;
         this.currentLocation = currentLocation;
         tasks = new ConcurrentLinkedQueue<>();
+        allocatedTasks = new ConcurrentHashMap<>();
+        this.droneSpeed = droneSpeed;
+
+        new HeartbeatTimer(Constants.DRONE_HEARTBEAT_TIMEOUT, allocatedTasks, allDrones, this).start();
     }
 
     public void setCurrentLocation(DeploymentArea location) {
@@ -79,8 +96,10 @@ public abstract class DroneDispatcher extends Thread {
         return true;
     }
 
-    protected synchronized void activateDrone(UUID drone) {
-        allDrones.remove(drone); // remove the current heartbeat
+    protected synchronized void activateDrone(UUID drone, Path task) {
+        allDrones.remove(drone); // remove the current (undeployed) heartbeat
+        allocatedTasks.put(drone, new AllocatedTask(drone, task, currentLocation.deploymentArea.centre, droneSpeed));
+
     }
 
     protected synchronized UUID getNextInactiveDrone() {
@@ -94,6 +113,10 @@ public abstract class DroneDispatcher extends Thread {
 
     public void handle(DroneHeartbeat heartbeat) {
         allDrones.put(heartbeat.origin, heartbeat);
+
+        if (heartbeat.state == DroneState.UNDEPLOYED) {
+            unallocateTask(heartbeat.origin);
+        }
     }
 
     @Override
@@ -119,7 +142,7 @@ public abstract class DroneDispatcher extends Thread {
                 messager.send(sp);
                 Log.info("Displatched Drone: %s", assignee);
 
-                activateDrone(assignee);
+                activateDrone(assignee, p);
             }
         }
     }
@@ -131,10 +154,88 @@ public abstract class DroneDispatcher extends Thread {
     protected void addTasks(Collection<Path> tasks) {
         this.tasks.addAll(tasks);
     }
-    
-    protected Location getLocation(){
+
+    protected Location getLocation() {
         return currentLocation.deploymentArea.centre;
     }
 
+    protected void unallocateTask(UUID drone) {
+        allocatedTasks.remove(drone);
+    }
+
     protected abstract void taskListEmpty();
+
+    protected abstract void handleTimeout(AllocatedTask task);
+
+    private class HeartbeatTimer extends Thread {
+        private int timeoutLength;
+        private Map<UUID, AllocatedTask> currentTasks;
+        private Map<UUID, DroneHeartbeat> droneHeartbeats;
+        private DroneDispatcher dispatcher;
+
+        public HeartbeatTimer(int timeoutLength, Map<UUID, AllocatedTask> currentTasks,
+                Map<UUID, DroneHeartbeat> droneHeartbeats, DroneDispatcher dispatcher) {
+            this.timeoutLength = timeoutLength;
+            this.currentTasks = currentTasks;
+            this.droneHeartbeats = droneHeartbeats;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+
+            while (true) {
+                currentTasks.forEach((drone, task) -> {
+                    LocalDateTime lastHeartbeat = droneHeartbeats.get(drone).timestamp;
+                    LocalDateTime now = LocalDateTime.now();
+                    long timeDiff = ChronoUnit.MILLIS.between(lastHeartbeat, now);
+                    if (timeDiff > timeoutLength) {
+                        dispatcher.handleTimeout(task);
+                    }
+
+                });
+
+                // Don't check too often
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    protected class AllocatedTask {
+        public UUID drone;
+        public Path task;
+        public LocalDateTime expectedReturnTime;
+
+        public AllocatedTask(UUID drone, Path task, Location start, KMPH droneSpeed) {
+            this.drone = drone;
+            this.task = task;
+
+            Kilometres distance = new Kilometres(0);
+            Iterator<Waypoint> it = task.iterator();
+            boolean hasOne = false;
+            while (it.hasNext()) {
+                hasOne = true;
+                Location l1 = it.next().location;
+                Location l2 = it.hasNext() ? it.next().location : null;
+
+                if (l2 != null) {
+                    distance.add(l1.distanceFrom(l2));
+                }
+
+            }
+            if (hasOne) {
+                distance.add(start.distanceFrom(task.get(0).location));
+            }
+
+            double timeHours = distance.value() / (droneSpeed.value() * Constants.SPEED_SCALING_FACTOR);
+            timeHours *= 1.05; // Add 5% lee-way 
+            long timeMillis = (long) Math.ceil(timeHours * 60 * 60 * 1000); // overestimate
+            expectedReturnTime = LocalDateTime.now().plus(Duration.ofMillis(timeMillis));
+        }
+    }
 }
