@@ -59,7 +59,7 @@ public class MessageSender {
         return send(message, MessageType.FAIL_COMMAND);
     }
 
-    private boolean send(Object message, MessageType type) {
+    protected boolean send(Object message, MessageType type) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
