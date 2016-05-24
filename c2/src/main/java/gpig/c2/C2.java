@@ -68,7 +68,7 @@ public class C2 {
             UUID dcToDeployTo = c2data.getDCLocations().keySet().stream().collect(Collectors.toList()).get(0);
 
             // TODO: movement to the path instead of teleporting
-            Path path = new Path(new ArrayList<>(), location);
+            Path path = new Path(location);
             SetPath setPathCmd = new SetPath(path, dcToDeployTo);
 
             msgToDCs.send(setPathCmd);

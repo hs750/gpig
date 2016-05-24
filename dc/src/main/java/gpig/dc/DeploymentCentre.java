@@ -76,7 +76,7 @@ public class DeploymentCentre {
         Location initialLocation = config.dcLocations.locations.get(0);
 
         // FIXME: Use real DC speed
-        movementBehaviour = new WaypointBasedMovement(initialLocation, kilometresPerHour(1.0), new NoFailsafe());
+        movementBehaviour = new WaypointBasedMovement(initialLocation, kilometresPerHour(150.0), new NoFailsafe());
     }
 
     public void run() {
@@ -87,10 +87,11 @@ public class DeploymentCentre {
                 deploy();
             }
 
+            movementBehaviour.step();
+
             DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location());
             msgToC2.send(msg);
-            Log.info("DC heartbeat");
-        }, 0, 1, TimeUnit.SECONDS);
+        }, 0, 50, TimeUnit.MILLISECONDS);
     }
 
     public void setDeployed() {
