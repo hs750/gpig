@@ -1,8 +1,8 @@
 package gpig.c2.data.external;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,14 +13,17 @@ import gpig.common.data.external.ExternalDataTranslator;
 import gpig.common.messages.handlers.DetectionNotificationHandler;
 
 public class DataImporter extends Thread {
-    private final DetectionNotificationHandler detectionHandler;
+    private final List<DetectionNotificationHandler> detectionHandler;
     private final List<URL> files;
 
-    public DataImporter(DetectionNotificationHandler detectionHandler, C2Config config) {
-        this.detectionHandler = detectionHandler;
+    public DataImporter(C2Config config) {
+        this.detectionHandler = new ArrayList<>();
         this.files = config.interoperabilityInputs;
 
-        start();
+    }
+
+    public void addHandler(DetectionNotificationHandler handler) {
+        detectionHandler.add(handler);
     }
 
     @Override
@@ -42,13 +45,14 @@ public class DataImporter extends Thread {
                     s.close();
 
                     input = sb.toString();
-                    
+
                     GPIGData data = ExternalDataTranslator.deserialise(input);
-                    ExternalDataTranslator.extractDetections(data).forEach(det -> detectionHandler.handle(det));
+                    ExternalDataTranslator.extractDetections(data)
+                            .forEach(det -> detectionHandler.forEach(handler -> handler.handle(det)));
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                
+
             }
 
             try {

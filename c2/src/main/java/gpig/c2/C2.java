@@ -47,10 +47,13 @@ public class C2 {
         guiAdapterOutbound = new GUIAdapterOutbound(this);
         
         // Allocate DCs to deliver to detections
-        new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
+        DetectionAllocator alloc = new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
         
         new DataExporter(c2data);
-        new DataImporter(c2data.getDetectionHandler(), config);
+        DataImporter di = new DataImporter(config);
+        di.addHandler(c2data.getDetectionHandler());
+        di.addHandler(alloc);
+        di.start();
         
     }
 
