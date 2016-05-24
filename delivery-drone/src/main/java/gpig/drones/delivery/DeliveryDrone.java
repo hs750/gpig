@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import gpig.common.data.Assignment;
 import gpig.common.data.DroneState;
@@ -12,13 +13,14 @@ import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.messages.DeliveryNotification;
 import gpig.common.networking.CommunicationChannel;
+import gpig.common.networking.FallibleMessageSender;
 import gpig.common.networking.MessageReceiver;
-import gpig.common.networking.MessageSender;
 import gpig.common.util.Log;
 import gpig.drones.delivery.config.DeliveryDroneConfig;
 
 public class DeliveryDrone {
-    private final MessageSender msgToDC;
+    private final FallibleMessageSender msgToDC;
+    private UUID thisDrone;
     private DroneState state;
     private Location location;
     private Assignment assignment;
@@ -27,11 +29,12 @@ public class DeliveryDrone {
     public DeliveryDrone(DeliveryDroneConfig config) {
         Log.info("Starting delivery drone");
 
+        thisDrone = UUID.randomUUID();
         this.state = DroneState.UNDEPLOYED;
 
         MessageReceiver msgFromDC = new MessageReceiver();
         CommunicationChannel dtdcChannel = new CommunicationChannel(config.dedcChannel, msgFromDC);
-        msgToDC = new MessageSender(dtdcChannel);
+        msgToDC = new FallibleMessageSender(dtdcChannel, thisDrone);
 
         msgFromDC.addHandler(new DeliveryDroneAssignmentHandler(this));
     }

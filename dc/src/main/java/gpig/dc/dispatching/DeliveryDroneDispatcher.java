@@ -1,8 +1,10 @@
 package gpig.dc.dispatching;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
@@ -20,7 +22,7 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
 
     public DeliveryDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
             DeploymentArea currentLocation) {
-        super(messager, recoveryStrategy, currentLocation);
+        super(messager, recoveryStrategy, currentLocation, Constants.DELIVERY_DRONE_SPEED);
     }
 
     @Override
@@ -61,6 +63,17 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
     public void handle(DeliveryDroneHeartbeat message) {
         super.handle(message);
 
+    }
+
+    @Override
+    protected void handleTimeout(AllocatedTask task) {
+        // Only re-allocate delivery if drone doesn't return in the expected time.
+        // This is the difference between dead drone and comms out drone
+        if(task.expectedReturnTime.isBefore(LocalDateTime.now())){
+            addTask(task.task);
+            unallocateTask(task.drone);
+        }
+        
     }
 
 }

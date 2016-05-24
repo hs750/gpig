@@ -50,6 +50,9 @@ public class DeploymentCentre {
         // Recover Drones
         new DroneRecaller(thisDC, msgFromC2, dtdd, dedd);
         
+        // Forward fail commands to drones, DC does nothing with them itself
+        new FailCommandForwarder(msgFromC2, msgToDes, msgToDts);
+        
     }
 
     public void run() {

@@ -3,6 +3,10 @@ package gpig.common.data;
 import gpig.common.units.KMPH;
 import gpig.common.units.Kilometres;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+
 import static gpig.common.units.Units.*;
 
 public class Constants {
@@ -14,5 +18,11 @@ public class Constants {
 
     public final static Kilometres DETECTION_RADIUS = kilometres(2.5);
 
+    public final static Duration AERIAL_VEHICLE_BATTERY_DURATION = Duration.of(20, ChronoUnit.MINUTES);
+
     public final static double SPEED_SCALING_FACTOR = 1.0;
+    
+    public final static int DRONE_HEARTBEAT_INTERVAL = 1000; // milliseconds
+    public final static int DRONE_HEARTBEAT_TIMEOUT = 5000; // milliseconds
+    
 }

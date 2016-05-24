@@ -38,12 +38,14 @@ public class InfoPanel extends JPanel{
 	//Field names
 	protected JLabel actorIdLN;
 	protected JLabel actorTypeLN;
+	protected JLabel actorStateLN;
 	protected JLabel actorLatLN;
 	protected JLabel actorLonLN;
 	
 	//Field contents
 	protected JLabel actorIdL;
 	protected JLabel actorTypeL;
+	protected JLabel actorStateL;
 	protected JLabel actorLatL;
 	protected JLabel actorLonL;
 	
@@ -75,23 +77,27 @@ public class InfoPanel extends JPanel{
 		//Field names
 		actorIdLN = new JLabel("ID: ");
 		actorTypeLN = new JLabel("Type: ");
+		actorStateLN = new JLabel("State: ");
 		actorLatLN = new JLabel("Latitude: ");
 		actorLonLN = new JLabel("Longtitude: ");
 		
 		//Field contents
 		actorIdL = new JLabel("");		
 		actorTypeL = new JLabel(""+actorType);
+		actorStateL = new JLabel("");
 		actorLatL = new JLabel("");
 		actorLonL = new JLabel("");
 		
 		//fonts
 		actorIdLN.setFont(fieldNameFont);
 		actorTypeLN.setFont(fieldNameFont);
+		actorStateLN.setFont(fieldNameFont);
 		actorLatLN.setFont(fieldNameFont);
 		actorLonLN.setFont(fieldNameFont);
 		
 		actorIdL.setFont(fieldContentsFont);
 		actorTypeL.setFont(fieldContentsFont);
+		actorStateL.setFont(fieldContentsFont);
 		actorLatL.setFont(fieldContentsFont);
 		actorLonL.setFont(fieldContentsFont);
 			
@@ -126,7 +132,7 @@ public class InfoPanel extends JPanel{
 		c.gridwidth = 1;
 		c.gridx = 0;
 		c.gridy = 2;
-		add(actorIdLN,c);
+		add(actorStateLN,c);
 		
 		c.fill = GridBagConstraints.VERTICAL;
 		c.anchor = GridBagConstraints.WEST;
@@ -134,6 +140,22 @@ public class InfoPanel extends JPanel{
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridx = 1;
 		c.gridy = 2;
+		add(actorStateL,c);
+		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 3;
+		add(actorIdLN,c);
+		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.gridx = 1;
+		c.gridy = 3;
 		add(actorIdL,c);
 		
 		c.fill = GridBagConstraints.VERTICAL;
@@ -141,7 +163,7 @@ public class InfoPanel extends JPanel{
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = 4;
 		add(actorLonLN,c);
 		
 		c.fill = GridBagConstraints.VERTICAL;
@@ -149,7 +171,7 @@ public class InfoPanel extends JPanel{
 		c.weighty = 0.5;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridx = 1;
-		c.gridy = 3;
+		c.gridy = 4;
 		add(actorLonL,c);
 		
 		c.fill = GridBagConstraints.VERTICAL;
@@ -157,7 +179,7 @@ public class InfoPanel extends JPanel{
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 5;
 		add(actorLatLN,c);
 		
 		c.fill = GridBagConstraints.VERTICAL;
@@ -165,7 +187,7 @@ public class InfoPanel extends JPanel{
 		c.weighty = 0.5;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridx = 1;
-		c.gridy = 4;
+		c.gridy = 5;
 		add(actorLatL,c);
 		
 	}
