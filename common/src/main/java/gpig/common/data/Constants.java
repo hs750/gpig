@@ -28,5 +28,6 @@ public class Constants {
     
     public final static File EXTERNAL_OUTPUT_LOCATION = new File("Group4.xml");
     public final static int EXTERNAL_OUTPUT_RATE = 1000; // milliseconds
+    public final static int EXTERNAL_INPUT_RATE = 1000; // milliseconds
     
 }

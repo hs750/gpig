@@ -7,6 +7,7 @@ import java.util.UUID;
 import gpig.c2.config.C2Config;
 import gpig.c2.data.C2Data;
 import gpig.c2.data.external.DataExporter;
+import gpig.c2.data.external.DataImporter;
 import gpig.common.data.Location;
 import gpig.common.messages.FailCommand;
 import gpig.common.messages.FailCommand.FailType;
@@ -49,6 +50,7 @@ public class C2 {
         new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
         
         new DataExporter(c2data);
+        new DataImporter(c2data.getDetectionHandler(), config);
         
     }
 

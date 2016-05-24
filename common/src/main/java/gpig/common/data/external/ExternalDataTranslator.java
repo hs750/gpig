@@ -33,13 +33,14 @@ import gpig.common.data.Location;
 import gpig.common.data.Person;
 import gpig.common.data.Person.PersonType;
 import gpig.common.messages.DeliveryNotification;
+import gpig.common.messages.DetectionNotification;
 import gpig.common.units.Kilometres;
 import gpig.common.util.Log;
 
 public class ExternalDataTranslator {
 
-    public static List<Detection> extractDetections(GPIGData data) {
-        ArrayList<Detection> detections = new ArrayList<>();
+    public static List<DetectionNotification> extractDetections(GPIGData data) {
+        ArrayList<DetectionNotification> detections = new ArrayList<>();
 
         for (GISPosition item : data.positions) {
             if (item.payload instanceof StrandedPerson) {
@@ -67,7 +68,8 @@ public class ExternalDataTranslator {
                 if (l != null) {
                     Detection d = new Detection(new Person(PersonType.OTHER, l),
                             new File(((StrandedPerson) item.payload).image.url), toLocalDateTime(item.timestamp.date));
-                    detections.add(d);
+                    DetectionNotification dn = new DetectionNotification(d);
+                    detections.add(dn);
                 }
             }
         }
