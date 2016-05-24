@@ -215,21 +215,10 @@ public abstract class DroneDispatcher extends Thread {
             this.drone = drone;
             this.task = task;
 
-            Kilometres distance = new Kilometres(0);
-            Iterator<Waypoint> it = task.iterator();
-            boolean hasOne = false;
-            while (it.hasNext()) {
-                hasOne = true;
-                Location l1 = it.next().location;
-                Location l2 = it.hasNext() ? it.next().location : null;
-
-                if (l2 != null) {
-                    distance.add(l1.distanceFrom(l2));
-                }
-
-            }
-            if (hasOne) {
-                distance.add(start.distanceFrom(task.get(0).location));
+            Kilometres distance = task.totalDistance();
+            
+            if (task.length() > 0) {
+                distance  = distance.add(start.distanceFrom(task.get(0).location));
             }
 
             double timeHours = distance.value() / (droneSpeed.value() * Constants.SPEED_SCALING_FACTOR);
