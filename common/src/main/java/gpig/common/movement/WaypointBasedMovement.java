@@ -39,8 +39,12 @@ public class WaypointBasedMovement implements MovementBehaviour {
         return currentLocation;
     }
 
+    public boolean isMoving() {
+        return path != null && !path.isAtEnd();
+    }
+
     public Location step() {
-        if (path == null) {
+        if (!isMoving()) {
             // No target, so the drone stays where it is
             return currentLocation;
         }

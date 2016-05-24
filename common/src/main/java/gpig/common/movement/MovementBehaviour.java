@@ -4,7 +4,14 @@ import gpig.common.data.Location;
 import gpig.common.data.Path;
 
 public interface MovementBehaviour {
-    void setPath(Path path);
     Location currentLocation();
+    boolean isMoving();
+
+    default boolean isStationary() {
+        return !isMoving();
+    }
+
+    void setPath(Path path);
     Location step();
+
 }

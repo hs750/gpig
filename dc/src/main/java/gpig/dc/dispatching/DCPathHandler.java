@@ -15,6 +15,7 @@ public class DCPathHandler implements SetPathHandler{
     public void handle(SetPath message) {
         if (message.isFor(dc.id)) {
             dc.movementBehaviour.setPath(message.path);
+            dc.setDeployed();
         }
     }
 }

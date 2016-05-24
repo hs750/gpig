@@ -34,6 +34,8 @@ public class DeploymentCentre {
 
     public final MovementBehaviour movementBehaviour;
 
+    private boolean isDeployed = false;
+
     public DeploymentCentre(DCConfig config) {
         id = UUID.randomUUID();
         Log.info("Starting mobile deployment centre: %s", id);
@@ -81,10 +83,22 @@ public class DeploymentCentre {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 
         ses.scheduleAtFixedRate(() -> {
+            if (isDeployed && movementBehaviour.isStationary()) {
+                deploy();
+            }
+
             DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location());
             msgToC2.send(msg);
             Log.info("DC heartbeat");
         }, 0, 1, TimeUnit.SECONDS);
+    }
+
+    public void setDeployed() {
+        isDeployed = true;
+    }
+
+    private void deploy() {
+
     }
 
     private Location location() {
