@@ -23,9 +23,15 @@ import static gpig.common.units.Units.kilometres;
 public class Path implements Iterable<Path.Waypoint> {
     @JsonProperty("waypoints")
     private List<Waypoint> waypoints;
+    private Location initialLocation;
+
+    public Path(List<Waypoint> waypoints, Location initialLocation) {
+        this.waypoints = waypoints;
+        this.initialLocation = initialLocation;
+    }
 
     public Path(List<Waypoint> waypoints) {
-        this.waypoints = waypoints;
+        this(waypoints, null);
     }
 
     public Path(Waypoint... waypoints) {
@@ -40,6 +46,10 @@ public class Path implements Iterable<Path.Waypoint> {
 
     public Waypoint get(int i) {
         return waypoints.get(i);
+    }
+
+    public Location getInitialLocation() {
+        return initialLocation;
     }
 
     public void addWaypoint(Waypoint waypoint) {
