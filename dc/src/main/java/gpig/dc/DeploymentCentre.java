@@ -12,6 +12,10 @@ import gpig.common.data.Location;
 import gpig.common.messages.DeploymentCentreHeartbeat;
 import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
 import gpig.common.movement.ImmediateReturn;
+import gpig.common.movement.MovementBehaviour;
+import gpig.common.movement.WaypointBasedMovement;
+import gpig.common.movement.failsafe.BatteryLevelLowFailsafe;
+import gpig.common.movement.failsafe.NoFailsafe;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
@@ -22,10 +26,13 @@ import gpig.dc.dispatching.DeliveryDroneDispatcher;
 import gpig.dc.dispatching.DetectionDroneDispatcher;
 import gpig.dc.dispatching.DroneRecaller;
 
+import static gpig.common.units.Units.kilometresPerHour;
+
 public class DeploymentCentre {
     public final UUID id;
-    public Location location;
     public final MessageSender msgToC2;
+
+    public final MovementBehaviour movementBehaviour;
 
     public DeploymentCentre(DCConfig config) {
         id = UUID.randomUUID();
@@ -64,17 +71,24 @@ public class DeploymentCentre {
         DCPathHandler pathHandler = new DCPathHandler(this);
         msgFromC2.addHandler(pathHandler);
 
-        this.location = config.dcLocations.locations.get(0);
+        Location initialLocation = config.dcLocations.locations.get(0);
+
+        // FIXME: Use real DC speed
+        movementBehaviour = new WaypointBasedMovement(initialLocation, kilometresPerHour(1.0), new NoFailsafe());
     }
 
     public void run() {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 
         ses.scheduleAtFixedRate(() -> {
-            DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location);
+            DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location());
             msgToC2.send(msg);
             Log.info("DC heartbeat");
         }, 0, 1, TimeUnit.SECONDS);
+    }
+
+    private Location location() {
+        return movementBehaviour.currentLocation();
     }
 
     public static void main(String... args) throws IOException {
