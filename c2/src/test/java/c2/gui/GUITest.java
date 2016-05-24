@@ -2,9 +2,12 @@ package c2.gui;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,10 +37,11 @@ public class GUITest extends Thread{
 	private C2Config c2Config;
 	private long updateSpeed;
 	
-	public GUITest(C2 c2, int updateSpeed) {
-
-		this.c2 = c2;
-		
+	public GUITest(C2Config c2c, int updateSpeed) {
+	    mockC2Data = new C2Data();
+	    
+		this.c2 = new C2(c2c, mockC2Data);
+		c2.run();
 		while(c2.getGUI() == null){
 			try {
 				Thread.currentThread().sleep(50);
@@ -56,12 +60,12 @@ public class GUITest extends Thread{
 	
 	@Override
 	public void run() {
-
+	    
 		//set up
 		
 		int numIterations = 8;
 		
-		mockC2Data = new C2Data();
+		
 	
 		ArrayList<UUID> dcIDs = new ArrayList<UUID>();
 		ArrayList<UUID> detectionDronesIDs = new ArrayList<UUID>();
@@ -174,8 +178,8 @@ public class GUITest extends Thread{
         person1.id = detectionsIDs.get(0);
         person2.id = detectionsIDs.get(1);
         
-        detections.add(new Detection(person1,null,null));
-        detections.add(new Detection(person2,null,null));
+        detections.add(new Detection(person1,new File("f"),LocalDateTime.now()));
+        detections.add(new Detection(person2,new File("f"),LocalDateTime.now()));
         
         mockC2Data.setDetections(detections);
         gui.setAdapterInbound(new GUIAdapterInbound(c2Config.victimDetections,c2Config.dcLocations, mockC2Data));
@@ -222,10 +226,14 @@ public class GUITest extends Thread{
 	    
 	    assignments.add(assignment1);
 	    assignments.add(assignment2);
-        
+	    
+	    HashMap<Assignment, LocalDateTime> deliveryTimes = new HashMap<>();
+	    deliveryTimes.put(assignment1, LocalDateTime.now());
+	    deliveryTimes.put(assignment2, LocalDateTime.now());
 	    
 	    
         mockC2Data.setAssignments(assignments);
+        mockC2Data.setDeliveryTimes(deliveryTimes);
         gui.setAdapterInbound(new GUIAdapterInbound(c2Config.victimDetections,c2Config.dcLocations, mockC2Data));
 	    
 	    
@@ -249,12 +257,8 @@ public class GUITest extends Thread{
 
         String configPath = args[0];
         C2Config conf = C2Config.getConfig(configPath, C2Config.class);
-
         
-        C2 c2 = new C2(conf);
-        c2.run();
-        
-        GUITest guiTest = new GUITest(c2,1000);
+        GUITest guiTest = new GUITest(conf,1000);
         guiTest.run();
     }
 

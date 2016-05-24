@@ -49,6 +49,10 @@ public class C2Data {
         return Collections.unmodifiableList(assignments);
     }
     
+    public Map<Assignment, LocalDateTime> getDeliveryTimes(){
+        return Collections.unmodifiableMap(deliveryTimes);
+    }
+    
     public synchronized List<Detection> getDetections() {
         return Collections.unmodifiableList(detections);
     }
@@ -93,6 +97,10 @@ public class C2Data {
 	public synchronized void setAssignments(List<Assignment> assignments) {
 		this.assignments = assignments;
 	}
+	
+	public synchronized void setDeliveryTimes(Map<Assignment, LocalDateTime> deliveries) {
+        this.deliveryTimes = deliveries;
+    }
 
 	public void setDeliveryDronesState(ConcurrentHashMap<UUID, DroneState> deliveryDronesState) {
 		this.deliveryDronesState = deliveryDronesState;
