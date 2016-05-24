@@ -97,7 +97,7 @@ public class ExternalDataTranslator {
     public static GISPosition export(DeliveryNotification delivery) {
         GISPosition gis = new GISPosition();
         gis.timestamp = new Timestamp();
-        gis.timestamp.date = delivery.timestamp;
+        gis.timestamp.date = toDate(delivery.timestamp);
 
         Point p = new Point();
         p.coord = new Coord();
