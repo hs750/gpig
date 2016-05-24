@@ -21,6 +21,39 @@ public class Assignment {
         deploymentCentreID = null;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((deploymentCentreID == null) ? 0 : deploymentCentreID.hashCode());
+        result = prime * result + ((detection == null) ? 0 : detection.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Assignment other = (Assignment) obj;
+        if (deploymentCentreID == null) {
+            if (other.deploymentCentreID != null)
+                return false;
+        } else if (!deploymentCentreID.equals(other.deploymentCentreID))
+            return false;
+        if (detection == null) {
+            if (other.detection != null)
+                return false;
+        } else if (!detection.equals(other.detection))
+            return false;
+        if (status != other.status)
+            return false;
+        return true;
+    }
+
     public enum AssignmentStatus {
         ASSIGNED,
         DELIVERED

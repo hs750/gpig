@@ -70,14 +70,28 @@ public class Location {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((location == null) ? 0 : location.hashCode());
+        return result;
+    }
 
-        Location that = (Location) o;
-        return location.equals(that.location);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Location other = (Location) obj;
+        if (location == null) {
+            if (other.location != null)
+                return false;
+        } else if (!location.equals(other.location))
+            return false;
+        return true;
     }
 
     private Location() {
@@ -119,4 +133,6 @@ public class Location {
             return new Location(latitude, longitude);
         }
     }
+    
+    
 }
