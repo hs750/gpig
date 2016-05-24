@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
@@ -20,7 +21,7 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
 
     public DetectionDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
             DeploymentArea currentLocation) {
-        super(messager, recoveryStrategy, currentLocation);
+        super(messager, recoveryStrategy, currentLocation, Constants.DETECTION_DRONE_SPEED);
     }
 
     private ArrayList<Path> calculateSearchPattern() {
@@ -58,6 +59,14 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
     protected void taskListEmpty() {
         deployable = false; // stop attempting to deploy drones when task done
         Log.info("Detection sweep completed");
+    }
+
+    @Override
+    protected void handleTimeout(AllocatedTask task) {
+        // When a detection drone stops responding re-allocate its task to another drone
+        addTask(task.task);
+        unallocateTask(task.drone);
+        
     }
 
 }

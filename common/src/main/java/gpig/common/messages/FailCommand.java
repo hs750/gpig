@@ -44,7 +44,7 @@ public class FailCommand {
     }
 
     public enum FailType {
-        COMMS, FATAL, BATTERY
+        COMMS, FATAL, BATTERY, RESTORE_COMMS
     }
 
 }

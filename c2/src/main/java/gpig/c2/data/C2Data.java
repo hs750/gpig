@@ -18,6 +18,10 @@ public class C2Data {
     private ConcurrentHashMap<UUID, Location> dcLocations;
     private ConcurrentHashMap<UUID, DroneState> detectionDronesState;
     private List<Detection> detections;
+    
+    //should only be populated with locations of drones that have been deployed
+    private ConcurrentHashMap<UUID, Location> deliveryDronesLocation;
+    private ConcurrentHashMap<UUID, Location> detectionDronesLocation;
 
     public C2Data() {
         assignments = Collections.synchronizedList(new ArrayList<>());
@@ -25,6 +29,8 @@ public class C2Data {
         dcLocations = new ConcurrentHashMap<>();
         detectionDronesState = new ConcurrentHashMap<>();
         detections = Collections.synchronizedList(new ArrayList<>());
+        deliveryDronesLocation = new ConcurrentHashMap<>();
+        detectionDronesLocation = new ConcurrentHashMap<>();
     }
 
     public void addAllHandlers(MessageReceiver receiver) {
@@ -36,12 +42,32 @@ public class C2Data {
         receiver.addHandler(new C2DetectionNotificationHandler(detections));
     }
 
-    public List<Detection> getDetections() {
+    public synchronized List<Assignment> getAssignments() {
+        return Collections.unmodifiableList(assignments);
+    }
+    
+    public synchronized List<Detection> getDetections() {
         return Collections.unmodifiableList(detections);
     }
     
     public Map<UUID, Location> getDCLocations(){
         return Collections.unmodifiableMap(dcLocations);
+    }
+    
+    public Map<UUID, Location> getDeliveryDronesLocation(){
+        return Collections.unmodifiableMap(deliveryDronesLocation);
+    }
+    
+    public Map<UUID, Location> getDetectionDronesLocation(){
+        return Collections.unmodifiableMap(detectionDronesLocation);
+    }
+    
+    public Map<UUID, DroneState> getDeliveryDronesState(){
+        return Collections.unmodifiableMap(deliveryDronesState);
+    }
+    
+    public Map<UUID, DroneState> getDetectionDronesState(){
+        return Collections.unmodifiableMap(detectionDronesState);
     }
 
 	public synchronized int getNumberOfDCs() {
@@ -51,7 +77,8 @@ public class C2Data {
 	public synchronized int getNumberOfUndeployedDCs() {
 		return numberOfUndeployedDCs;
 	}
-
+	
+	//setters used to run the gui with mock data
 	public synchronized void setNumberOfDCs(int numberOfDCs) {
 		this.numberOfDCs = numberOfDCs;
 	}
@@ -59,8 +86,33 @@ public class C2Data {
 	public synchronized void setNumberOfUndeployedDCs(int numberOfUndeployedDCs) {
 		this.numberOfUndeployedDCs = numberOfUndeployedDCs;
 	}
-	
-	
-    
-    
+
+	public synchronized void setAssignments(List<Assignment> assignments) {
+		this.assignments = assignments;
+	}
+
+	public void setDeliveryDronesState(ConcurrentHashMap<UUID, DroneState> deliveryDronesState) {
+		this.deliveryDronesState = deliveryDronesState;
+	}
+
+	public void setDcLocations(ConcurrentHashMap<UUID, Location> dcLocations) {
+		this.dcLocations = dcLocations;
+	}
+
+	public void setDetectionDronesState(ConcurrentHashMap<UUID, DroneState> detectionDronesState) {
+		this.detectionDronesState = detectionDronesState;
+	}
+
+	public synchronized void setDetections(List<Detection> detections) {
+		this.detections = detections;
+	}
+
+	public void setDeliveryDronesLocation(ConcurrentHashMap<UUID, Location> deliveryDronesLocation) {
+		this.deliveryDronesLocation = deliveryDronesLocation;
+	}
+
+	public void setDetectionDronesLocation(ConcurrentHashMap<UUID, Location> detectionDronesLocation) {
+		this.detectionDronesLocation = detectionDronesLocation;
+	}
+   
 }
