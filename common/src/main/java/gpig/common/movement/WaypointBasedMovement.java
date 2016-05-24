@@ -9,6 +9,7 @@ import gpig.common.units.Kilometres;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static gpig.common.units.Units.kilometres;
 
@@ -29,6 +30,9 @@ public class WaypointBasedMovement implements MovementBehaviour {
 
     public void setPath(Path newPath) {
         path = new InTraversalPath(newPath);
+
+        // Teleport to destination if the teleport location exists
+        path.teleportLocation().ifPresent(loc -> currentLocation = loc);
     }
 
     public Location currentLocation() {
@@ -120,10 +124,12 @@ public class WaypointBasedMovement implements MovementBehaviour {
     private class InTraversalPath {
         private Path path;
         private int currentWaypoint;
+        private Optional<Location> initialLocation;
 
         public InTraversalPath(Path path) {
             this.path = path;
             this.currentWaypoint = 0;
+            this.initialLocation = Optional.ofNullable(path.getInitialLocation());
         }
 
         public Path.Waypoint currentDestination() {
@@ -133,6 +139,16 @@ public class WaypointBasedMovement implements MovementBehaviour {
         public Path.Waypoint advance() {
             currentWaypoint += 1;
             return currentDestination();
+        }
+
+        public Optional<Location> teleportLocation() {
+            if (initialLocation.isPresent()) {
+                Optional<Location> initLocation = initialLocation;
+                initialLocation = Optional.empty();
+                return initLocation;
+            }
+
+            return Optional.empty();
         }
 
         public boolean isAtEnd() {
