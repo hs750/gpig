@@ -63,6 +63,8 @@ public class DeploymentCentre {
 
         DCPathHandler pathHandler = new DCPathHandler(this);
         msgFromC2.addHandler(pathHandler);
+
+        this.location = config.dcLocations.locations.get(0);
     }
 
     public void run() {
@@ -71,6 +73,7 @@ public class DeploymentCentre {
         ses.scheduleAtFixedRate(() -> {
             DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location);
             msgToC2.send(msg);
+            Log.info("DC heartbeat");
         }, 0, 1, TimeUnit.SECONDS);
     }
 

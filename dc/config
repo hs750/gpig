@@ -17,5 +17,13 @@
 		"in": "DE-DC",
 		"outAddr": "localhost",
 		"inAddr": "localhost" 
+	},
+	"dcLocations":{
+		"locations": [
+					   {
+					      "lat":53.805927,
+					      "lon":-1.526755
+					   }
+		]
 	}
 }
