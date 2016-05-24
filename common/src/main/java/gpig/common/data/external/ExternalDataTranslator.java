@@ -6,6 +6,8 @@ import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -73,10 +75,7 @@ public class ExternalDataTranslator {
         return detections;
     }
 
-    public static GPIGData export(Detection detection) {
-        GPIGData data = new GPIGData();
-        data.positions = new HashSet<>();
-
+    public static GISPosition export(Detection detection) {
         GISPosition gis = new GISPosition();
         gis.timestamp = new Timestamp();
         gis.timestamp.date = toDate(detection.timestamp);
@@ -92,14 +91,10 @@ public class ExternalDataTranslator {
         sp.image.url = detection.image.toString();
         gis.payload = sp;
 
-        data.positions.add(gis);
-        return data;
+        return gis;
     }
 
-    public static GPIGData export(DeliveryNotification delivery) {
-        GPIGData data = new GPIGData();
-        data.positions = new HashSet<>();
-
+    public static GISPosition export(DeliveryNotification delivery) {
         GISPosition gis = new GISPosition();
         gis.timestamp = new Timestamp();
         gis.timestamp.date = delivery.timestamp;
@@ -113,9 +108,25 @@ public class ExternalDataTranslator {
         Delivery del = new Delivery();
         gis.payload = del;
 
-        data.positions.add(gis);
-        return data;
+        return gis;
 
+    }
+
+    public static GPIGData export(Collection<Detection> detections, Collection<DeliveryNotification> deliveries) {
+        if (detections == null) {
+            detections = Collections.emptyList();
+        }
+        if (deliveries == null) {
+            deliveries = Collections.emptyList();
+        }
+
+        GPIGData data = new GPIGData();
+        data.positions = new HashSet<>();
+
+        detections.forEach(detection -> data.positions.add(export(detection)));
+        deliveries.forEach(delivery -> data.positions.add(export(delivery)));
+
+        return data;
     }
 
     public static String serialise(GPIGData data) {
@@ -125,19 +136,19 @@ public class ExternalDataTranslator {
 
             jaxbContext = JAXBContext.newInstance(GPIGData.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            
+
             jaxbMarshaller.marshal(data, sw);
-            
+
             return sw.toString();
         } catch (JAXBException e) {
             Log.error("Unable to serialise GPIGData instance");
             e.printStackTrace();
         }
-        
+
         return "";
     }
-    
-    public static GPIGData deserialise(String data){
+
+    public static GPIGData deserialise(String data) {
         GPIGData gpd = null;
         try {
             StringReader sr = new StringReader(data);
@@ -145,22 +156,22 @@ public class ExternalDataTranslator {
 
             jaxbContext = JAXBContext.newInstance(GPIGData.class);
             Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
-            
+
             gpd = (GPIGData) jaxbMarshaller.unmarshal(sr);
-            
+
         } catch (JAXBException e) {
             Log.error("Unable to deserialise GPIGData: %s", data);
             e.printStackTrace();
         }
-        
+
         return gpd;
     }
-    
-    public static LocalDateTime toLocalDateTime(Date date){
+
+    public static LocalDateTime toLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
-    
-    public static Date toDate(LocalDateTime ldt){
+
+    public static Date toDate(LocalDateTime ldt) {
         return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
     }
 }
