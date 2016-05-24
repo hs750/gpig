@@ -7,6 +7,7 @@ import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.networking.MessageReceiver;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +19,7 @@ public class C2Data {
     private ConcurrentHashMap<UUID, Location> dcLocations;
     private ConcurrentHashMap<UUID, DroneState> detectionDronesState;
     private List<Detection> detections;
+    private Map<Assignment, LocalDateTime> deliveryTimes;
     
     //should only be populated with locations of drones that have been deployed
     private ConcurrentHashMap<UUID, Location> deliveryDronesLocation;
@@ -25,6 +27,7 @@ public class C2Data {
 
     public C2Data() {
         assignments = Collections.synchronizedList(new ArrayList<>());
+        deliveryTimes = new ConcurrentHashMap<>();
         deliveryDronesState = new ConcurrentHashMap<>();
         dcLocations = new ConcurrentHashMap<>();
         detectionDronesState = new ConcurrentHashMap<>();
@@ -36,7 +39,7 @@ public class C2Data {
     public void addAllHandlers(MessageReceiver receiver) {
         receiver.addHandler(new C2DeliveryAssignmentHandler(assignments));
         receiver.addHandler(new C2DeliveryDroneHeartbeatHandler(deliveryDronesState));
-        receiver.addHandler(new C2DeliveryNotificationHandler(assignments));
+        receiver.addHandler(new C2DeliveryNotificationHandler(assignments, deliveryTimes));
         receiver.addHandler(new C2DeploymentCentreHeartbeatHandler(dcLocations));
         receiver.addHandler(new C2DetectionDroneHeartbeatHandler(detectionDronesState));
         receiver.addHandler(new C2DetectionNotificationHandler(detections));
