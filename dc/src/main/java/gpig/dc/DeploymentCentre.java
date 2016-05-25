@@ -38,10 +38,10 @@ public class DeploymentCentre {
         CommunicationChannel dcdeChannel = new CommunicationChannel(config.dcdeChannel, msgFromDes);
         MessageSender msgToDes = new MessageSender(dcdeChannel);
         
-        DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_SEARCH_RADIUS)); //TODO create this object when a true locaiton is known.
+        DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_SEARCH_RADIUS), msgToC2); //TODO create this object when a true locaiton is known.
         msgFromDts.addHandler(dtdd);
         
-        DeliveryDroneDispatcher dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_DELIVERY_RADIUS)); //TODO create this object when a true locaiton is known.
+        DeliveryDroneDispatcher dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_DELIVERY_RADIUS), msgToC2); //TODO create this object when a true locaiton is known.
         msgFromDes.addHandler((DeliveryDroneHeartbeatHandler) dedd);
 
         //Forward messages from drones to C2
