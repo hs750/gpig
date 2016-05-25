@@ -28,6 +28,7 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
     private C2Data database;
     private MessageSender dcMessageSender;
     private ConcurrentLinkedQueue<DetectionNotification> unallocatedDeliveries;
+    private ConcurrentLinkedQueue<DetectionNotification> unableDeliveries;
     private Set<Location> serviceLocations;
 
     public DetectionAllocator(MessageSender dcMessageSender, MessageReceiver dcMessenger, C2Data database) {
@@ -35,6 +36,7 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
         dcMessenger.addHandler(this);
         this.dcMessageSender = dcMessageSender;
         unallocatedDeliveries = new ConcurrentLinkedQueue<>();
+        unableDeliveries = new ConcurrentLinkedQueue<>();
         serviceLocations = Collections.synchronizedSet(new HashSet<>());
         start();
     }
@@ -76,10 +78,17 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                     Log.info("Delivery to %s assigned to %s", message.detection.person.location.toString(), closestDC);
                 } else {
                     // Attempt delivery assignment later.
-                    unallocatedDeliveries.add(message);
+                    unableDeliveries.add(message);
                     Log.warn("Unable to assign delivery to %s", message.detection.person.location.toString());
                 }
             } else {
+                // If detection was un-assignable first time around, only
+                // re-attempt one assignment a second.
+                DetectionNotification dn = unableDeliveries.poll();
+                if (dn != null) {
+                    unallocatedDeliveries.add(dn);
+                }
+                
                 // Wait for detections to need servicing.
                 try {
                     Thread.sleep(1000);
