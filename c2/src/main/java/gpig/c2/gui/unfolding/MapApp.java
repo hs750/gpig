@@ -115,6 +115,30 @@ public class MapApp extends PApplet {
 			map.addMarker(imgMrk);
 		}
 		
+		idmap = gui.getOtherTeamLocationsUndelivered();
+        for(UUID id : idmap.keySet()){
+            ImageMarker imgMrk = new ImageMarker(
+                    imageMarkersWidth,
+                    imageMarkersHeight,
+                    id,
+                    idmap.get(id),ActorType.PERSON,
+                    loadImage(gui.getOtherTeamDetectionURL().toString())
+                    );
+            map.addMarker(imgMrk);
+        }
+		
+		idmap = gui.getOtherTeamLocationsDelivered();
+        for(UUID id : idmap.keySet()){
+            ImageMarker imgMrk = new ImageMarker(
+                    imageMarkersWidth,
+                    imageMarkersHeight,
+                    id,
+                    idmap.get(id),ActorType.PERSON,
+                    loadImage(gui.getOtherTeamDeliveredURL().toString())
+                    );
+            map.addMarker(imgMrk);
+        }
+		
 		
 		
 		//add dcs

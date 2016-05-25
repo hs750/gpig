@@ -15,6 +15,7 @@ import gpig.common.data.ActorType;
 import gpig.common.data.Detection;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
+import gpig.common.data.Person.PersonType;
 import gpig.common.config.DetectionsConfig;
 import gpig.common.config.LocationsConfig;
 import gpig.common.util.Log;
@@ -41,7 +42,8 @@ public class GUI {
 	private URL deliveryDroneSoftFailURL = GUI.class.getResource("/DeliveryDroneSoftFail.png");
 	private URL detectionDroneHardFailURL = GUI.class.getResource("/DetectionDroneHardFail.png");
 	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
-	
+	private URL otherTeamDetectionURL = GUI.class.getResource("/OtherTeamDetection.png");
+	private URL otherTeamDeliveredURL = GUI.class.getResource("/OtherTeamDetectionDelivered.png");
 	
 	private JFrame detailsFrame;
 	private ControlPanel controlPanel;
@@ -159,9 +161,19 @@ public class GUI {
     		Detection detection = adapterInbound.getDetectionByID(id);
    		
     		if(adapterInbound.hasBeenDeliveredTo(id)){
-    			infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		    if(detection.person.type == PersonType.CIVILIAN){
+    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		    }else{
+    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,otherTeamDeliveredURL,infoPanelSize);
+    		    }
+    			
     		}else{
-    			infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		    if(detection.person.type == PersonType.CIVILIAN){
+    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		    }else{
+    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,otherTeamDetectionURL,infoPanelSize);
+    		    }
+    			
     		}
     		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
@@ -272,8 +284,10 @@ public class GUI {
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
 		for(Detection detection:adapterInbound.getUndeliveredDetections()){
-			unfLocations.put(detection.person.id,
-					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    if(detection.person.type == PersonType.CIVILIAN){
+		        unfLocations.put(detection.person.id,
+		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    }
 		}
 		
 		
@@ -285,13 +299,45 @@ public class GUI {
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
 		for(Detection detection:adapterInbound.getDeliveredDetections()){
-			unfLocations.put(detection.person.id,
-					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    if(detection.person.type == PersonType.CIVILIAN){
+		        unfLocations.put(detection.person.id,
+		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    }
 		}
 		
 		
 		return unfLocations;
 	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getOtherTeamLocationsUndelivered() {
+        
+        HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+        
+        for(Detection detection:adapterInbound.getUndeliveredDetections()){
+            if(detection.person.type == PersonType.OTHER){
+                unfLocations.put(detection.person.id,
+                        new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+            }
+        }
+        
+        
+        return unfLocations;
+    }
+    
+    public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getOtherTeamLocationsDelivered() {
+        
+        HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+        
+        for(Detection detection:adapterInbound.getDeliveredDetections()){
+            if(detection.person.type == PersonType.OTHER){
+                unfLocations.put(detection.person.id,
+                        new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+            }
+        }
+        
+        
+        return unfLocations;
+    }
 
 	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDcLocations() {
 
@@ -431,6 +477,14 @@ public class GUI {
 
 	public URL getDeliveryDroneHardFailURL() {
 		return deliveryDroneHardFailURL;
+	}
+	
+	public URL getOtherTeamDetectionURL(){
+	    return otherTeamDetectionURL;
+	}
+	
+	public URL getOtherTeamDeliveredURL(){
+	    return otherTeamDeliveredURL;
 	}
 	
 	public void setAdapterInbound(GUIAdapterInbound adapterInbound) {
