@@ -3,6 +3,7 @@ package gpig.c2.gui;
 import processing.core.PApplet;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
@@ -44,6 +45,7 @@ public class GUI {
 	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
 	private URL otherTeamDetectionURL = GUI.class.getResource("/OtherTeamDetection.png");
 	private URL otherTeamDeliveredURL = GUI.class.getResource("/OtherTeamDetectionDelivered.png");
+	private URL detectionImagesDirectory = GUI.class.getResource("/DetectionImages");
 	private URL[] detectionImageURLs;
 	private HashMap<UUID, URL> detectionImageMap;
 	
@@ -61,7 +63,8 @@ public class GUI {
 		this.adapterInbound = adapterInbound;
 		this.adapterOutbound = adapterOutbound;
 		
-		detectionImageURLs = new URL[10];
+		int numeberOfImages = new File(detectionImagesDirectory.getPath()).listFiles().length;
+		detectionImageURLs = new URL[numeberOfImages];
 		for(int i=0;i<detectionImageURLs.length;i++)
 			detectionImageURLs[i] = GUI.class.getResource("/DetectionImages/D"+i +".jpg");
 		detectionImageMap = new HashMap<>();
