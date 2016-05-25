@@ -161,9 +161,19 @@ public class GUI {
     		Detection detection = adapterInbound.getDetectionByID(id);
    		
     		if(adapterInbound.hasBeenDeliveredTo(id)){
-    			infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		    if(detection.person.type == PersonType.CIVILIAN){
+    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		    }else{
+    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,otherTeamDeliveredURL,infoPanelSize);
+    		    }
+    			
     		}else{
-    			infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		    if(detection.person.type == PersonType.CIVILIAN){
+    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		    }else{
+    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,otherTeamDetectionURL,infoPanelSize);
+    		    }
+    			
     		}
     		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
