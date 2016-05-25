@@ -59,6 +59,14 @@ public class GUI {
 	private UUID currentlySelectedActorID = null;
 	private ActorType currentlySelectedActorType = null;
 	
+	private boolean showDetectionDrones = true;
+	private boolean showDeliveryDrones = true;
+	private boolean showDCs = true;
+	private boolean showUndeliveredDetections = true;
+	private boolean showDeliveredDetections = true;
+	private boolean showExternalDetections = true;
+	
+	
 	public GUI(GUIAdapterInbound adapterInbound, GUIAdapterOutbound adapterOutbound){
 		this.adapterInbound = adapterInbound;
 		this.adapterOutbound = adapterOutbound;
@@ -513,6 +521,54 @@ public class GUI {
 	    return otherTeamDeliveredURL;
 	}
 	
+	public boolean isShowDetectionDrones() {
+		return showDetectionDrones;
+	}
+
+	public void setShowDetectionDrones(boolean showDetectionDrones) {
+		this.showDetectionDrones = showDetectionDrones;
+	}
+
+	public boolean isShowDeliveryDrones() {
+		return showDeliveryDrones;
+	}
+
+	public void setShowDeliveryDrones(boolean showDeliveryDrones) {
+		this.showDeliveryDrones = showDeliveryDrones;
+	}
+
+	public boolean isShowDCs() {
+		return showDCs;
+	}
+
+	public void setShowDCs(boolean showDCs) {
+		this.showDCs = showDCs;
+	}
+
+	public boolean isShowUndeliveredDetections() {
+		return showUndeliveredDetections;
+	}
+
+	public void setShowUndeliveredDetections(boolean showUndeliveredDetections) {
+		this.showUndeliveredDetections = showUndeliveredDetections;
+	}
+
+	public boolean isShowDeliveredDetections() {
+		return showDeliveredDetections;
+	}
+
+	public void setShowDeliveredDetections(boolean showDeliveredDetections) {
+		this.showDeliveredDetections = showDeliveredDetections;
+	}
+
+	public boolean isShowExternalDetections() {
+		return showExternalDetections;
+	}
+
+	public void setShowExternalDetections(boolean showExternalDetections) {
+		this.showExternalDetections = showExternalDetections;
+	}
+
 	public void setAdapterInbound(GUIAdapterInbound adapterInbound) {
 		this.adapterInbound = adapterInbound;
 	}
