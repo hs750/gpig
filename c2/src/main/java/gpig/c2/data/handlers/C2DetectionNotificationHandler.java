@@ -25,13 +25,6 @@ public class C2DetectionNotificationHandler implements DetectionNotificationHand
     }
 
     protected boolean detectionExists(Detection det) {
-        boolean exists = false;
-        for (Detection d : detections) {
-            if (d.person.location.equals(det.person.location)) {
-                exists = true;
-            }
-        }
-
-        return exists;
+        return detections.stream().filter(d -> d.person.location.equals(det.person.location)).findFirst().isPresent();
     }
 }
