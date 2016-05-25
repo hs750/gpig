@@ -42,13 +42,10 @@ public class GUI {
 	private URL deliveryDroneSoftFailURL = GUI.class.getResource("/DeliveryDroneSoftFail.png");
 	private URL detectionDroneHardFailURL = GUI.class.getResource("/DetectionDroneHardFail.png");
 	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
-<<<<<<< Upstream, based on origin/master
 	private URL otherTeamDetectionURL = GUI.class.getResource("/OtherTeamDetection.png");
 	private URL otherTeamDeliveredURL = GUI.class.getResource("/OtherTeamDetectionDelivered.png");
-=======
 	private URL[] detectionImageURLs;
 	private HashMap<UUID, URL> detectionImageMap;
->>>>>>> 789572e Add detection images
 	
 	private JFrame detailsFrame;
 	private ControlPanel controlPanel;
@@ -156,6 +153,10 @@ public class GUI {
 	    			controlPanel.disableCommsFailure();
 	    			controlPanel.disableEngineFailure();
 	        	}
+    	}else{
+			controlPanel.disableBatteryFailure();
+			controlPanel.disableCommsFailure();
+			controlPanel.disableEngineFailure();
     	}
     	
 		controlPanel.revalidate();
@@ -172,27 +173,17 @@ public class GUI {
     		Detection detection = adapterInbound.getDetectionByID(id);
    		
     		if(adapterInbound.hasBeenDeliveredTo(id)){
-<<<<<<< Upstream, based on origin/master
     		    if(detection.person.type == PersonType.CIVILIAN){
-    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,true,detectionImageMap.get(id),ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
     		    }else{
-    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,otherTeamDeliveredURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,true,detectionImageMap.get(id),ActorType.PERSON,otherTeamDeliveredURL,infoPanelSize);
     		    }
-    			
-=======
-    			infoPanel = new PersonInfoPanel(detection,true,detectionImageMap.get(id),ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
->>>>>>> 789572e Add detection images
     		}else{
-<<<<<<< Upstream, based on origin/master
     		    if(detection.person.type == PersonType.CIVILIAN){
-    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,false,detectionImageMap.get(id),ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
     		    }else{
-    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,otherTeamDetectionURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,false,detectionImageMap.get(id),ActorType.PERSON,otherTeamDetectionURL,infoPanelSize);
     		    }
-    			
-=======
-    			infoPanel = new PersonInfoPanel(detection,false,detectionImageMap.get(id),ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
->>>>>>> 789572e Add detection images
     		}
     		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
@@ -303,14 +294,10 @@ public class GUI {
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
 		for(Detection detection:adapterInbound.getUndeliveredDetections()){
-<<<<<<< Upstream, based on origin/master
 		    if(detection.person.type == PersonType.CIVILIAN){
 		        unfLocations.put(detection.person.id,
 		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 		    }
-=======
-			unfLocations.put(detection.person.id,
-					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 			
 			if( ! detectionImageMap.containsKey(detection.person.id)){
 				int index = detectionImageMap.size()+1;
@@ -318,7 +305,6 @@ public class GUI {
 					index = 0;
 				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
 			}
->>>>>>> 789572e Add detection images
 		}
 		
 		
@@ -330,14 +316,10 @@ public class GUI {
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
 		for(Detection detection:adapterInbound.getDeliveredDetections()){
-<<<<<<< Upstream, based on origin/master
 		    if(detection.person.type == PersonType.CIVILIAN){
 		        unfLocations.put(detection.person.id,
 		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 		    }
-=======
-			unfLocations.put(detection.person.id,
-					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 		
 			if( ! detectionImageMap.containsKey(detection.person.id)){
 				int index = detectionImageMap.size()+1;
@@ -345,7 +327,6 @@ public class GUI {
 					index = 0;
 				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
 			}
->>>>>>> 789572e Add detection images
 		}
 
 		return unfLocations;
