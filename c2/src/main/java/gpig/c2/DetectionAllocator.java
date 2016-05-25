@@ -1,7 +1,10 @@
 package gpig.c2;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -25,18 +28,24 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
     private C2Data database;
     private MessageSender dcMessageSender;
     private ConcurrentLinkedQueue<DetectionNotification> unallocatedDeliveries;
+    private Set<Location> serviceLocations;
 
     public DetectionAllocator(MessageSender dcMessageSender, MessageReceiver dcMessenger, C2Data database) {
         this.database = database;
         dcMessenger.addHandler(this);
         this.dcMessageSender = dcMessageSender;
         unallocatedDeliveries = new ConcurrentLinkedQueue<>();
+        serviceLocations = Collections.synchronizedSet(new HashSet<>());
         start();
     }
 
     @Override
     public void handle(DetectionNotification message) {
-        unallocatedDeliveries.add(message);
+        boolean newLoc = serviceLocations.add(message.detection.person.location);
+        if (newLoc) {
+            unallocatedDeliveries.add(message);
+        }
+
     }
 
     @Override
