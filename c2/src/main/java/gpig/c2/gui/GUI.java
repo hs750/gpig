@@ -3,6 +3,7 @@ package gpig.c2.gui;
 import processing.core.PApplet;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
@@ -44,6 +45,9 @@ public class GUI {
 	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
 	private URL otherTeamDetectionURL = GUI.class.getResource("/OtherTeamDetection.png");
 	private URL otherTeamDeliveredURL = GUI.class.getResource("/OtherTeamDetectionDelivered.png");
+	private URL detectionImagesDirectory = GUI.class.getResource("/DetectionImages");
+	private URL[] detectionImageURLs;
+	private HashMap<UUID, URL> detectionImageMap;
 	
 	private JFrame detailsFrame;
 	private ControlPanel controlPanel;
@@ -58,6 +62,13 @@ public class GUI {
 	public GUI(GUIAdapterInbound adapterInbound, GUIAdapterOutbound adapterOutbound){
 		this.adapterInbound = adapterInbound;
 		this.adapterOutbound = adapterOutbound;
+		
+		int numeberOfImages = new File(detectionImagesDirectory.getPath()).listFiles().length;
+		detectionImageURLs = new URL[numeberOfImages];
+		for(int i=0;i<detectionImageURLs.length;i++)
+			detectionImageURLs[i] = GUI.class.getResource("/DetectionImages/D"+i +".jpg");
+		detectionImageMap = new HashMap<>();
+		
 		
 		appletRunner = new AppletRunner(this);
 		appletRunner.start();
@@ -145,6 +156,10 @@ public class GUI {
 	    			controlPanel.disableCommsFailure();
 	    			controlPanel.disableEngineFailure();
 	        	}
+    	}else{
+			controlPanel.disableBatteryFailure();
+			controlPanel.disableCommsFailure();
+			controlPanel.disableEngineFailure();
     	}
     	
 		controlPanel.revalidate();
@@ -162,18 +177,16 @@ public class GUI {
    		
     		if(adapterInbound.hasBeenDeliveredTo(id)){
     		    if(detection.person.type == PersonType.CIVILIAN){
-    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,true,detectionImageMap.get(id),ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
     		    }else{
-    		        infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,otherTeamDeliveredURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,true,detectionImageMap.get(id),ActorType.PERSON,otherTeamDeliveredURL,infoPanelSize);
     		    }
-    			
     		}else{
     		    if(detection.person.type == PersonType.CIVILIAN){
-    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,false,detectionImageMap.get(id),ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
     		    }else{
-    		        infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,otherTeamDetectionURL,infoPanelSize);
+    		        infoPanel = new PersonInfoPanel(detection,false,detectionImageMap.get(id),ActorType.PERSON,otherTeamDetectionURL,infoPanelSize);
     		    }
-    			
     		}
     		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
@@ -288,6 +301,13 @@ public class GUI {
 		        unfLocations.put(detection.person.id,
 		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 		    }
+			
+			if( ! detectionImageMap.containsKey(detection.person.id)){
+				int index = detectionImageMap.size()+1;
+				if(index>=detectionImageURLs.length)
+					index = 0;
+				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
+			}
 		}
 		
 		
@@ -303,9 +323,15 @@ public class GUI {
 		        unfLocations.put(detection.person.id,
 		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
 		    }
+		
+			if( ! detectionImageMap.containsKey(detection.person.id)){
+				int index = detectionImageMap.size()+1;
+				if(index>=detectionImageURLs.length)
+					index = 0;
+				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
+			}
 		}
-		
-		
+
 		return unfLocations;
 	}
 	

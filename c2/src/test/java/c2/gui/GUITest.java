@@ -44,7 +44,7 @@ public class GUITest extends Thread{
 		c2.run();
 		while(c2.getGUI() == null){
 			try {
-				Thread.currentThread().sleep(50);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -174,7 +174,7 @@ public class GUITest extends Thread{
         Location det2Current = new Location(detd2Current.latitude()+0.05,detd2Current.longitude()-0.05);
         
         Person person1 = new Person(PersonType.CIVILIAN, det1Current);
-        Person person2 = new Person(PersonType.CIVILIAN, det2Current);
+        Person person2 = new Person(PersonType.OTHER, det2Current);
         person1.id = detectionsIDs.get(0);
         person2.id = detectionsIDs.get(1);
         
