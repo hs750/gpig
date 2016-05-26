@@ -43,7 +43,7 @@ public class Detection {
         if (image == null) {
             if (other.image != null)
                 return false;
-        } else if (!image.equals(other.image))
+        } else if (!image.getAbsoluteFile().equals(other.image.getAbsoluteFile()))
             return false;
         if (person == null) {
             if (other.person != null)
