@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -17,7 +16,6 @@ import gpig.common.data.DeploymentArea;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
-import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.DroneHeartbeat;
 import gpig.common.messages.SetPath;
 import gpig.common.movement.RecoveryStrategy;
@@ -32,21 +30,26 @@ public abstract class DroneDispatcher extends Thread {
     protected boolean deployed = false;
     private KMPH droneSpeed;
 
-    private Map<UUID, DroneHeartbeat> allDrones;
-    private MessageSender messager;
+    protected Map<UUID, DroneHeartbeat> allDrones;
+    private MessageSender droneMessager;
+    protected MessageSender c2Messager;
     private RecoveryStrategy recoveryStrategy;
+    private Map<UUID, LocalDateTime> deployedDrones;
 
     private ConcurrentLinkedQueue<Path> tasks;
     private ConcurrentHashMap<UUID, AllocatedTask> allocatedTasks;
 
-    public DroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation, KMPH droneSpeed) {
-        this.messager = messager;
+    public DroneDispatcher(MessageSender droneMessager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation, KMPH droneSpeed, MessageSender c2Messager) {
+        this.droneMessager = droneMessager;
+        this.c2Messager = c2Messager;
         allDrones = Collections.synchronizedMap(new LinkedHashMap<>());
         this.recoveryStrategy = recoveryStrategy;
         this.currentLocation = currentLocation;
         tasks = new ConcurrentLinkedQueue<>();
         allocatedTasks = new ConcurrentHashMap<>();
         this.droneSpeed = droneSpeed;
+        this.deployedDrones = new ConcurrentHashMap<>();
+        
 
         new HeartbeatTimer(Constants.DRONE_HEARTBEAT_TIMEOUT, allocatedTasks, allDrones, this).start();
     }
@@ -71,7 +74,7 @@ public abstract class DroneDispatcher extends Thread {
         for (DroneHeartbeat drone : allDrones.values()) {
             if (drone.state != DroneState.UNDEPLOYED) {
                 SetPath sp = new SetPath(recoveryStrategy.getPath(getLocation()), drone.origin);
-                messager.send(sp);
+                droneMessager.send(sp);
             }
         }
 
@@ -80,7 +83,7 @@ public abstract class DroneDispatcher extends Thread {
     public synchronized boolean allDronesRecovered() {
         boolean recovered = true;
         for (DroneHeartbeat drone : allDrones.values()) {
-            if (drone.state != DroneState.UNDEPLOYED) {
+            if (deployedDrones.containsKey(drone.origin)) {
                 recovered = false;
             }
         }
@@ -89,7 +92,7 @@ public abstract class DroneDispatcher extends Thread {
 
     protected synchronized boolean allDronesActive() {
         for (DroneHeartbeat drone : allDrones.values()) {
-            if (drone.state == DroneState.UNDEPLOYED) {
+            if (!deployedDrones.containsKey(drone.origin)) {
                 return false;
             }
         }
@@ -97,7 +100,8 @@ public abstract class DroneDispatcher extends Thread {
     }
 
     protected synchronized void activateDrone(UUID drone, Path task) {
-        allDrones.remove(drone); // remove the current (undeployed) heartbeat
+        //allDrones.remove(drone); // remove the current (undeployed) heartbeat
+        deployedDrones.put(drone, LocalDateTime.now());
         allocatedTasks.put(drone, new AllocatedTask(drone, task, currentLocation.deploymentArea.centre, droneSpeed));
 
     }
@@ -112,7 +116,20 @@ public abstract class DroneDispatcher extends Thread {
     }
 
     public void handle(DroneHeartbeat heartbeat) {
-        allDrones.put(heartbeat.origin, heartbeat);
+        DroneHeartbeat dh = allDrones.put(heartbeat.origin, heartbeat);
+        if(heartbeat.state == DroneState.UNDEPLOYED){
+            LocalDateTime deployTime = deployedDrones.get(heartbeat.origin);
+            if(deployTime != null){
+                
+                // Allow some time for the heartbeats to reflect deployment to prevent immediate redeployment.
+                if(deployTime.isBefore(LocalDateTime.now().minus(10000, ChronoUnit.MILLIS))){
+                    deployedDrones.remove(heartbeat.origin);
+                }
+            }
+        }
+        if(dh == null){
+            Log.info("Descovered new drone " + heartbeat.getClass().getSimpleName() + " " + heartbeat.origin);
+        }
 
         if (heartbeat.state == DroneState.UNDEPLOYED) {
             unallocateTask(heartbeat.origin);
@@ -139,7 +156,7 @@ public abstract class DroneDispatcher extends Thread {
                 taskListEmpty();
             } else {
                 SetPath sp = new SetPath(p, assignee);
-                messager.send(sp);
+                droneMessager.send(sp);
                 Log.info("Displatched Drone: %s", assignee);
 
                 activateDrone(assignee, p);

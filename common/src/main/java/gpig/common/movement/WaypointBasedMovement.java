@@ -1,18 +1,20 @@
 package gpig.common.movement;
 
-import com.javadocmd.simplelatlng.LatLngTool;
-import gpig.common.data.Constants;
-import gpig.common.data.Location;
-import gpig.common.data.Path;
-import gpig.common.units.KMPH;
-import gpig.common.units.Kilometres;
+import static gpig.common.units.Units.kilometres;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
-import static gpig.common.units.Units.kilometres;
+import gpig.common.data.Constants;
+import gpig.common.data.Location;
+import gpig.common.data.Path;
+import gpig.common.messages.heartbeater.LocationProvider;
+import gpig.common.units.KMPH;
+import gpig.common.units.Kilometres;
+import gpig.common.util.Log;
 
-public class WaypointBasedMovement implements MovementBehaviour {
+public class WaypointBasedMovement implements MovementBehaviour, LocationProvider {
     private Location currentLocation;
     private InTraversalPath path;
     private LocalDateTime lastUpdateTime;
@@ -23,22 +25,34 @@ public class WaypointBasedMovement implements MovementBehaviour {
         this.currentLocation = initialLocation;
         this.vehicleSpeed = speed;
         this.path = null;
-        this.lastUpdateTime = LocalDateTime.now();
+        this.lastUpdateTime = null;
         this.failsafeBehaviour = failsafeBehaviour;
     }
 
     public void setPath(Path newPath) {
         path = new InTraversalPath(newPath);
+
+        // Teleport to destination if the teleport location exists
+        path.teleportLocation().ifPresent(loc -> currentLocation = loc);
     }
 
     public Location currentLocation() {
         return currentLocation;
     }
 
+    public boolean isMoving() {
+        return path != null && !path.isAtEnd();
+    }
+
     public Location step() {
-        if (path == null) {
+        if (!isMoving()) {
             // No target, so the drone stays where it is
-            return currentLocation;
+            return currentLocation();
+        }
+
+        if (lastUpdateTime == null) {
+            lastUpdateTime = LocalDateTime.now();
+            return currentLocation();
         }
 
         // Switch over to the failsafe path if the battery failsafe behaviour is triggered
@@ -53,7 +67,8 @@ public class WaypointBasedMovement implements MovementBehaviour {
         // Find the amount of time which elapsed since the drone's location was
         // last calculated
         LocalDateTime currentUpdateTime = LocalDateTime.now();
-        long secondsSinceLastEvent = ChronoUnit.SECONDS.between(lastUpdateTime, currentUpdateTime);
+        long millisecondsSinceLastEvent = ChronoUnit.MILLIS.between(lastUpdateTime, currentUpdateTime);
+        double secondsSinceLastEvent = millisecondsSinceLastEvent / 100.0;
         double hoursSinceLastEvent = ((secondsSinceLastEvent / 60.0) / 60.0);
 
         // Calculate the distance travelled by the drone since the last update
@@ -109,6 +124,7 @@ public class WaypointBasedMovement implements MovementBehaviour {
             path.advance();
 
             if (path.isAtEnd()) {
+                Log.info("Path end reached");
                 return new TravelStatus(newLocation, kilometres(0.0), Status.FINISHED);
             } else {
                 return new TravelStatus(newLocation, remainingDistance, Status.REACHED_WAYPOINT);
@@ -120,10 +136,12 @@ public class WaypointBasedMovement implements MovementBehaviour {
     private class InTraversalPath {
         private Path path;
         private int currentWaypoint;
+        private Optional<Location> initialLocation;
 
         public InTraversalPath(Path path) {
             this.path = path;
             this.currentWaypoint = 0;
+            this.initialLocation = Optional.ofNullable(path.getInitialLocation());
         }
 
         public Path.Waypoint currentDestination() {
@@ -135,6 +153,16 @@ public class WaypointBasedMovement implements MovementBehaviour {
             return currentDestination();
         }
 
+        public Optional<Location> teleportLocation() {
+            if (initialLocation.isPresent()) {
+                Optional<Location> initLocation = initialLocation;
+                initialLocation = Optional.empty();
+                return initLocation;
+            }
+
+            return Optional.empty();
+        }
+
         public boolean isAtEnd() {
             return currentWaypoint >= path.length();
         }
@@ -142,6 +170,12 @@ public class WaypointBasedMovement implements MovementBehaviour {
         public Path remainingPath() {
             return path.subPathUntilEnd(currentWaypoint);
         }
+    }
+    
+    @Override
+    public void clearPath() {
+        setPath(new Path(currentLocation));
+        
     }
 
     private class TravelStatus {

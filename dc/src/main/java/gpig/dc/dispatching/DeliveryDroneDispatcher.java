@@ -6,6 +6,7 @@ import java.util.List;
 
 import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
+import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.data.Path.Waypoint;
@@ -21,8 +22,8 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
         implements DeliveryDroneHeartbeatHandler, DeliveryAssignmentHandler {
 
     public DeliveryDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
-            DeploymentArea currentLocation) {
-        super(messager, recoveryStrategy, currentLocation, Constants.DELIVERY_DRONE_SPEED);
+            DeploymentArea currentLocation, MessageSender c2Messager) {
+        super(messager, recoveryStrategy, currentLocation, Constants.DELIVERY_DRONE_SPEED, c2Messager);
     }
 
     @Override
@@ -39,7 +40,7 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
     private Path calculatePathToDelivery(Location deliveryLocation) {
         if(currentLocation.deploymentArea.contains(deliveryLocation)){
             List<Waypoint> wps = Arrays.asList(new Waypoint(deliveryLocation), new Waypoint(getLocation()));
-            Path p = new Path(wps);
+            Path p = new Path(wps, currentLocation.deploymentArea.centre);
             return p;
         }
         
@@ -72,6 +73,12 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
         if(task.expectedReturnTime.isBefore(LocalDateTime.now())){
             addTask(task.task);
             unallocateTask(task.drone);
+            
+            DeliveryDroneHeartbeat ddh = new DeliveryDroneHeartbeat(task.drone, DroneState.CRASHED, allDrones.get(task.drone).location);
+            c2Messager.send(ddh);
+        }else{
+            DeliveryDroneHeartbeat ddh = new DeliveryDroneHeartbeat(task.drone, DroneState.FAULTY, allDrones.get(task.drone).location);
+            c2Messager.send(ddh);
         }
         
     }

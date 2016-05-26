@@ -1,13 +1,20 @@
 package gpig.c2;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import gpig.c2.config.C2Config;
 import gpig.c2.data.C2Data;
+import gpig.c2.data.external.DataExporter;
+import gpig.c2.data.external.DataImporter;
 import gpig.common.data.Location;
+import gpig.common.data.Path;
 import gpig.common.messages.FailCommand;
 import gpig.common.messages.FailCommand.FailType;
+import gpig.common.messages.SetPath;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.FallibleMessageSender;
 import gpig.common.networking.MessageReceiver;
@@ -24,8 +31,12 @@ public class C2 {
 	
 	private C2Config config;
 	private C2Data c2data;
+	
+	public C2(C2Config config){
+	    this(config, new C2Data());
+	}
 
-    public C2(C2Config config) {
+    public C2(C2Config config, C2Data data) {
         Log.info("Starting C2");
    
         this.config = config;
@@ -33,14 +44,20 @@ public class C2 {
         MessageReceiver msgFromDCs = new MessageReceiver();
         CommunicationChannel c2dcChannel = new CommunicationChannel(config.c2dcChannel, msgFromDCs);
         msgToDCs = new MessageSender(c2dcChannel);
-        c2data = new C2Data();
+        c2data = data;
         c2data.addAllHandlers(msgFromDCs);
 
         guiAdapterInbound = new GUIAdapterInbound(config.victimDetections,config.dcLocations, c2data);
         guiAdapterOutbound = new GUIAdapterOutbound(this);
         
         // Allocate DCs to deliver to detections
-        new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
+        DetectionAllocator alloc = new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
+        
+        new DataExporter(c2data);
+        DataImporter di = new DataImporter(config);
+        di.addHandler(c2data.getDetectionHandler());
+        di.addHandler(alloc);
+        di.start();
         
     }
 
@@ -59,6 +76,15 @@ public class C2 {
     	if(c2data.getNumberOfUndeployedDCs() > 0){
     		//deployment
     		//send request here
+
+            // TODO: find first undeployed DC
+            UUID dcToDeployTo = c2data.getDCLocations().keySet().stream().collect(Collectors.toList()).get(0);
+
+            // TODO: movement to the path instead of teleporting
+            Path path = new Path(location);
+            SetPath setPathCmd = new SetPath(path, dcToDeployTo);
+
+            msgToDCs.send(setPathCmd);
     		
     		c2data.setNumberOfUndeployedDCs(c2data.getNumberOfUndeployedDCs()-1);
     	}else{

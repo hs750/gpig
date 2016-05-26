@@ -17,7 +17,7 @@ public class DetectionHeartbeater extends Heartbeater {
 
     @Override
     protected void beat() {
-        DetectionDroneHeartbeat ddh = new DetectionDroneHeartbeat(thisDrone, stateProvier.getState(), locationProvider.getLocation());
+        DetectionDroneHeartbeat ddh = new DetectionDroneHeartbeat(thisDrone, stateProvier.getState(), locationProvider.currentLocation());
         messenger.send(ddh);
     }
 }

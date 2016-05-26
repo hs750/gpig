@@ -21,8 +21,11 @@ public class FallibleMessageSender extends MessageSender implements FailCommandH
     }
 
     public void setFailed(boolean failed) {
-        this.failed = failed;
-        Log.info("Comminications are %s", failed ? "down" : "restored");
+        if(failed != this.failed){
+            this.failed = failed;
+            Log.info("Comminications are %s", failed ? "down" : "restored");
+        }
+        
     }
     
     @Override

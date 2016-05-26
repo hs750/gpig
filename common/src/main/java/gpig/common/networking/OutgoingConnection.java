@@ -31,6 +31,8 @@ public class OutgoingConnection {
 
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(address.getHostAddress());
+		factory.setUsername("gpig");
+		factory.setPassword("gpig");
 		connection = factory.newConnection();
 		channel = connection.createChannel();
 

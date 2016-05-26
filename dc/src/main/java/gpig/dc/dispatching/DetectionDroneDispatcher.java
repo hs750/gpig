@@ -1,11 +1,13 @@
 package gpig.dc.dispatching;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
+import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.data.Path.Waypoint;
@@ -20,8 +22,8 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
     private final Kilometres edgeDistance = new Kilometres(8.6);
 
     public DetectionDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
-            DeploymentArea currentLocation) {
-        super(messager, recoveryStrategy, currentLocation, Constants.DETECTION_DRONE_SPEED);
+            DeploymentArea currentLocation, MessageSender c2Messager) {
+        super(messager, recoveryStrategy, currentLocation, Constants.DETECTION_DRONE_SPEED, c2Messager);
     }
 
     private ArrayList<Path> calculateSearchPattern() {
@@ -35,7 +37,7 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
 
             List<Waypoint> waypoints = Arrays.asList(new Waypoint(l1), new Waypoint(l2), new Waypoint(getLocation()));
 
-            Path p = new Path(waypoints);
+            Path p = new Path(waypoints, currentLocation.deploymentArea.centre);
             deployments.add(p);
 
         }
@@ -57,7 +59,7 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
 
     @Override
     protected void taskListEmpty() {
-        deployable = false; // stop attempting to deploy drones when task done
+        deployable = false; // stop attempting to setDeployed drones when task done
         Log.info("Detection sweep completed");
     }
 
@@ -66,6 +68,14 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
         // When a detection drone stops responding re-allocate its task to another drone
         addTask(task.task);
         unallocateTask(task.drone);
+        
+        if(task.expectedReturnTime.isBefore(LocalDateTime.now())){
+            DetectionDroneHeartbeat ddh = new DetectionDroneHeartbeat(task.drone, DroneState.CRASHED, allDrones.get(task.drone).location);
+            c2Messager.send(ddh);
+        }else{
+            DetectionDroneHeartbeat ddh = new DetectionDroneHeartbeat(task.drone, DroneState.FAULTY, allDrones.get(task.drone).location);
+            c2Messager.send(ddh);
+        }
         
     }
 

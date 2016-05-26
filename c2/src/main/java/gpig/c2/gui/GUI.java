@@ -3,6 +3,7 @@ package gpig.c2.gui;
 import processing.core.PApplet;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import gpig.common.data.ActorType;
 import gpig.common.data.Detection;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
+import gpig.common.data.Person.PersonType;
 import gpig.common.config.DetectionsConfig;
 import gpig.common.config.LocationsConfig;
 import gpig.common.util.Log;
@@ -41,7 +43,11 @@ public class GUI {
 	private URL deliveryDroneSoftFailURL = GUI.class.getResource("/DeliveryDroneSoftFail.png");
 	private URL detectionDroneHardFailURL = GUI.class.getResource("/DetectionDroneHardFail.png");
 	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
-	
+	private URL otherTeamDetectionURL = GUI.class.getResource("/OtherTeamDetection.png");
+	private URL otherTeamDeliveredURL = GUI.class.getResource("/OtherTeamDetectionDelivered.png");
+	private URL detectionImagesDirectory = GUI.class.getResource("/DetectionImages");
+	private URL[] detectionImageURLs;
+	private HashMap<UUID, URL> detectionImageMap;
 	
 	private JFrame detailsFrame;
 	private ControlPanel controlPanel;
@@ -53,9 +59,24 @@ public class GUI {
 	private UUID currentlySelectedActorID = null;
 	private ActorType currentlySelectedActorType = null;
 	
+	private boolean showDetectionDrones = true;
+	private boolean showDeliveryDrones = true;
+	private boolean showDCs = true;
+	private boolean showUndeliveredDetections = true;
+	private boolean showDeliveredDetections = true;
+	private boolean showExternalDetections = true;
+	
+	
 	public GUI(GUIAdapterInbound adapterInbound, GUIAdapterOutbound adapterOutbound){
 		this.adapterInbound = adapterInbound;
 		this.adapterOutbound = adapterOutbound;
+		
+		int numeberOfImages = new File(detectionImagesDirectory.getPath()).listFiles().length;
+		detectionImageURLs = new URL[numeberOfImages];
+		for(int i=0;i<detectionImageURLs.length;i++)
+			detectionImageURLs[i] = GUI.class.getResource("/DetectionImages/D"+i +".jpg");
+		detectionImageMap = new HashMap<>();
+		
 		
 		appletRunner = new AppletRunner(this);
 		appletRunner.start();
@@ -143,6 +164,10 @@ public class GUI {
 	    			controlPanel.disableCommsFailure();
 	    			controlPanel.disableEngineFailure();
 	        	}
+    	}else{
+			controlPanel.disableBatteryFailure();
+			controlPanel.disableCommsFailure();
+			controlPanel.disableEngineFailure();
     	}
     	
 		controlPanel.revalidate();
@@ -159,9 +184,17 @@ public class GUI {
     		Detection detection = adapterInbound.getDetectionByID(id);
    		
     		if(adapterInbound.hasBeenDeliveredTo(id)){
-    			infoPanel = new PersonInfoPanel(detection,true,ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		    if(detection.person.type == PersonType.CIVILIAN){
+    		        infoPanel = new PersonInfoPanel(detection,true,detectionImageMap.get(id),ActorType.PERSON,deliveredDetectionURL,infoPanelSize);
+    		    }else{
+    		        infoPanel = new PersonInfoPanel(detection,true,detectionImageMap.get(id),ActorType.PERSON,otherTeamDeliveredURL,infoPanelSize);
+    		    }
     		}else{
-    			infoPanel = new PersonInfoPanel(detection,false,ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		    if(detection.person.type == PersonType.CIVILIAN){
+    		        infoPanel = new PersonInfoPanel(detection,false,detectionImageMap.get(id),ActorType.PERSON,undeliveredDetectionURL,infoPanelSize);
+    		    }else{
+    		        infoPanel = new PersonInfoPanel(detection,false,detectionImageMap.get(id),ActorType.PERSON,otherTeamDetectionURL,infoPanelSize);
+    		    }
     		}
     		
     		detailsFrame.getContentPane().add(infoPanel,BorderLayout.CENTER);
@@ -272,8 +305,17 @@ public class GUI {
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
 		for(Detection detection:adapterInbound.getUndeliveredDetections()){
-			unfLocations.put(detection.person.id,
-					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    if(detection.person.type == PersonType.CIVILIAN){
+		        unfLocations.put(detection.person.id,
+		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    }
+			
+			if( ! detectionImageMap.containsKey(detection.person.id)){
+				int index = detectionImageMap.size()+1;
+				if(index>=detectionImageURLs.length)
+					index = 0;
+				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
+			}
 		}
 		
 		
@@ -285,13 +327,51 @@ public class GUI {
 		HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
 		
 		for(Detection detection:adapterInbound.getDeliveredDetections()){
-			unfLocations.put(detection.person.id,
-					new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    if(detection.person.type == PersonType.CIVILIAN){
+		        unfLocations.put(detection.person.id,
+		                new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+		    }
+		
+			if( ! detectionImageMap.containsKey(detection.person.id)){
+				int index = detectionImageMap.size()+1;
+				if(index>=detectionImageURLs.length)
+					index = 0;
+				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
+			}
 		}
-		
-		
+
 		return unfLocations;
 	}
+	
+	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getOtherTeamLocationsUndelivered() {
+        
+        HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+        
+        for(Detection detection:adapterInbound.getUndeliveredDetections()){
+            if(detection.person.type == PersonType.OTHER){
+                unfLocations.put(detection.person.id,
+                        new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+            }
+        }
+        
+        
+        return unfLocations;
+    }
+    
+    public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getOtherTeamLocationsDelivered() {
+        
+        HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> unfLocations = new HashMap<UUID,de.fhpotsdam.unfolding.geo.Location>();
+        
+        for(Detection detection:adapterInbound.getDeliveredDetections()){
+            if(detection.person.type == PersonType.OTHER){
+                unfLocations.put(detection.person.id,
+                        new de.fhpotsdam.unfolding.geo.Location(detection.person.location.latitude(),detection.person.location.longitude()));
+            }
+        }
+        
+        
+        return unfLocations;
+    }
 
 	public HashMap<UUID,de.fhpotsdam.unfolding.geo.Location> getDcLocations() {
 
@@ -433,6 +513,62 @@ public class GUI {
 		return deliveryDroneHardFailURL;
 	}
 	
+	public URL getOtherTeamDetectionURL(){
+	    return otherTeamDetectionURL;
+	}
+	
+	public URL getOtherTeamDeliveredURL(){
+	    return otherTeamDeliveredURL;
+	}
+	
+	public boolean isShowDetectionDrones() {
+		return showDetectionDrones;
+	}
+
+	public void setShowDetectionDrones(boolean showDetectionDrones) {
+		this.showDetectionDrones = showDetectionDrones;
+	}
+
+	public boolean isShowDeliveryDrones() {
+		return showDeliveryDrones;
+	}
+
+	public void setShowDeliveryDrones(boolean showDeliveryDrones) {
+		this.showDeliveryDrones = showDeliveryDrones;
+	}
+
+	public boolean isShowDCs() {
+		return showDCs;
+	}
+
+	public void setShowDCs(boolean showDCs) {
+		this.showDCs = showDCs;
+	}
+
+	public boolean isShowUndeliveredDetections() {
+		return showUndeliveredDetections;
+	}
+
+	public void setShowUndeliveredDetections(boolean showUndeliveredDetections) {
+		this.showUndeliveredDetections = showUndeliveredDetections;
+	}
+
+	public boolean isShowDeliveredDetections() {
+		return showDeliveredDetections;
+	}
+
+	public void setShowDeliveredDetections(boolean showDeliveredDetections) {
+		this.showDeliveredDetections = showDeliveredDetections;
+	}
+
+	public boolean isShowExternalDetections() {
+		return showExternalDetections;
+	}
+
+	public void setShowExternalDetections(boolean showExternalDetections) {
+		this.showExternalDetections = showExternalDetections;
+	}
+
 	public void setAdapterInbound(GUIAdapterInbound adapterInbound) {
 		this.adapterInbound = adapterInbound;
 	}
