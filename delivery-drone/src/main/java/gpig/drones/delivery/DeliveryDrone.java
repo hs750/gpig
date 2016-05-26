@@ -1,6 +1,7 @@
 package gpig.drones.delivery;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -69,7 +70,7 @@ public class DeliveryDrone {
 
     private void onAssignmentDelivery() {
         this.assignment.status = Assignment.AssignmentStatus.DELIVERED;
-        DeliveryNotification msg = new DeliveryNotification(new Date(), assignment);
+        DeliveryNotification msg = new DeliveryNotification(LocalDateTime.now(), assignment);
         msgToDC.send(msg);
     }
 
