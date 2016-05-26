@@ -91,7 +91,7 @@ public class DeploymentCentre {
 
         ses.scheduleAtFixedRate(() -> {
             if (isDeployed && movementBehaviour.isStationary()) {
-                deploy();
+                deployDrones();
             }
 
             movementBehaviour.step();
@@ -107,7 +107,7 @@ public class DeploymentCentre {
         isDeployed = true;
     }
 
-    private void deploy() {
+    private void deployDrones() {
         dtdd.deployDrones();
         dedd.deployDrones();
     }
