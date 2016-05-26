@@ -45,6 +45,9 @@ public class Path implements Iterable<Path.Waypoint> {
     }
 
     public Waypoint get(int i) {
+        if(i >= waypoints.size()){
+            return waypoints.get(waypoints.size() - 1);
+        }
         return waypoints.get(i);
     }
 
