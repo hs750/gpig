@@ -59,7 +59,7 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
 
     @Override
     protected void taskListEmpty() {
-        deployable = false; // stop attempting to deploy drones when task done
+        deployable = false; // stop attempting to setDeployed drones when task done
         Log.info("Detection sweep completed");
     }
 

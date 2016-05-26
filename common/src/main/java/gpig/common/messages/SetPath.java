@@ -21,4 +21,8 @@ public class SetPath {
         path = null;
         assignee = null;
     }
+
+    public boolean isFor(UUID uuid) {
+        return assignee.equals(uuid);
+    }
 }

@@ -2,15 +2,19 @@ package gpig.c2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import gpig.c2.config.C2Config;
 import gpig.c2.data.C2Data;
 import gpig.c2.data.external.DataExporter;
 import gpig.c2.data.external.DataImporter;
 import gpig.common.data.Location;
+import gpig.common.data.Path;
 import gpig.common.messages.FailCommand;
 import gpig.common.messages.FailCommand.FailType;
+import gpig.common.messages.SetPath;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.FallibleMessageSender;
 import gpig.common.networking.MessageReceiver;
@@ -72,6 +76,15 @@ public class C2 {
     	if(c2data.getNumberOfUndeployedDCs() > 0){
     		//deployment
     		//send request here
+
+            // TODO: find first undeployed DC
+            UUID dcToDeployTo = c2data.getDCLocations().keySet().stream().collect(Collectors.toList()).get(0);
+
+            // TODO: movement to the path instead of teleporting
+            Path path = new Path(location);
+            SetPath setPathCmd = new SetPath(path, dcToDeployTo);
+
+            msgToDCs.send(setPathCmd);
     		
     		c2data.setNumberOfUndeployedDCs(c2data.getNumberOfUndeployedDCs()-1);
     	}else{

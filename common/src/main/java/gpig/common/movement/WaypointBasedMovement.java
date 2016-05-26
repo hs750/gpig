@@ -6,6 +6,7 @@ import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.units.KMPH;
 import gpig.common.units.Kilometres;
+import gpig.common.util.Log;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -24,7 +25,7 @@ public class WaypointBasedMovement implements MovementBehaviour {
         this.currentLocation = initialLocation;
         this.vehicleSpeed = speed;
         this.path = null;
-        this.lastUpdateTime = LocalDateTime.now();
+        this.lastUpdateTime = null;
         this.failsafeBehaviour = failsafeBehaviour;
     }
 
@@ -39,10 +40,19 @@ public class WaypointBasedMovement implements MovementBehaviour {
         return currentLocation;
     }
 
+    public boolean isMoving() {
+        return path != null && !path.isAtEnd();
+    }
+
     public Location step() {
-        if (path == null) {
+        if (!isMoving()) {
             // No target, so the drone stays where it is
-            return currentLocation;
+            return currentLocation();
+        }
+
+        if (lastUpdateTime == null) {
+            lastUpdateTime = LocalDateTime.now();
+            return currentLocation();
         }
 
         // Switch over to the failsafe path if the battery failsafe behaviour is triggered
@@ -57,7 +67,8 @@ public class WaypointBasedMovement implements MovementBehaviour {
         // Find the amount of time which elapsed since the drone's location was
         // last calculated
         LocalDateTime currentUpdateTime = LocalDateTime.now();
-        long secondsSinceLastEvent = ChronoUnit.SECONDS.between(lastUpdateTime, currentUpdateTime);
+        long millisecondsSinceLastEvent = ChronoUnit.MILLIS.between(lastUpdateTime, currentUpdateTime);
+        double secondsSinceLastEvent = millisecondsSinceLastEvent / 100.0;
         double hoursSinceLastEvent = ((secondsSinceLastEvent / 60.0) / 60.0);
 
         // Calculate the distance travelled by the drone since the last update
