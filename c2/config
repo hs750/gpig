@@ -45,7 +45,9 @@
 			     }
 	    ]	
 		
-	}
+	},
+	
+	"interoperabilityInputs": ["file:interop.xml"]
 	
 	
 }

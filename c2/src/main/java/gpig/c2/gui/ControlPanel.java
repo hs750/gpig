@@ -9,12 +9,15 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -50,6 +53,14 @@ public class ControlPanel extends JPanel{
 	protected JButton failBatteryB;
 	protected JButton failCommsB;
 	protected JButton failEngineB;
+	
+	//checkbox filters
+	protected JCheckBox showDetectionDronesCB;
+	protected JCheckBox showDeliveryDronesCB;
+	protected JCheckBox showDCsCB;
+	protected JCheckBox showDeliveredDetectionsCB;
+	protected JCheckBox showUndeliveredDetectionsCB;
+	protected JCheckBox showExternalDetectionsCB;
 	
 	
 	public ControlPanel(GUI gui,Dimension size) {
@@ -92,21 +103,39 @@ public class ControlPanel extends JPanel{
 		failCommsB = new JButton("Fail Comms");
 		failEngineB = new JButton("Fail Engine");
 		
-		//cant make the buttons the same size
-		//deployB.setPreferredSize(failBatteryB.getPreferredSize());
-		deployB.setPreferredSize(new Dimension((int)buttonWidth,deployB.getHeight()));
-		reDeployB.setPreferredSize(new Dimension((int)buttonWidth,reDeployB.getHeight()));
-		failBatteryB.setPreferredSize(new Dimension((int)buttonWidth,failBatteryB.getHeight()));
-		failCommsB.setPreferredSize(new Dimension((int)buttonWidth,failCommsB.getHeight()));
-		failEngineB.setPreferredSize(new Dimension((int)buttonWidth,failEngineB.getHeight()));
+		//checkbox filters
 		
+		showDetectionDronesCB = new JCheckBox("Detection Drones");
+		showDeliveryDronesCB = new JCheckBox("Delivery Drones");
+		showDCsCB = new JCheckBox("Deployment Centres");
+		showDeliveredDetectionsCB = new JCheckBox("Delivered Detections");
+		showUndeliveredDetectionsCB = new JCheckBox("Undelivered Detections");
+		showExternalDetectionsCB = new JCheckBox("External Detections");
 		
+		//check box backgrounds
+		
+		showDetectionDronesCB.setOpaque(false);
+		showDeliveryDronesCB.setOpaque(false);
+		showDCsCB.setOpaque(false);
+		showDeliveredDetectionsCB.setOpaque(false);
+		showUndeliveredDetectionsCB.setOpaque(false);
+		showExternalDetectionsCB.setOpaque(false);
+		
+		//initial states
 		deployB.setEnabled(false);
 		reDeployB.setEnabled(false);
 		failBatteryB.setEnabled(false);
 		failCommsB.setEnabled(false);
 		failEngineB.setEnabled(false);
 		
+		showDetectionDronesCB.setSelected(true);
+		showDeliveryDronesCB.setSelected(true);
+		showDCsCB.setSelected(true);
+		showDeliveredDetectionsCB.setSelected(true);
+		showUndeliveredDetectionsCB.setSelected(true);
+		showExternalDetectionsCB.setSelected(true);
+		
+		//listeners
 		deployB.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 			    deployB.setEnabled(false);
@@ -161,22 +190,77 @@ public class ControlPanel extends JPanel{
 			  } 
 			});
 		
-
+		showDetectionDronesCB.addItemListener(new ItemListener() {
+	         public void itemStateChanged(ItemEvent e) {         
+	             if(e.getStateChange() == ItemEvent.DESELECTED){
+	            	 gui.setShowDetectionDrones(false);
+	             }else if(e.getStateChange() == ItemEvent.SELECTED){
+	            	 gui.setShowDetectionDrones(true);
+	             }
+	          }           
+	       });
 		
-		//butons formatting
-		//deployB.setBackground(backgroundColour);
-		//reDeployB.setBackground(backgroundColour);
+		showDeliveryDronesCB.addItemListener(new ItemListener() {
+	         public void itemStateChanged(ItemEvent e) {         
+	             if(e.getStateChange() == ItemEvent.DESELECTED){
+	            	 gui.setShowDeliveryDrones(false);
+	             }else if(e.getStateChange() == ItemEvent.SELECTED){
+	            	 gui.setShowDeliveryDrones(true);
+	             }
+	          }           
+	       });
 		
+		showDCsCB.addItemListener(new ItemListener() {
+	         public void itemStateChanged(ItemEvent e) {         
+	             if(e.getStateChange() == ItemEvent.DESELECTED){
+	            	 gui.setShowDCs(false);
+	             }else if(e.getStateChange() == ItemEvent.SELECTED){
+	            	 gui.setShowDCs(true);
+	             }
+	          }           
+	       });
+		
+		showDeliveredDetectionsCB.addItemListener(new ItemListener() {
+	         public void itemStateChanged(ItemEvent e) {         
+	             if(e.getStateChange() == ItemEvent.DESELECTED){
+	            	 gui.setShowDeliveredDetections(false);
+	             }else if(e.getStateChange() == ItemEvent.SELECTED){
+	            	 gui.setShowDeliveredDetections(true);
+	             }
+	          }           
+	       });
+		
+		showUndeliveredDetectionsCB.addItemListener(new ItemListener() {
+	         public void itemStateChanged(ItemEvent e) {         
+	             if(e.getStateChange() == ItemEvent.DESELECTED){
+	            	 gui.setShowUndeliveredDetections(false);
+	             }else if(e.getStateChange() == ItemEvent.SELECTED){
+	            	 gui.setShowUndeliveredDetections(true);
+	             }
+	          }           
+	       });
+		
+		showExternalDetectionsCB.addItemListener(new ItemListener() {
+	         public void itemStateChanged(ItemEvent e) {         
+	             if(e.getStateChange() == ItemEvent.DESELECTED){
+	            	 gui.setShowExternalDetections(false);
+	             }else if(e.getStateChange() == ItemEvent.SELECTED){
+	            	 gui.setShowExternalDetections(true);
+	             }
+	          }           
+	       });
+			
 		//fonts
 		selectedLatLN.setFont(fieldNameFont);
 		selectedLonLN.setFont(fieldNameFont);
 		
 		selectedLatL.setFont(fieldContentsFont);
-		selectedLonL.setFont(fieldContentsFont);
+		selectedLonL.setFont(fieldContentsFont);	
 
+		
+		//add labels
 		c.fill = GridBagConstraints.VERTICAL;
 		c.anchor = GridBagConstraints.WEST;
-		//cst.weightx = 0.3;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 0;
@@ -207,31 +291,32 @@ public class ControlPanel extends JPanel{
 		c.gridy = 1;
 		add(selectedLonL,c);
 		
-		c.fill = GridBagConstraints.VERTICAL;
-		c.anchor = GridBagConstraints.EAST;
+		//add buttons
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 0;
 		c.gridy = 2;
 		add(deployB,c);
 		
-		c.fill = GridBagConstraints.VERTICAL;
-		c.anchor = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 1;
 		c.gridy = 2;
 		add(reDeployB,c);
 		
-		c.fill = GridBagConstraints.VERTICAL;
-		c.anchor = GridBagConstraints.EAST;
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 0;
 		c.gridy = 3;
 		add(failBatteryB,c);
 		
-		c.fill = GridBagConstraints.VERTICAL;
+		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.WEST;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
@@ -239,13 +324,64 @@ public class ControlPanel extends JPanel{
 		c.gridy = 3;
 		add(failCommsB,c);
 		
-		c.fill = GridBagConstraints.VERTICAL;
+		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.WEST;
 		c.weighty = 0.5;
 		c.gridwidth = 1;
 		c.gridx = 2;
 		c.gridy = 3;
 		add(failEngineB,c);
+		
+		//add checkboxes
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 4;
+		add(showDeliveredDetectionsCB,c);
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 1;
+		c.gridy = 4;
+		add(showUndeliveredDetectionsCB,c);
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 2;
+		c.gridy = 4;
+		add(showExternalDetectionsCB,c);
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 5;
+		add(showDCsCB,c);
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 1;
+		c.gridy = 5;
+		add(showDetectionDronesCB,c);
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.WEST;
+		c.weighty = 0.5;
+		c.gridwidth = 1;
+		c.gridx = 2;
+		c.gridy = 5;
+		add(showDeliveryDronesCB,c);
+		
 	}
 	
 	public void selectLocation(Location location){

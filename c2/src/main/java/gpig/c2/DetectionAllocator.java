@@ -1,7 +1,10 @@
 package gpig.c2;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -25,18 +28,26 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
     private C2Data database;
     private MessageSender dcMessageSender;
     private ConcurrentLinkedQueue<DetectionNotification> unallocatedDeliveries;
+    private ConcurrentLinkedQueue<DetectionNotification> unableDeliveries;
+    private Set<Location> serviceLocations;
 
     public DetectionAllocator(MessageSender dcMessageSender, MessageReceiver dcMessenger, C2Data database) {
         this.database = database;
         dcMessenger.addHandler(this);
         this.dcMessageSender = dcMessageSender;
         unallocatedDeliveries = new ConcurrentLinkedQueue<>();
+        unableDeliveries = new ConcurrentLinkedQueue<>();
+        serviceLocations = Collections.synchronizedSet(new HashSet<>());
         start();
     }
 
     @Override
     public void handle(DetectionNotification message) {
-        unallocatedDeliveries.add(message);
+        boolean newLoc = serviceLocations.add(message.detection.person.location);
+        if (newLoc) {
+            unallocatedDeliveries.add(message);
+        }
+
     }
 
     @Override
@@ -67,10 +78,17 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                     Log.info("Delivery to %s assigned to %s", message.detection.person.location.toString(), closestDC);
                 } else {
                     // Attempt delivery assignment later.
-                    unallocatedDeliveries.add(message);
+                    unableDeliveries.add(message);
                     Log.warn("Unable to assign delivery to %s", message.detection.person.location.toString());
                 }
             } else {
+                // If detection was un-assignable first time around, only
+                // re-attempt one assignment a second.
+                DetectionNotification dn = unableDeliveries.poll();
+                if (dn != null) {
+                    unallocatedDeliveries.add(dn);
+                }
+                
                 // Wait for detections to need servicing.
                 try {
                     Thread.sleep(1000);

@@ -15,6 +15,16 @@ public class C2DetectionNotificationHandler implements DetectionNotificationHand
 
     @Override
     public void handle(DetectionNotification message) {
-        detections.add(message.detection);
+
+        // Only add detections that don't already exist (based on detection
+        // Locations matching exactly)
+        if (!detectionExists(message.detection)) {
+            detections.add(message.detection);
+        }
+
+    }
+
+    protected boolean detectionExists(Detection det) {
+        return detections.stream().filter(d -> d.person.location.equals(det.person.location)).findFirst().isPresent();
     }
 }
