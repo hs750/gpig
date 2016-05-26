@@ -3,7 +3,12 @@ package gpig.dc.dispatching;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import gpig.common.data.Assignment;
 import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.DroneState;
@@ -12,14 +17,16 @@ import gpig.common.data.Path;
 import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.DeliveryAssignment;
 import gpig.common.messages.DeliveryDroneHeartbeat;
+import gpig.common.messages.DeliveryNotification;
 import gpig.common.messages.handlers.DeliveryAssignmentHandler;
 import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
+import gpig.common.messages.handlers.DeliveryNotificationHandler;
 import gpig.common.movement.RecoveryStrategy;
 import gpig.common.networking.MessageSender;
 import gpig.common.util.Log;
 
 public class DeliveryDroneDispatcher extends DroneDispatcher
-        implements DeliveryDroneHeartbeatHandler, DeliveryAssignmentHandler {
+        implements DeliveryDroneHeartbeatHandler, DeliveryAssignmentHandler, DeliveryNotificationHandler {
 
     public DeliveryDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
             DeploymentArea currentLocation, MessageSender c2Messager) {
@@ -55,7 +62,7 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
             Log.warn("Unable to schedule delivery to %s", l);
         }else{
             Log.info("Delivery scheduled to %s", l);
-            addTask(p);
+            addTask(new Task(p, message.assignment));
         }
 
     }
@@ -81,6 +88,16 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
             c2Messager.send(ddh);
         }
         
+    }
+
+    @Override
+    public void handle(DeliveryNotification message) {
+        Optional<Assignment> a = allocatedTasks.get(message.deliveryDrone).task.assignment;
+        if(a.isPresent()){
+            c2Messager.send(new DeliveryNotification(message.timestamp, a.get()));
+        }else{
+            Log.error("Unable to forward delivery notification for drone " + message.deliveryDrone);
+        }
     }
 
 }
