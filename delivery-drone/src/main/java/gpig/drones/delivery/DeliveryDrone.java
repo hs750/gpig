@@ -1,18 +1,20 @@
 package gpig.drones.delivery;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import gpig.common.data.Assignment;
+import gpig.common.battery.Battery;
+import gpig.common.data.Constants;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
-import gpig.common.data.Path;
-import gpig.common.messages.DeliveryNotification;
+import gpig.common.messages.heartbeater.LocationProvider;
+import gpig.common.messages.heartbeater.StateProvider;
+import gpig.common.movement.MovementBehaviour;
+import gpig.common.movement.WaypointBasedMovement;
+import gpig.common.movement.failsafe.BatteryLevelLowFailsafe;
 import gpig.common.networking.CommunicationChannel;
 import gpig.common.networking.FallibleMessageSender;
 import gpig.common.networking.MessageReceiver;
@@ -21,58 +23,59 @@ import gpig.drones.delivery.config.DeliveryDroneConfig;
 
 public class DeliveryDrone {
     private final FallibleMessageSender msgToDC;
-    private UUID thisDrone;
-    private DroneState state;
-    private Location location;
-    private Assignment assignment;
-    private Path path;
+    UUID thisDrone;
+    private StateProvider state;
+    MovementBehaviour movementBehaviour;
+    private Battery battery;
+    Location dcLocation;
 
     public DeliveryDrone(DeliveryDroneConfig config) {
         Log.info("Starting delivery drone");
 
         thisDrone = UUID.randomUUID();
-        this.state = DroneState.UNDEPLOYED;
 
         MessageReceiver msgFromDC = new MessageReceiver();
         CommunicationChannel dtdcChannel = new CommunicationChannel(config.dedcChannel, msgFromDC);
         msgToDC = new FallibleMessageSender(dtdcChannel, thisDrone);
-
-        msgFromDC.addHandler(new DeliveryDroneAssignmentHandler(this));
+        
+        state = new StateProvider();
+        dcLocation = new Location(0,0);
+        
+        battery = new Battery(Constants.AERIAL_VEHICLE_BATTERY_DURATION);
+        Location homeLocation = new Location(0.0, 0.0);
+        movementBehaviour = new WaypointBasedMovement(homeLocation, Constants.DETECTION_DRONE_SPEED, new BatteryLevelLowFailsafe(battery, homeLocation));
+    
+        msgFromDC.addHandler(new DeliveryPathHandler(this));
+        msgFromDC.addHandler(new DeliveryFatalFailureHandler(this));
+        
+        new DeliveryHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
     }
 
     public void run() {
-        // Put logic to tick, move and deliver.
-        // On delivery, call "onAssignmentDelivery" method.
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+
+        ses.scheduleAtFixedRate(() -> {
+            if(isDeployed()){
+                movementBehaviour.step();
+                if(movementBehaviour.currentLocation().equals(dcLocation)){
+                    Log.info("Returned to DC");
+                    setReturned();
+                }
+            }
+            
+        }, 0, 50, TimeUnit.MILLISECONDS);
     }
 
     public DroneState getState() {
-        return this.state;
+        return this.state.getState();
     }
 
-    public void assign(Assignment assignment) {
-        if (this.assignment == null || this.assignment.status == Assignment.AssignmentStatus.DELIVERED) {
-            this.assignment = assignment;
-            calculatePath();
-        }
-    }
 
-    private void calculatePath() {
-        Location deliveryDestination = assignment.detection.person.location;
-        Location returnDestination = this.location;
-
-        List<Path.Waypoint> waypoints = Collections.synchronizedList(new ArrayList<>());
-        waypoints.add(new Path.Waypoint(deliveryDestination));
-        waypoints.add(new Path.Waypoint(returnDestination));
-
-        Path path = new Path(waypoints);
-        this.path = path;
-    }
-
-    private void onAssignmentDelivery() {
-        this.assignment.status = Assignment.AssignmentStatus.DELIVERED;
-        DeliveryNotification msg = new DeliveryNotification(LocalDateTime.now(), assignment);
-        msgToDC.send(msg);
-    }
+//    private void onAssignmentDelivery() {
+//        this.assignment.status = Assignment.AssignmentStatus.DELIVERED;
+//        DeliveryNotification msg = new DeliveryNotification(LocalDateTime.now(), assignment);
+//        msgToDC.send(msg);
+//    }
 
     public static void main(String... args) throws IOException {
         if (args.length != 1) {
@@ -84,5 +87,21 @@ public class DeliveryDrone {
 
         DeliveryDrone drone = new DeliveryDrone(conf);
         drone.run();
+    }
+    
+    public void setDeployed(){
+        state.setOutbound();
+    }
+    
+    public void setReturned(){
+        state.setUndeployed();
+    }
+    
+    public boolean isDeployed(){
+        return state.getState() != DroneState.UNDEPLOYED;
+    }
+    
+    public void setCrashed(){
+        state.setCrashed();
     }
 }
