@@ -13,5 +13,7 @@ public interface MovementBehaviour {
 
     void setPath(Path path);
     Location step();
+    
+    void clearPath();
 
 }

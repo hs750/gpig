@@ -171,6 +171,12 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
             return path.subPathUntilEnd(currentWaypoint);
         }
     }
+    
+    @Override
+    public void clearPath() {
+        setPath(new Path(currentLocation));
+        
+    }
 
     private class TravelStatus {
         public final Location newLocation;

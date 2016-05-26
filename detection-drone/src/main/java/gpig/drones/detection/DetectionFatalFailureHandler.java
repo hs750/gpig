@@ -1,6 +1,5 @@
 package gpig.drones.detection;
 
-import gpig.common.data.Path;
 import gpig.common.messages.FailCommand;
 import gpig.common.messages.FailCommand.FailType;
 import gpig.common.messages.handlers.FailCommandHandler;
@@ -18,9 +17,7 @@ public class DetectionFatalFailureHandler implements FailCommandHandler {
             if (message.type == FailType.FATAL) {
                 det.setCrashed();
 
-                // Set the path to the current location (aka. stop moving)
-                Path p = new Path(det.movementBehaviour.currentLocation());
-                det.movementBehaviour.setPath(p);
+                det.movementBehaviour.clearPath();
             }
         }
 
