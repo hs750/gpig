@@ -112,7 +112,10 @@ public abstract class DroneDispatcher extends Thread {
     }
 
     public void handle(DroneHeartbeat heartbeat) {
-        allDrones.put(heartbeat.origin, heartbeat);
+        DroneHeartbeat dh = allDrones.put(heartbeat.origin, heartbeat);
+        if(dh == null){
+            Log.info("Descovered new drone " + heartbeat.getClass().getSimpleName() + " " + heartbeat.origin);
+        }
 
         if (heartbeat.state == DroneState.UNDEPLOYED) {
             unallocateTask(heartbeat.origin);
