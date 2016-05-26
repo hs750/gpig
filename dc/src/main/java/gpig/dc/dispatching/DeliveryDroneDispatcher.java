@@ -40,7 +40,7 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
     private Path calculatePathToDelivery(Location deliveryLocation) {
         if(currentLocation.deploymentArea.contains(deliveryLocation)){
             List<Waypoint> wps = Arrays.asList(new Waypoint(deliveryLocation), new Waypoint(getLocation()));
-            Path p = new Path(wps);
+            Path p = new Path(wps, currentLocation.deploymentArea.centre);
             return p;
         }
         

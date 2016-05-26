@@ -1,20 +1,20 @@
 package gpig.common.movement;
 
-import com.javadocmd.simplelatlng.LatLngTool;
-import gpig.common.data.Constants;
-import gpig.common.data.Location;
-import gpig.common.data.Path;
-import gpig.common.units.KMPH;
-import gpig.common.units.Kilometres;
-import gpig.common.util.Log;
+import static gpig.common.units.Units.kilometres;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import static gpig.common.units.Units.kilometres;
+import gpig.common.data.Constants;
+import gpig.common.data.Location;
+import gpig.common.data.Path;
+import gpig.common.messages.heartbeater.LocationProvider;
+import gpig.common.units.KMPH;
+import gpig.common.units.Kilometres;
+import gpig.common.util.Log;
 
-public class WaypointBasedMovement implements MovementBehaviour {
+public class WaypointBasedMovement implements MovementBehaviour, LocationProvider {
     private Location currentLocation;
     private InTraversalPath path;
     private LocalDateTime lastUpdateTime;
@@ -124,6 +124,7 @@ public class WaypointBasedMovement implements MovementBehaviour {
             path.advance();
 
             if (path.isAtEnd()) {
+                Log.info("Path end reached");
                 return new TravelStatus(newLocation, kilometres(0.0), Status.FINISHED);
             } else {
                 return new TravelStatus(newLocation, remainingDistance, Status.REACHED_WAYPOINT);
@@ -169,6 +170,12 @@ public class WaypointBasedMovement implements MovementBehaviour {
         public Path remainingPath() {
             return path.subPathUntilEnd(currentWaypoint);
         }
+    }
+    
+    @Override
+    public void clearPath() {
+        setPath(new Path(currentLocation));
+        
     }
 
     private class TravelStatus {

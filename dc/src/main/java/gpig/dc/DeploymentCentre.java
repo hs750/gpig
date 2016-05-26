@@ -36,6 +36,9 @@ public class DeploymentCentre {
 
     private boolean isDeployed = false;
 
+    private DetectionDroneDispatcher dtdd;
+    private DeliveryDroneDispatcher dedd;
+
     public DeploymentCentre(DCConfig config) {
         id = UUID.randomUUID();
         Log.info("Starting mobile deployment centre: %s", id);
@@ -54,16 +57,20 @@ public class DeploymentCentre {
         MessageReceiver msgFromDes = new MessageReceiver();
         CommunicationChannel dcdeChannel = new CommunicationChannel(config.dcdeChannel, msgFromDes);
         MessageSender msgToDes = new MessageSender(dcdeChannel);
+
+        Location initialLocation = config.dcLocations.locations.get(0);
         
-        DetectionDroneDispatcher dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_SEARCH_RADIUS), msgToC2); //TODO create this object when a true locaiton is known.
+        dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(),
+                new DeploymentArea(initialLocation, Constants.DEPLOYMENT_SEARCH_RADIUS), msgToC2);
         msgFromDts.addHandler(dtdd);
-        
-        DeliveryDroneDispatcher dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(), new DeploymentArea(new Location(0, 0), Constants.DEPLOYMENT_DELIVERY_RADIUS), msgToC2); //TODO create this object when a true locaiton is known.
+
+        dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(),
+                new DeploymentArea(initialLocation, Constants.DEPLOYMENT_DELIVERY_RADIUS), msgToC2);
         msgFromDes.addHandler((DeliveryDroneHeartbeatHandler) dedd);
 
-        //Forward messages from drones to C2
+        // Forward messages from drones to C2
         new DroneMessageForwarder(msgToC2, msgFromDts, msgFromDes);
-        
+
         // Recover Drones
         new DroneRecaller(id, msgFromC2, dtdd, dedd);
 
@@ -73,7 +80,7 @@ public class DeploymentCentre {
         DCPathHandler pathHandler = new DCPathHandler(this);
         msgFromC2.addHandler(pathHandler);
 
-        Location initialLocation = config.dcLocations.locations.get(0);
+        
 
         // FIXME: Use real DC speed
         movementBehaviour = new WaypointBasedMovement(initialLocation, kilometresPerHour(150.0), new NoFailsafe());
@@ -84,11 +91,13 @@ public class DeploymentCentre {
 
         ses.scheduleAtFixedRate(() -> {
             if (isDeployed && movementBehaviour.isStationary()) {
-                deploy();
+                deployDrones();
             }
 
             movementBehaviour.step();
-
+            dtdd.setCurrentLocation(new DeploymentArea(this.location(), Constants.DEPLOYMENT_SEARCH_RADIUS));
+            dedd.setCurrentLocation(new DeploymentArea(this.location(), Constants.DEPLOYMENT_DELIVERY_RADIUS));
+            
             DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location());
             msgToC2.send(msg);
         }, 0, 50, TimeUnit.MILLISECONDS);
@@ -98,8 +107,9 @@ public class DeploymentCentre {
         isDeployed = true;
     }
 
-    private void deploy() {
-
+    private void deployDrones() {
+        dtdd.deployDrones();
+        dedd.deployDrones();
     }
 
     private Location location() {

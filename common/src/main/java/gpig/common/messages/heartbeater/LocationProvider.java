@@ -5,5 +5,5 @@ import gpig.common.data.Location;
 @FunctionalInterface
 public interface LocationProvider {
 
-    public Location getLocation();
+    public Location currentLocation();
 }

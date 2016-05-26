@@ -23,6 +23,10 @@ import static gpig.common.units.Units.kilometres;
 @JsonDeserialize(using = Location.LocationDeserializer.class)
 public class Location {
     final LatLng location;
+    
+    // locations are the same if they are within this margin of eachother.
+    // Half meter.
+    private static final Kilometres LOCATION_EQUALITY_MARGIN = kilometres(0.0005);
 
     public Location(double latitude, double longitude) {
         location = new LatLng(latitude, longitude);
@@ -89,7 +93,7 @@ public class Location {
         if (location == null) {
             if (other.location != null)
                 return false;
-        } else if (!location.equals(other.location))
+        } else if (!isAt(other))
             return false;
         return true;
     }
@@ -101,6 +105,12 @@ public class Location {
     @Override
     public String toString() {
         return location.toString();
+    }
+    
+    public boolean isAt(Location l){
+        CircularArea area = new CircularArea(this, LOCATION_EQUALITY_MARGIN);
+        return area.contains(l);
+        
     }
 
     public static class LocationSerializer extends JsonSerializer<Location> {

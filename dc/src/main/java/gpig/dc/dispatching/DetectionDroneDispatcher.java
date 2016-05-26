@@ -37,7 +37,7 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
 
             List<Waypoint> waypoints = Arrays.asList(new Waypoint(l1), new Waypoint(l2), new Waypoint(getLocation()));
 
-            Path p = new Path(waypoints);
+            Path p = new Path(waypoints, currentLocation.deploymentArea.centre);
             deployments.add(p);
 
         }
