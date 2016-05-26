@@ -61,11 +61,11 @@ public class DeploymentCentre {
         Location initialLocation = config.dcLocations.locations.get(0);
         
         dtdd = new DetectionDroneDispatcher(msgToDts, new ImmediateReturn(),
-                new DeploymentArea(initialLocation, Constants.DEPLOYMENT_SEARCH_RADIUS));
+                new DeploymentArea(initialLocation, Constants.DEPLOYMENT_SEARCH_RADIUS), msgToC2);
         msgFromDts.addHandler(dtdd);
 
         dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(),
-                new DeploymentArea(initialLocation, Constants.DEPLOYMENT_DELIVERY_RADIUS));
+                new DeploymentArea(initialLocation, Constants.DEPLOYMENT_DELIVERY_RADIUS), msgToC2);
         msgFromDes.addHandler((DeliveryDroneHeartbeatHandler) dedd);
 
         // Forward messages from drones to C2

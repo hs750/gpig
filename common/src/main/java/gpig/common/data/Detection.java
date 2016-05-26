@@ -20,4 +20,41 @@ public class Detection {
         timestamp = null;
         image = null;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((image == null) ? 0 : image.hashCode());
+        result = prime * result + ((person == null) ? 0 : person.hashCode());
+        result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Detection other = (Detection) obj;
+        if (image == null) {
+            if (other.image != null)
+                return false;
+        } else if (!image.equals(other.image))
+            return false;
+        if (person == null) {
+            if (other.person != null)
+                return false;
+        } else if (!person.equals(other.person))
+            return false;
+        if (timestamp == null) {
+            if (other.timestamp != null)
+                return false;
+        } else if (!timestamp.equals(other.timestamp))
+            return false;
+        return true;
+    }
 }

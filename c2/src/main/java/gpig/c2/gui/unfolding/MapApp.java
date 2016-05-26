@@ -88,21 +88,24 @@ public class MapApp extends PApplet {
 		
 		map.getMarkerManager(0).clearMarkers();
 		
-		//add detections
+		//add actors
 		HashMap<UUID,Location> idmap;
 		
-		idmap = gui.getDetectionLocationsUndelivered();
-		for(UUID id : idmap.keySet()){
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id,
-					idmap.get(id),ActorType.PERSON,
-					loadImage(gui.getUndeliveredDetectionURL().toString())
-					);
-			map.addMarker(imgMrk);
+		if(gui.isShowUndeliveredDetections()){
+			idmap = gui.getDetectionLocationsUndelivered();
+			for(UUID id : idmap.keySet()){
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id,
+						idmap.get(id),ActorType.PERSON,
+						loadImage(gui.getUndeliveredDetectionURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
 		}
 		
+		if(gui.isShowDeliveredDetections()){
 		idmap = gui.getDetectionLocationsDelivered();
 		for(UUID id : idmap.keySet()){
 			ImageMarker imgMrk = new ImageMarker(
@@ -114,108 +117,156 @@ public class MapApp extends PApplet {
 					);
 			map.addMarker(imgMrk);
 		}
+		}
 		
+		if(gui.isShowUndeliveredDetections() && gui.isShowExternalDetections()){
 		
+		idmap = gui.getOtherTeamLocationsUndelivered();
+        for(UUID id : idmap.keySet()){
+            ImageMarker imgMrk = new ImageMarker(
+                    imageMarkersWidth,
+                    imageMarkersHeight,
+                    id,
+                    idmap.get(id),ActorType.PERSON,
+                    loadImage(gui.getOtherTeamDetectionURL().toString())
+                    );
+            map.addMarker(imgMrk);
+        }
+		}
+		
+		if(gui.isShowDeliveredDetections() && gui.isShowExternalDetections()){
+		
+		idmap = gui.getOtherTeamLocationsDelivered();
+        for(UUID id : idmap.keySet()){
+            ImageMarker imgMrk = new ImageMarker(
+                    imageMarkersWidth,
+                    imageMarkersHeight,
+                    id,
+                    idmap.get(id),ActorType.PERSON,
+                    loadImage(gui.getOtherTeamDeliveredURL().toString())
+                    );
+            map.addMarker(imgMrk);
+        }
+		}
 		
 		//add dcs
-		idmap = gui.getDcLocations();
-		for(UUID id : idmap.keySet()){
-			
-			
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id, idmap.get(id),
-					ActorType.DEPLOYMENT_CENTRE,
-					loadImage(gui.getDcURL().toString())
-					);
-			map.addMarker(imgMrk);
-		}
+		if(gui.isShowDCs()){
 		
+			idmap = gui.getDcLocations();
+			for(UUID id : idmap.keySet()){
+				
+				
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id, idmap.get(id),
+						ActorType.DEPLOYMENT_CENTRE,
+						loadImage(gui.getDcURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
+		}
 		
 		//add drones
-		idmap = gui.getDetectionDroneLocations();
-		for(UUID id : idmap.keySet()){
+		if(gui.isShowDetectionDrones()){
 			
-			
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id, idmap.get(id),
-					ActorType.DETECTION_DRONE,
-					loadImage(gui.getDetectionDroneNormalURL().toString())
-					);
-			map.addMarker(imgMrk);
+			idmap = gui.getDetectionDroneLocations();
+			for(UUID id : idmap.keySet()){
+				
+				
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id, idmap.get(id),
+						ActorType.DETECTION_DRONE,
+						loadImage(gui.getDetectionDroneNormalURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
 		}
 		
-		idmap = gui.getFaultyDetectionDroneLocations();
-		for(UUID id : idmap.keySet()){
+		if(gui.isShowDetectionDrones()){
 			
-			
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id, idmap.get(id),
-					ActorType.DETECTION_DRONE,
-					loadImage(gui.getDetectionDroneSoftFailURL().toString())
-					);
-			map.addMarker(imgMrk);
+			idmap = gui.getFaultyDetectionDroneLocations();
+			for(UUID id : idmap.keySet()){
+				
+				
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id, idmap.get(id),
+						ActorType.DETECTION_DRONE,
+						loadImage(gui.getDetectionDroneSoftFailURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
 		}
 		
-		idmap = gui.getCrashedDetectionDroneLocations();
-		for(UUID id : idmap.keySet()){
-			
-			
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id, idmap.get(id),
-					ActorType.DETECTION_DRONE,
-					loadImage(gui.getDetectionDroneHardFailURL().toString())
-					);
-			map.addMarker(imgMrk);
+		if(gui.isShowDetectionDrones()){
+		
+			idmap = gui.getCrashedDetectionDroneLocations();
+			for(UUID id : idmap.keySet()){
+				
+				
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id, idmap.get(id),
+						ActorType.DETECTION_DRONE,
+						loadImage(gui.getDetectionDroneHardFailURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
 		}
 		
-		idmap = gui.getDeliveryDroneLocations();
-		for(UUID id : idmap.keySet()){
-			
-			
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id, idmap.get(id),
-					ActorType.DELIVERY_DRONE,
-					loadImage(gui.getDeliveryDroneNormalURL().toString())
-					);
-			map.addMarker(imgMrk);
+		if(gui.isShowDeliveryDrones()){
+		
+			idmap = gui.getDeliveryDroneLocations();
+			for(UUID id : idmap.keySet()){
+				
+				
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id, idmap.get(id),
+						ActorType.DELIVERY_DRONE,
+						loadImage(gui.getDeliveryDroneNormalURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
 		}
 		
-		idmap = gui.getFaultyDeliveryDroneLocations();
-		for(UUID id : idmap.keySet()){
-			
-			
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id, idmap.get(id),
-					ActorType.DELIVERY_DRONE,
-					loadImage(gui.getDeliveryDroneSoftFailURL().toString())
-					);
-			map.addMarker(imgMrk);
+		if(gui.isShowDeliveryDrones()){
+		
+			idmap = gui.getFaultyDeliveryDroneLocations();
+			for(UUID id : idmap.keySet()){
+				
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id, idmap.get(id),
+						ActorType.DELIVERY_DRONE,
+						loadImage(gui.getDeliveryDroneSoftFailURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
 		}
 		
-		idmap = gui.getCrashedDeliveryDroneLocations();
-		for(UUID id : idmap.keySet()){
+		if(gui.isShowDeliveryDrones()){
 			
-			
-			ImageMarker imgMrk = new ImageMarker(
-					imageMarkersWidth,
-					imageMarkersHeight,
-					id, idmap.get(id),
-					ActorType.DELIVERY_DRONE,
-					loadImage(gui.getDeliveryDroneHardFailURL().toString())
-					);
-			map.addMarker(imgMrk);
+			idmap = gui.getCrashedDeliveryDroneLocations();
+			for(UUID id : idmap.keySet()){
+				
+				
+				ImageMarker imgMrk = new ImageMarker(
+						imageMarkersWidth,
+						imageMarkersHeight,
+						id, idmap.get(id),
+						ActorType.DELIVERY_DRONE,
+						loadImage(gui.getDeliveryDroneHardFailURL().toString())
+						);
+				map.addMarker(imgMrk);
+			}
 		}
 		
 		

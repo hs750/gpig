@@ -5,11 +5,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -19,7 +16,6 @@ import gpig.common.data.DeploymentArea;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
-import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.DroneHeartbeat;
 import gpig.common.messages.SetPath;
 import gpig.common.movement.RecoveryStrategy;
@@ -34,16 +30,18 @@ public abstract class DroneDispatcher extends Thread {
     protected boolean deployed = false;
     private KMPH droneSpeed;
 
-    private Map<UUID, DroneHeartbeat> allDrones;
-    private MessageSender messager;
+    protected Map<UUID, DroneHeartbeat> allDrones;
+    private MessageSender droneMessager;
+    protected MessageSender c2Messager;
     private RecoveryStrategy recoveryStrategy;
     private Map<UUID, LocalDateTime> deployedDrones;
 
     private ConcurrentLinkedQueue<Path> tasks;
     private ConcurrentHashMap<UUID, AllocatedTask> allocatedTasks;
 
-    public DroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation, KMPH droneSpeed) {
-        this.messager = messager;
+    public DroneDispatcher(MessageSender droneMessager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation, KMPH droneSpeed, MessageSender c2Messager) {
+        this.droneMessager = droneMessager;
+        this.c2Messager = c2Messager;
         allDrones = Collections.synchronizedMap(new LinkedHashMap<>());
         this.recoveryStrategy = recoveryStrategy;
         this.currentLocation = currentLocation;
@@ -76,7 +74,7 @@ public abstract class DroneDispatcher extends Thread {
         for (DroneHeartbeat drone : allDrones.values()) {
             if (drone.state != DroneState.UNDEPLOYED) {
                 SetPath sp = new SetPath(recoveryStrategy.getPath(getLocation()), drone.origin);
-                messager.send(sp);
+                droneMessager.send(sp);
             }
         }
 
@@ -158,7 +156,7 @@ public abstract class DroneDispatcher extends Thread {
                 taskListEmpty();
             } else {
                 SetPath sp = new SetPath(p, assignee);
-                messager.send(sp);
+                droneMessager.send(sp);
                 Log.info("Displatched Drone: %s", assignee);
 
                 activateDrone(assignee, p);

@@ -1,6 +1,6 @@
 package gpig.common.messages;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import gpig.common.data.Assignment;
 
@@ -9,9 +9,9 @@ import gpig.common.data.Assignment;
  */
 public class DeliveryNotification {
     public final Assignment assignment;
-    public final Date timestamp;
+    public final LocalDateTime timestamp;
     
-    public DeliveryNotification(Date timestamp, Assignment assignment) {
+    public DeliveryNotification(LocalDateTime timestamp, Assignment assignment) {
         this.timestamp = timestamp;
         this.assignment = assignment;
     }

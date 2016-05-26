@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpigdata>
+	<gisposition>
+		<position xsi:type="point"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<position latitude="54.13745" longitude="-1.183062" />
+		</position>
+		<timestamp date="2016-05-24T16:27:59.883+01:00" />
+		<value xsi:type="delivery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+	</gisposition>
+	<gisposition>
+		<position xsi:type="point"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<position latitude="54.12" longitude="-0.779" />
+		</position>
+		<timestamp date="2016-05-24T16:27:51.862+01:00" />
+		<value xsi:type="strandedPerson" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<image url="f" />
+		</value>
+	</gisposition>
+	<gisposition>
+		<position xsi:type="point"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<position latitude="54.12866" longitude="-0.779197" />
+		</position>
+		<timestamp date="2016-05-24T16:27:59.883+01:00" />
+		<value xsi:type="delivery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+	</gisposition>
+	<gisposition>
+		<position xsi:type="point"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<position latitude="54.13" longitude="-1.183" />
+		</position>
+		<timestamp date="2016-05-24T16:27:51.864+01:00" />
+		<value xsi:type="strandedPerson" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<image url="f" />
+		</value>
+	</gisposition>
+</gpigdata>
