@@ -1,20 +1,19 @@
 package gpig.common.movement;
 
-import com.javadocmd.simplelatlng.LatLngTool;
-import gpig.common.data.Constants;
-import gpig.common.data.Location;
-import gpig.common.data.Path;
-import gpig.common.units.KMPH;
-import gpig.common.units.Kilometres;
-import gpig.common.util.Log;
+import static gpig.common.units.Units.kilometres;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import static gpig.common.units.Units.kilometres;
+import gpig.common.data.Constants;
+import gpig.common.data.Location;
+import gpig.common.data.Path;
+import gpig.common.messages.heartbeater.LocationProvider;
+import gpig.common.units.KMPH;
+import gpig.common.units.Kilometres;
 
-public class WaypointBasedMovement implements MovementBehaviour {
+public class WaypointBasedMovement implements MovementBehaviour, LocationProvider {
     private Location currentLocation;
     private InTraversalPath path;
     private LocalDateTime lastUpdateTime;
