@@ -37,17 +37,18 @@ public class DeliveryDrone {
         MessageReceiver msgFromDC = new MessageReceiver();
         CommunicationChannel dtdcChannel = new CommunicationChannel(config.dedcChannel, msgFromDC);
         msgToDC = new FallibleMessageSender(dtdcChannel, thisDrone);
-        
+
         state = new StateProvider();
-        dcLocation = new Location(0,0);
-        
+        dcLocation = new Location(0, 0);
+
         battery = new Battery(Constants.AERIAL_VEHICLE_BATTERY_DURATION);
         Location homeLocation = new Location(0.0, 0.0);
-        movementBehaviour = new WaypointBasedMovement(homeLocation, Constants.DETECTION_DRONE_SPEED, new BatteryLevelLowFailsafe(battery, homeLocation));
-    
+        movementBehaviour = new DeliveryPathMovementBehaviour(homeLocation, Constants.DETECTION_DRONE_SPEED,
+                new BatteryLevelLowFailsafe(battery, homeLocation), msgToDC, thisDrone);
+
         msgFromDC.addHandler(new DeliveryPathHandler(this));
         msgFromDC.addHandler(new DeliveryFatalFailureHandler(this));
-        
+
         new DeliveryHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
     }
 
@@ -55,27 +56,20 @@ public class DeliveryDrone {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 
         ses.scheduleAtFixedRate(() -> {
-            if(isDeployed()){
+            if (isDeployed()) {
                 movementBehaviour.step();
-                if(movementBehaviour.currentLocation().equals(dcLocation)){
+                if (movementBehaviour.currentLocation().equals(dcLocation)) {
                     Log.info("Returned to DC");
                     setReturned();
                 }
             }
-            
+
         }, 0, 50, TimeUnit.MILLISECONDS);
     }
 
     public DroneState getState() {
         return this.state.getState();
     }
-
-
-//    private void onAssignmentDelivery() {
-//        this.assignment.status = Assignment.AssignmentStatus.DELIVERED;
-//        DeliveryNotification msg = new DeliveryNotification(LocalDateTime.now(), assignment);
-//        msgToDC.send(msg);
-//    }
 
     public static void main(String... args) throws IOException {
         if (args.length != 1) {
@@ -88,20 +82,20 @@ public class DeliveryDrone {
         DeliveryDrone drone = new DeliveryDrone(conf);
         drone.run();
     }
-    
-    public void setDeployed(){
+
+    public void setDeployed() {
         state.setOutbound();
     }
-    
-    public void setReturned(){
+
+    public void setReturned() {
         state.setUndeployed();
     }
-    
-    public boolean isDeployed(){
+
+    public boolean isDeployed() {
         return state.getState() != DroneState.UNDEPLOYED;
     }
-    
-    public void setCrashed(){
+
+    public void setCrashed() {
         state.setCrashed();
     }
 }
