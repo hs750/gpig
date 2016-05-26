@@ -5,6 +5,7 @@ import gpig.common.data.Assignment;
 import gpig.common.data.Detection;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
+import gpig.common.messages.handlers.DeliveryAssignmentHandler;
 import gpig.common.messages.handlers.DetectionNotificationHandler;
 import gpig.common.networking.MessageReceiver;
 
@@ -27,6 +28,7 @@ public class C2Data {
     private ConcurrentHashMap<UUID, Location> detectionDronesLocation;
     
     private DetectionNotificationHandler detectionHandler;
+    private DeliveryAssignmentHandler deliveryAssignmentHandler;
 
     public C2Data() {
         assignments = Collections.synchronizedList(new ArrayList<>());
@@ -41,7 +43,8 @@ public class C2Data {
 
     public void addAllHandlers(MessageReceiver receiver) {
         detectionHandler = new C2DetectionNotificationHandler(detections);
-        receiver.addHandler(new C2DeliveryAssignmentHandler(assignments));
+        deliveryAssignmentHandler = new C2DeliveryAssignmentHandler(assignments);
+        receiver.addHandler(deliveryAssignmentHandler);
         receiver.addHandler(new C2DeliveryDroneHeartbeatHandler(deliveryDronesState));
         receiver.addHandler(new C2DeliveryNotificationHandler(assignments, deliveryTimes));
         receiver.addHandler(new C2DeploymentCentreHeartbeatHandler(dcLocations));
@@ -51,6 +54,10 @@ public class C2Data {
     
     public DetectionNotificationHandler getDetectionHandler(){
         return detectionHandler;
+    }
+    
+    public DeliveryAssignmentHandler getDeliveryAssignmentHandler(){
+        return deliveryAssignmentHandler;
     }
 
     public synchronized List<Assignment> getAssignments() {

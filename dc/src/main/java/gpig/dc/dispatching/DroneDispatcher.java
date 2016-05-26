@@ -7,10 +7,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import gpig.common.data.Assignment;
 import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.DroneState;
@@ -36,8 +38,8 @@ public abstract class DroneDispatcher extends Thread {
     private RecoveryStrategy recoveryStrategy;
     private Map<UUID, LocalDateTime> deployedDrones;
 
-    private ConcurrentLinkedQueue<Path> tasks;
-    private ConcurrentHashMap<UUID, AllocatedTask> allocatedTasks;
+    private ConcurrentLinkedQueue<Task> tasks;
+    ConcurrentHashMap<UUID, AllocatedTask> allocatedTasks;
 
     public DroneDispatcher(MessageSender droneMessager, RecoveryStrategy recoveryStrategy, DeploymentArea currentLocation, KMPH droneSpeed, MessageSender c2Messager) {
         this.droneMessager = droneMessager;
@@ -99,7 +101,7 @@ public abstract class DroneDispatcher extends Thread {
         return true;
     }
 
-    protected synchronized void activateDrone(UUID drone, Path task) {
+    protected synchronized void activateDrone(UUID drone, Task task) {
         //allDrones.remove(drone); // remove the current (undeployed) heartbeat
         deployedDrones.put(drone, LocalDateTime.now());
         allocatedTasks.put(drone, new AllocatedTask(drone, task, currentLocation.deploymentArea.centre, droneSpeed));
@@ -151,24 +153,24 @@ public abstract class DroneDispatcher extends Thread {
 
             UUID assignee = getNextInactiveDrone();
 
-            Path p = tasks.poll();
-            if (p == null) {
+            Task t = tasks.poll();
+            if (t == null) {
                 taskListEmpty();
             } else {
-                SetPath sp = new SetPath(p, assignee);
+                SetPath sp = new SetPath(t.path, assignee);
                 droneMessager.send(sp);
                 Log.info("Displatched Drone: %s", assignee);
 
-                activateDrone(assignee, p);
+                activateDrone(assignee, t);
             }
         }
     }
 
-    protected void addTask(Path task) {
+    protected void addTask(Task task) {
         tasks.add(task);
     }
 
-    protected void addTasks(Collection<Path> tasks) {
+    protected void addTasks(Collection<Task> tasks) {
         this.tasks.addAll(tasks);
     }
 
@@ -225,23 +227,33 @@ public abstract class DroneDispatcher extends Thread {
 
     protected class AllocatedTask {
         public UUID drone;
-        public Path task;
+        public Task task;
         public LocalDateTime expectedReturnTime;
 
-        public AllocatedTask(UUID drone, Path task, Location start, KMPH droneSpeed) {
+        public AllocatedTask(UUID drone, Task task, Location start, KMPH droneSpeed) {
             this.drone = drone;
             this.task = task;
 
-            Kilometres distance = task.totalDistance();
+            Kilometres distance = task.path.totalDistance();
             
-            if (task.length() > 0) {
-                distance  = distance.add(start.distanceFrom(task.get(0).location));
+            if (task.path.length() > 0) {
+                distance  = distance.add(start.distanceFrom(task.path.get(0).location));
             }
 
             double timeHours = distance.value() / (droneSpeed.value() * Constants.SPEED_SCALING_FACTOR);
             timeHours *= 1.05; // Add 5% lee-way 
             long timeMillis = (long) Math.ceil(timeHours * 60 * 60 * 1000); // overestimate
             expectedReturnTime = LocalDateTime.now().plus(Duration.ofMillis(timeMillis));
+        }
+    }
+    
+    protected class Task {
+        public Optional<Assignment> assignment;
+        public Path path;
+        
+        public Task(Path p, Assignment a) {
+            path = p;
+            assignment = Optional.ofNullable(a);
         }
     }
 }

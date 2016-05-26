@@ -75,6 +75,8 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                     Assignment a = new Assignment(message.detection, closestDC);
                     DeliveryAssignment da = new DeliveryAssignment(a);
                     dcMessageSender.send(da);
+                    database.getDeliveryAssignmentHandler().handle(da);
+                    
                     Log.info("Delivery to %s assigned to %s", message.detection.person.location.toString(), closestDC);
                 } else {
                     // Attempt delivery assignment later.

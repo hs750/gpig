@@ -26,10 +26,10 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
         super(messager, recoveryStrategy, currentLocation, Constants.DETECTION_DRONE_SPEED, c2Messager);
     }
 
-    private ArrayList<Path> calculateSearchPattern() {
+    private ArrayList<Task> calculateSearchPattern() {
         // Produces a basic hexagon pattern
 
-        ArrayList<Path> deployments = new ArrayList<>();
+        ArrayList<Task> deployments = new ArrayList<>();
 
         for (int segment = 0; segment < 6; segment++) {
             Location l1 = getLocation().locationAt(segment * 60, edgeDistance);
@@ -38,7 +38,7 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
             List<Waypoint> waypoints = Arrays.asList(new Waypoint(l1), new Waypoint(l2), new Waypoint(getLocation()));
 
             Path p = new Path(waypoints, currentLocation.deploymentArea.centre);
-            deployments.add(p);
+            deployments.add(new Task(p, null));
 
         }
 

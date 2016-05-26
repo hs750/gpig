@@ -10,7 +10,9 @@ import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
 import gpig.common.messages.DeploymentCentreHeartbeat;
+import gpig.common.messages.handlers.DeliveryAssignmentHandler;
 import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
+import gpig.common.messages.handlers.DeliveryNotificationHandler;
 import gpig.common.movement.ImmediateReturn;
 import gpig.common.movement.MovementBehaviour;
 import gpig.common.movement.WaypointBasedMovement;
@@ -67,6 +69,8 @@ public class DeploymentCentre {
         dedd = new DeliveryDroneDispatcher(msgToDes, new ImmediateReturn(),
                 new DeploymentArea(initialLocation, Constants.DEPLOYMENT_DELIVERY_RADIUS), msgToC2);
         msgFromDes.addHandler((DeliveryDroneHeartbeatHandler) dedd);
+        msgFromC2.addHandler((DeliveryAssignmentHandler) dedd);
+        msgFromDes.addHandler((DeliveryNotificationHandler) dedd);
 
         // Forward messages from drones to C2
         new DroneMessageForwarder(msgToC2, msgFromDts, msgFromDes);

@@ -9,6 +9,7 @@ import java.util.Optional;
 import gpig.common.data.Constants;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
+import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.heartbeater.LocationProvider;
 import gpig.common.units.KMPH;
 import gpig.common.units.Kilometres;
@@ -121,7 +122,7 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
 
             // The status depends on whether the waypoint reached was the final destination
             // If so, the remaining distance is disregarded since no more travelling will occur
-            path.advance();
+            advancePath();
 
             if (path.isAtEnd()) {
                 Log.info("Path end reached");
@@ -130,6 +131,10 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
                 return new TravelStatus(newLocation, remainingDistance, Status.REACHED_WAYPOINT);
             }
         }
+    }
+    
+    protected Waypoint advancePath(){
+        return path.advance();
     }
 
 
