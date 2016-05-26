@@ -12,6 +12,7 @@ import gpig.common.data.Path;
 import gpig.common.messages.heartbeater.LocationProvider;
 import gpig.common.units.KMPH;
 import gpig.common.units.Kilometres;
+import gpig.common.util.Log;
 
 public class WaypointBasedMovement implements MovementBehaviour, LocationProvider {
     private Location currentLocation;
@@ -123,6 +124,7 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
             path.advance();
 
             if (path.isAtEnd()) {
+                Log.info("Path end reached");
                 return new TravelStatus(newLocation, kilometres(0.0), Status.FINISHED);
             } else {
                 return new TravelStatus(newLocation, remainingDistance, Status.REACHED_WAYPOINT);

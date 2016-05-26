@@ -18,6 +18,7 @@ public class DetectionPathHandler implements SetPathHandler{
             Log.info("Received path");
             det.dcLocation = message.path.getInitialLocation();
             det.movementBehaviour.setPath(message.path);
+            det.movementBehaviour.step();
             Log.info("Detection Drone Deployment made to location %s", message.path.get(0).location);
             det.setDeployed();
         }

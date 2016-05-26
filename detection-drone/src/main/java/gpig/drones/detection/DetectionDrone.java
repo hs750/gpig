@@ -68,6 +68,7 @@ public class DetectionDrone {
             if(isDeployed()){
                 movementBehaviour.step();
                 if(movementBehaviour.currentLocation().equals(dcLocation)){
+                    Log.info("Returned to DC");
                     setReturned();
                 }
             }
