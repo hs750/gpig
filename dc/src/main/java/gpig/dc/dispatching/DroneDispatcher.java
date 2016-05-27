@@ -74,7 +74,7 @@ public abstract class DroneDispatcher extends Thread {
         deployable = false;
 
         for (DroneHeartbeat drone : allDrones.values()) {
-            if (drone.state != DroneState.UNDEPLOYED) {
+            if (deployedDrones.containsKey(drone.origin)) {
                 SetPath sp = new SetPath(recoveryStrategy.getPath(getLocation()), drone.origin);
                 droneMessager.send(sp);
             }
@@ -110,7 +110,7 @@ public abstract class DroneDispatcher extends Thread {
 
     protected synchronized UUID getNextInactiveDrone() {
         for (DroneHeartbeat drone : allDrones.values()) {
-            if (drone.state == DroneState.UNDEPLOYED) {
+            if (!deployedDrones.containsKey(drone.origin)) {
                 return drone.origin;
             }
         }

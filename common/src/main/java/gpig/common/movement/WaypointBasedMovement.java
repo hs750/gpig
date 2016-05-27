@@ -69,9 +69,9 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
         // last calculated
         LocalDateTime currentUpdateTime = LocalDateTime.now();
         long millisecondsSinceLastEvent = ChronoUnit.MILLIS.between(lastUpdateTime, currentUpdateTime);
-        double secondsSinceLastEvent = millisecondsSinceLastEvent / 100.0;
+        double secondsSinceLastEvent = millisecondsSinceLastEvent / 1000.0;
         double hoursSinceLastEvent = ((secondsSinceLastEvent / 60.0) / 60.0);
-
+        
         // Calculate the distance travelled by the drone since the last update
         Kilometres totalDistanceTravelled = kilometres(vehicleSpeed.value() * speedScalingFactor * hoursSinceLastEvent);
 
