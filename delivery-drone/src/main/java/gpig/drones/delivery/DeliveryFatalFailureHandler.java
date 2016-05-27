@@ -15,8 +15,6 @@ public class DeliveryFatalFailureHandler implements FailCommandHandler {
     public void handle(FailCommand message) {
         if (message.drone.equals(del.thisDrone)) {
             if (message.type == FailType.FATAL) {
-                del.setCrashed();
-
                 del.movementBehaviour.clearPath();
             }
         }
