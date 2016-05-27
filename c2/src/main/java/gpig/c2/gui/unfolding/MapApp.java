@@ -14,9 +14,12 @@ import java.util.HashMap;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.Marker;
+import de.fhpotsdam.unfolding.utils.GeoUtils;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import de.fhpotsdam.unfolding.utils.ScreenPosition;
 import gpig.c2.gui.GUI;
 import gpig.common.data.ActorType;
+import gpig.common.data.Constants;
 import de.fhpotsdam.unfolding.providers.*;
 
 
@@ -164,6 +167,23 @@ public class MapApp extends PApplet {
 						loadImage(gui.getDcURL().toString())
 						);
 				map.addMarker(imgMrk);
+				
+				
+				
+				ScreenPosition markerPosition = imgMrk.getScreenPosition(map);
+				ScreenPosition referencePosition = map.getScreenPosition(
+						GeoUtils.getDestinationLocation(
+								imgMrk.getLocation(),
+								90,
+								(float) Constants.DEPLOYMENT_SEARCH_RADIUS.value())
+						);
+				float screenDiff = Math.abs(referencePosition.x - markerPosition.x);
+				
+				
+				strokeWeight(5);
+				stroke(67, 211, 227, 50);
+				noFill();
+				ellipse(markerPosition.x, markerPosition.y, screenDiff*2, screenDiff*2);
 			}
 		}
 		
