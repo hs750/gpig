@@ -63,6 +63,8 @@ public class FallibleMessageSender extends MessageSender implements FailCommandH
                 setFailed(true);
             } else if (message.type == FailType.RESTORE_COMMS) {
                 setFailed(false);
+            } else if (message.type == FailType.FATAL){
+                setFailed(true);
             }
             // Ignore others
         }
