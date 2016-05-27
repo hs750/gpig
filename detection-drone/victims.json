@@ -1,38 +1,41 @@
 {
-  "people" : [ {
-    "id" : "8ded1b39-2cee-4c2a-9233-32b360a209fc",
+  "victims" : [ {
     "type" : "CIVILIAN",
     "location" : {
-      "lat" : 1.0,
-      "lon" : 2.0
+      "lat" : 53.970676,
+      "lon" : -1.085470
     }
   }, {
-    "id" : "e9300ece-fbca-45f1-be4c-be4ac08993b7",
-    "type" : "OTHER",
-    "location" : {
-      "lat" : 1.0,
-      "lon" : 2.0
-    }
-  }, {
-    "id" : "92e85d5d-35ef-48dc-92ec-d5eb50a0e3bb",
-    "type" : "RESCUE_TEAM",
-    "location" : {
-      "lat" : 1.0,
-      "lon" : 2.0
-    }
-  }, {
-    "id" : "f678e751-b552-4467-a93d-31194ea5f035",
     "type" : "CIVILIAN",
     "location" : {
-      "lat" : 1.0,
-      "lon" : 2.0
+      "lat" : 53.958557,
+      "lon" : -1.098173
     }
   }, {
-    "id" : "e40290d5-11c3-4e50-bd34-f8e5c25f8981",
     "type" : "CIVILIAN",
     "location" : {
-      "lat" : 1.0,
-      "lon" : 2.0
+      "lat" : 53.959264,
+      "lon" : -1.058004
     }
+  }, {
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.968353, 
+      "lon" : -1.111562
+    }
+  }, {
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.942394, 
+      "lon" : -1.086157
+    }
+    
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.931076,
+      "lon" : -1.079118
+    }
+    
   } ]
 }
