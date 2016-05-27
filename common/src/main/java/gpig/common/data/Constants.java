@@ -21,7 +21,7 @@ public class Constants {
 
     public final static Duration AERIAL_VEHICLE_BATTERY_DURATION = Duration.of(20, ChronoUnit.MINUTES);
 
-    public final static double SPEED_SCALING_FACTOR = 1.0;
+    public final static double SPEED_SCALING_FACTOR = 10.0;
     
     public final static int DRONE_HEARTBEAT_INTERVAL = 1000; // milliseconds
     public final static int DRONE_HEARTBEAT_TIMEOUT = 5000; // milliseconds
