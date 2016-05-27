@@ -3,10 +3,7 @@ package gpig.dc.dispatching;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import gpig.common.data.Assignment;
 import gpig.common.data.Constants;
@@ -78,8 +75,9 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
         // Only re-allocate delivery if drone doesn't return in the expected time.
         // This is the difference between dead drone and comms out drone
         if(task.expectedReturnTime.isBefore(LocalDateTime.now())){
-            addTask(task.task);
-            unallocateTask(task.drone);
+            if(firstTimeoutBeat(task.drone)){
+                addTask(task.task);
+            }
             
             DeliveryDroneHeartbeat ddh = new DeliveryDroneHeartbeat(task.drone, DroneState.CRASHED, allDrones.get(task.drone).location);
             c2Messager.send(ddh);

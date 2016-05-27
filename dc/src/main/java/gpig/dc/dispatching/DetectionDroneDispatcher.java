@@ -16,7 +16,6 @@ import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.movement.RecoveryStrategy;
 import gpig.common.networking.MessageSender;
 import gpig.common.units.Kilometres;
-import gpig.common.util.Log;
 
 public class DetectionDroneDispatcher extends DroneDispatcher implements DetectionDroneHeartbeatHandler {
     private final Kilometres edgeDistance = new Kilometres(8.6);
@@ -59,16 +58,20 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
 
     @Override
     protected void taskListEmpty() {
-        deployable = false; // stop attempting to setDeployed drones when task done
-        Log.info("Detection sweep completed");
+        
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void handleTimeout(AllocatedTask task) {
         // When a detection drone stops responding re-allocate its task to another drone
-        addTask(task.task);
-        unallocateTask(task.drone);
-        
+        if(firstTimeoutBeat(task.drone)){
+            addTask(task.task);
+        }
         if(task.expectedReturnTime.isBefore(LocalDateTime.now())){
             DetectionDroneHeartbeat ddh = new DetectionDroneHeartbeat(task.drone, DroneState.CRASHED, allDrones.get(task.drone).location);
             c2Messager.send(ddh);
