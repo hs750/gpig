@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import gpig.common.data.Constants;
 import gpig.common.util.Log;
 
 /**
@@ -15,6 +17,7 @@ public abstract class CommonConfig {
 
     // Fields
     public String app;
+    public double speedScalingFactor;
 
     /**
      * Read a config file of a particular type. Example: <br>
@@ -41,6 +44,8 @@ public abstract class CommonConfig {
         mapper.registerModule(new JavaTimeModule());
 
         C conf = mapper.readValue(configFile, clazz);
+        
+        Constants.SPEED_SCALING_FACTOR = conf.speedScalingFactor;
         return conf;
     }
 }
