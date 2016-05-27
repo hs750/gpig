@@ -183,7 +183,7 @@ public class MapApp extends PApplet {
 				strokeWeight(5);
 				stroke(67, 211, 227, 50);
 				noFill();
-				ellipse(markerPosition.x, markerPosition.y, screenDiff, screenDiff);
+				ellipse(markerPosition.x, markerPosition.y, screenDiff*2, screenDiff*2);
 			}
 		}
 		
