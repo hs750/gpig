@@ -112,8 +112,14 @@ public class ControlPanel extends JPanel{
 		showUndeliveredDetectionsCB = new JCheckBox("Undelivered Detections");
 		showExternalDetectionsCB = new JCheckBox("External Detections");
 		
-		//check box backgrounds
+		//button background
+		deployB.setOpaque(false);
+		reDeployB.setOpaque(false);
+		failBatteryB.setOpaque(false);
+		failCommsB.setOpaque(false);
+		failEngineB.setOpaque(false);
 		
+		//check box backgrounds	
 		showDetectionDronesCB.setOpaque(false);
 		showDeliveryDronesCB.setOpaque(false);
 		showDCsCB.setOpaque(false);

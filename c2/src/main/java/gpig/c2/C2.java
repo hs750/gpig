@@ -65,7 +65,6 @@ public class C2 {
         //create and update the gui in the event dispatch thread
         javax.swing.SwingUtilities.invokeLater(() -> {
             gui = new GUI(guiAdapterInbound,guiAdapterOutbound);
-            gui.createAndShowGUI();
         });
     }
     

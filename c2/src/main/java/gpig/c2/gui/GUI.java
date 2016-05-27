@@ -77,6 +77,14 @@ public class GUI {
 			detectionImageURLs[i] = GUI.class.getResource("/DetectionImages/D"+i +".jpg");
 		detectionImageMap = new HashMap<>();
 		
+		createAndShowGUI();
+		
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		appletRunner = new AppletRunner(this);
 		appletRunner.start();
@@ -85,9 +93,9 @@ public class GUI {
     /**
      * GUI rendering entry point.
      */
-    public void createAndShowGUI() {
+    private void createAndShowGUI() {
     	
-    	/*
+    	
     	try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
@@ -102,7 +110,7 @@ public class GUI {
 		} catch (UnsupportedLookAndFeelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
     	
     	// The screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
