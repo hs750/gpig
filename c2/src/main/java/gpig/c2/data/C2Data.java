@@ -48,7 +48,7 @@ public class C2Data {
         receiver.addHandler(new C2DeliveryDroneHeartbeatHandler(deliveryDronesState, deliveryDronesLocation));
         receiver.addHandler(new C2DeliveryNotificationHandler(assignments, deliveryTimes));
         receiver.addHandler(new C2DeploymentCentreHeartbeatHandler(dcLocations));
-        receiver.addHandler(new C2DetectionDroneHeartbeatHandler(detectionDronesState, deliveryDronesLocation));
+        receiver.addHandler(new C2DetectionDroneHeartbeatHandler(detectionDronesState, detectionDronesLocation));
         receiver.addHandler(detectionHandler);
     }
     
