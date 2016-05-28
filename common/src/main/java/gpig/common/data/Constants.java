@@ -31,4 +31,6 @@ public class Constants {
     public final static int EXTERNAL_OUTPUT_RATE = 1000; // milliseconds
     public final static int EXTERNAL_INPUT_RATE = 1000; // milliseconds
     
+    public final static String DETECTION_IMAGE_DIR = ".." + File.separator + "c2" + File.separator + "DetectionImages";
+    
 }

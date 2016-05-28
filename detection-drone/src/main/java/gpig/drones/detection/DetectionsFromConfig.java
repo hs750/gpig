@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 class DetectionsFromConfig implements DetectionBehaviour {
     private List<Person> allPeople;
     private Set<UUID> alreadyDetected;
+    private int numImages;
+    private Random r;
 
     DetectionsFromConfig(File configFile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -25,6 +27,9 @@ class DetectionsFromConfig implements DetectionBehaviour {
         this.alreadyDetected = new HashSet<>();
 
         Log.info("Loaded %d people", allPeople.size());
+        
+        numImages = new File("../c2/DetectionImages").listFiles().length;
+        r = new Random();
     }
 
     @Override
@@ -37,9 +42,9 @@ class DetectionsFromConfig implements DetectionBehaviour {
                 .filter(this::needsSupplies)
                 .collect(Collectors.toList());
 
-        // TODO: add image data to the new detections
+        
         List<Detection> detections = undetectedVictimsInArea.stream()
-                .map(person -> new Detection(person, new File("f"), LocalDateTime.now()))
+                .map(person -> new Detection(person, new File(Constants.DETECTION_IMAGE_DIR + File.separator + "D" + (1 + r.nextInt(numImages -1)) + ".jpg"), LocalDateTime.now()))
                 .collect(Collectors.toList());
 
         detections.forEach(d -> alreadyDetected.add(d.person.id));
