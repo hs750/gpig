@@ -37,7 +37,8 @@ public class DeliveryDrone {
         MessageReceiver msgFromDC = new MessageReceiver();
         CommunicationChannel dtdcChannel = new CommunicationChannel(config.dedcChannel, msgFromDC);
         msgToDC = new FallibleMessageSender(dtdcChannel, thisDrone);
-
+        msgFromDC.addHandler(msgToDC);
+        
         state = new StateProvider();
         dcLocation = new Location(0, 0);
 

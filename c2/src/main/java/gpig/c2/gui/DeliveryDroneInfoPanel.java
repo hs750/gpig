@@ -26,8 +26,10 @@ public class DeliveryDroneInfoPanel extends InfoPanel{
 		actorIdL.setText(""+id);
 		actorTypeL.setText("Delivery Drone");
 		actorStateL.setText(""+state);		
-		actorLatL.setText(""+String.format ("%.6f", location.latitude()));
-		actorLonL.setText(""+String.format ("%.6f", location.longitude()));
+		if(location != null){
+		    actorLatL.setText(""+String.format ("%.6f", location.latitude()));
+	        actorLonL.setText(""+String.format ("%.6f", location.longitude()));
+		}
 	}
 	
 	public void paintComponent(Graphics g){

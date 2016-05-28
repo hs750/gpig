@@ -2,8 +2,14 @@ package gpig.dc.dispatching;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import gpig.common.data.Assignment;
 import gpig.common.data.Constants;
@@ -24,10 +30,12 @@ import gpig.common.util.Log;
 
 public class DeliveryDroneDispatcher extends DroneDispatcher
         implements DeliveryDroneHeartbeatHandler, DeliveryAssignmentHandler, DeliveryNotificationHandler {
+    private Set<UUID> pendingTimeouts;
 
     public DeliveryDroneDispatcher(MessageSender messager, RecoveryStrategy recoveryStrategy,
             DeploymentArea currentLocation, MessageSender c2Messager) {
         super(messager, recoveryStrategy, currentLocation, Constants.DELIVERY_DRONE_SPEED, c2Messager);
+        pendingTimeouts = Collections.synchronizedSet(new HashSet<>());
     }
 
     @Override
@@ -66,12 +74,18 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
 
     @Override
     public void handle(DeliveryDroneHeartbeat message) {
+        if(pendingTimeouts.contains(message.origin)){
+            // If the drone was timed out but returned (comms failure) send notification that the delivery did indeed happen
+            sendDeliveryNotification(message.origin, LocalDateTime.now());
+            pendingTimeouts.remove(message.origin);
+        }
         super.handle(message);
-
+        
     }
 
     @Override
     protected void handleTimeout(AllocatedTask task) {
+        pendingTimeouts.add(task.drone);
         // Only re-allocate delivery if drone doesn't return in the expected time.
         // This is the difference between dead drone and comms out drone
         if(task.expectedReturnTime.isBefore(LocalDateTime.now())){
@@ -90,11 +104,15 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
 
     @Override
     public void handle(DeliveryNotification message) {
-        Optional<Assignment> a = allocatedTasks.get(message.deliveryDrone).task.assignment;
+        sendDeliveryNotification(message.deliveryDrone, message.timestamp);
+    }
+    
+    private void sendDeliveryNotification(UUID drone, LocalDateTime timestamp){
+        Optional<Assignment> a = allocatedTasks.get(drone).task.assignment;
         if(a.isPresent()){
-            c2Messager.send(new DeliveryNotification(message.timestamp, a.get()));
+            c2Messager.send(new DeliveryNotification(timestamp, a.get()));
         }else{
-            Log.error("Unable to forward delivery notification for drone " + message.deliveryDrone);
+            Log.error("Unable to forward delivery notification for drone " + drone);
         }
     }
 
