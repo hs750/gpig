@@ -11,6 +11,7 @@ import gpig.c2.data.C2Data;
 import gpig.common.data.Assignment.AssignmentStatus;
 import gpig.common.data.Constants;
 import gpig.common.data.Detection;
+import gpig.common.data.Person.PersonType;
 import gpig.common.data.external.ExternalDataTranslator;
 import gpig.common.messages.DeliveryNotification;
 import gpig.common.util.Log;
@@ -39,7 +40,7 @@ public class DataExporter extends Thread {
         super.run();
 
         while (true) {
-            List<Detection> det = data.getDetections();
+            List<Detection> det = data.getDetections().stream().filter(d -> d.person.type == PersonType.CIVILIAN).collect(Collectors.toList());
             List<DeliveryNotification> del = data.getAssignments().stream()
                     .filter(a -> a.status == AssignmentStatus.DELIVERED)
                     .map(d -> new DeliveryNotification(data.getDeliveryTimes().get(d), d)).collect(Collectors.toList());
