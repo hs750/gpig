@@ -7,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import gpig.common.data.Constants;
+import gpig.common.data.DCState;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.Location;
 import gpig.common.messages.DeploymentCentreHeartbeat;
@@ -100,7 +101,7 @@ public class DeploymentCentre {
             dtdd.setCurrentLocation(new DeploymentArea(this.location(), Constants.DEPLOYMENT_SEARCH_RADIUS));
             dedd.setCurrentLocation(new DeploymentArea(this.location(), Constants.DEPLOYMENT_DELIVERY_RADIUS));
             
-            DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location());
+            DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location(), dtdd.isDeployable() && dedd.isDeployable() ? DCState.ACTIVE : DCState.INACTIVE);
             msgToC2.send(msg);
         }, 0, 50, TimeUnit.MILLISECONDS);
     }
