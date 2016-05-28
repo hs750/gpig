@@ -31,7 +31,7 @@ public class DetectionDrone {
     UUID thisDrone;
     
     MovementBehaviour movementBehaviour;
-    DetectionBehaviour detectionBehaviour;
+    Detector detector;
     Battery battery;
     private StateProvider state;
     Location dcLocation;
@@ -53,7 +53,8 @@ public class DetectionDrone {
         // TODO: Actual initial location
         Location homeLocation = new Location(0.0, 0.0);
         movementBehaviour = new WaypointBasedMovement(homeLocation, Constants.DETECTION_DRONE_SPEED, new BatteryLevelLowFailsafe(battery, homeLocation));
-        detectionBehaviour = new DetectionsFromConfig(new File("victims.json"));
+        DetectionBehaviour db = new DetectionsFromConfig(config.detectionConfig);
+        detector = new Detector(db, msgToDC);
         
         msgFromDC.addHandler(new DetectionPathHandler(this));
         msgFromDC.addHandler(new DetectionFatalFailureHandler(this));
@@ -66,7 +67,7 @@ public class DetectionDrone {
 
         ses.scheduleAtFixedRate(() -> {
             if(isDeployed()){
-                movementBehaviour.step();
+                step();
                 if(movementBehaviour.currentLocation().equals(dcLocation)){
                     Log.info("Returned to DC");
                     setReturned();
@@ -74,6 +75,13 @@ public class DetectionDrone {
             }
             
         }, 0, 50, TimeUnit.MILLISECONDS);
+    }
+    
+    private void step(){
+        Location start = movementBehaviour.currentLocation();
+        movementBehaviour.step();
+        Location end = movementBehaviour.currentLocation();
+        detector.detect(start, end);
     }
 
     public static void main(String... args) throws IOException {

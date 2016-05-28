@@ -6,6 +6,7 @@
 		"in": "DC-DT",
 		"outAddr": "localhost",
 		"inAddr": "localhost" 
-	}
+	},
+	"detectionConfig": "victims.json"
 	
 }
