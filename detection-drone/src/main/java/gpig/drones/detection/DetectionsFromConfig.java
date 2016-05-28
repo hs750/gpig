@@ -39,7 +39,7 @@ class DetectionsFromConfig implements DetectionBehaviour {
 
         // TODO: add image data to the new detections
         List<Detection> detections = undetectedVictimsInArea.stream()
-                .map(person -> new Detection(person, null, LocalDateTime.now()))
+                .map(person -> new Detection(person, new File("f"), LocalDateTime.now()))
                 .collect(Collectors.toList());
 
         detections.forEach(d -> alreadyDetected.add(d.person.id));
