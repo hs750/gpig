@@ -285,7 +285,7 @@ public class GUI {
     	
     	if(adapterInbound.canDeploy()){
     		controlPanel.enableDeployment();
-    	}else{
+    	}else if(adapterInbound.getDCLocations().size() > 0){
     		controlPanel.enableRedeployment();
     	}
     	

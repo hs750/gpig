@@ -20,7 +20,7 @@ public class C2Data {
 	private int numberOfUndeployedDCs = 2;
     private List<Assignment> assignments;
     private ConcurrentHashMap<UUID, DroneState> deliveryDronesState;
-    private ConcurrentHashMap<UUID, Location> dcLocations;
+    private Map<UUID, Location> dcLocations;
     private ConcurrentHashMap<UUID, DCState> dcStates;
     private ConcurrentHashMap<UUID, DroneState> detectionDronesState;
     private List<Detection> detections;
@@ -37,7 +37,7 @@ public class C2Data {
         assignments = Collections.synchronizedList(new ArrayList<>());
         deliveryTimes = new ConcurrentHashMap<>();
         deliveryDronesState = new ConcurrentHashMap<>();
-        dcLocations = new ConcurrentHashMap<>();
+        dcLocations = Collections.synchronizedMap(new LinkedHashMap<>());
         detectionDronesState = new ConcurrentHashMap<>();
         detections = Collections.synchronizedList(new ArrayList<>());
         deliveryDronesLocation = new ConcurrentHashMap<>();
@@ -117,11 +117,11 @@ public class C2Data {
     }
 
 	public synchronized int getNumberOfDCs() {
-		return numberOfDCs;
+		return dcStates.size();
 	}
 	
 	public synchronized int getNumberOfUndeployedDCs() {
-		return numberOfUndeployedDCs;
+		return getInactiveDCs().size();
 	}
 	
 	//setters used to run the gui with mock data

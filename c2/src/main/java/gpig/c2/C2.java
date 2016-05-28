@@ -1,44 +1,44 @@
 package gpig.c2;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import gpig.c2.config.C2Config;
 import gpig.c2.data.C2Data;
 import gpig.c2.data.external.DataExporter;
 import gpig.c2.data.external.DataImporter;
+import gpig.c2.gui.GUI;
+import gpig.c2.gui.GUIAdapterInbound;
+import gpig.c2.gui.GUIAdapterOutbound;
 import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.messages.FailCommand;
 import gpig.common.messages.FailCommand.FailType;
 import gpig.common.messages.SetPath;
 import gpig.common.networking.CommunicationChannel;
-import gpig.common.networking.FallibleMessageSender;
 import gpig.common.networking.MessageReceiver;
 import gpig.common.networking.MessageSender;
-
-import gpig.c2.gui.*;
+import gpig.common.units.Kilometres;
 import gpig.common.util.Log;
 
 public class C2 {
-	private GUI gui;
-	private GUIAdapterInbound guiAdapterInbound;
-	private GUIAdapterOutbound guiAdapterOutbound;
-	private MessageSender msgToDCs;
-	
-	private C2Config config;
-	private C2Data c2data;
-	
-	public C2(C2Config config){
-	    this(config, new C2Data());
-	}
+    private GUI gui;
+    private GUIAdapterInbound guiAdapterInbound;
+    private GUIAdapterOutbound guiAdapterOutbound;
+    private MessageSender msgToDCs;
+
+    private C2Config config;
+    private C2Data c2data;
+
+    public C2(C2Config config) {
+        this(config, new C2Data());
+    }
 
     public C2(C2Config config, C2Data data) {
         Log.info("Starting C2");
-   
+
         this.config = config;
 
         MessageReceiver msgFromDCs = new MessageReceiver();
@@ -47,63 +47,85 @@ public class C2 {
         c2data = data;
         c2data.addAllHandlers(msgFromDCs);
 
-        guiAdapterInbound = new GUIAdapterInbound(config.victimDetections,config.dcLocations, c2data);
+        guiAdapterInbound = new GUIAdapterInbound(config.victimDetections, config.dcLocations, c2data);
         guiAdapterOutbound = new GUIAdapterOutbound(this);
-        
+
         // Allocate DCs to deliver to detections
         DetectionAllocator alloc = new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
-        
+
         new DataExporter(c2data, config);
         DataImporter di = new DataImporter(config);
         di.addHandler(c2data.getDetectionHandler());
         di.addHandler(alloc);
         di.start();
-        
+
     }
 
     public void run() {
-        //create and update the gui in the event dispatch thread
+        // create and update the gui in the event dispatch thread
         javax.swing.SwingUtilities.invokeLater(() -> {
-            gui = new GUI(guiAdapterInbound,guiAdapterOutbound);
+            gui = new GUI(guiAdapterInbound, guiAdapterOutbound);
         });
     }
-    
-    //GUI called methods
-    //needs to send a deploy request to a dc
-    public void deployRedeployDC(Location location){
-    	
-    	if(c2data.getNumberOfUndeployedDCs() > 0){
-    		//deployment
-    		//send request here
+
+    // GUI called methods
+    // needs to send a deploy request to a dc
+    public void deployRedeployDC(Location location) {
+
+        if (c2data.getNumberOfUndeployedDCs() > 0) {
+            // deployment
+            // send request here
 
             // TODO: find first undeployed DC
-            UUID dcToDeployTo = c2data.getDCLocations().keySet().stream().collect(Collectors.toList()).get(0);
+            Optional<UUID> dcToDeployTo = c2data.getDCLocations().keySet().stream()
+                    .filter(id -> c2data.getInactiveDCs().contains(id)).findFirst();
 
-            // TODO: movement to the path instead of teleporting
+            if (dcToDeployTo.isPresent()) {
+                // TODO: movement to the path instead of teleporting
+                Path path = new Path(location);
+                SetPath setPathCmd = new SetPath(path, dcToDeployTo.get());
+
+                msgToDCs.send(setPathCmd);
+
+                // c2data.setNumberOfUndeployedDCs(c2data.getNumberOfUndeployedDCs()-1);
+            }
+        } else {
+            // re-deployment
+            // figure out the closest dc
+            // send deployment request
+            Kilometres closestDCDist = new Kilometres(Double.MAX_VALUE);
+            UUID closestDC = null;
+
+            for (Entry<UUID, Location> DCs : c2data.getDCLocations().entrySet()) {
+                Kilometres dist = DCs.getValue().distanceFrom(location);
+                if (dist.value() < closestDCDist.value()) {
+                    closestDC = DCs.getKey();
+                    closestDCDist = dist;
+                }
+            }
+
             Path path = new Path(location);
-            SetPath setPathCmd = new SetPath(path, dcToDeployTo);
+            SetPath setPathCmd = new SetPath(path, closestDC);
 
             msgToDCs.send(setPathCmd);
-    		
-    		c2data.setNumberOfUndeployedDCs(c2data.getNumberOfUndeployedDCs()-1);
-    	}else{
-    		//re-deployment
-    		//figure out the closest dc
-    		//send deployment request
-    	}
-    	
+
+            
+        }
+
     }
-    
-    //need to send requests to dcs here
-    public void failBattery(UUID id){
-    	 msgToDCs.send(new FailCommand(id, 51));
-    	
+
+    // need to send requests to dcs here
+    public void failBattery(UUID id) {
+        msgToDCs.send(new FailCommand(id, 51));
+
     }
-    public void failComms(UUID id){
-    	msgToDCs.send(new FailCommand(id, FailType.COMMS));
+
+    public void failComms(UUID id) {
+        msgToDCs.send(new FailCommand(id, FailType.COMMS));
     }
-    public void failEngine(UUID id){
-    	msgToDCs.send(new FailCommand(id, FailType.FATAL));
+
+    public void failEngine(UUID id) {
+        msgToDCs.send(new FailCommand(id, FailType.FATAL));
     }
 
     public static void main(String... args) throws IOException {
@@ -117,14 +139,14 @@ public class C2 {
         C2 c2 = new C2(conf);
         c2.run();
     }
-    
-    //methods used to mock c2data
-    public GUI getGUI(){
-    	return gui;
+
+    // methods used to mock c2data
+    public GUI getGUI() {
+        return gui;
     }
-    
-    public C2Config getC2Config(){
-    	return config;
+
+    public C2Config getC2Config() {
+        return config;
     }
-    
+
 }
