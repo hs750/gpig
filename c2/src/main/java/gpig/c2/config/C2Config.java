@@ -13,4 +13,5 @@ public class C2Config extends CommonConfig {
     public LocationsConfig dcLocations;
     public DetectionsConfig victimDetections;
     public List<URL> interoperabilityInputs;
+    public URL detectionImageURL;
 }

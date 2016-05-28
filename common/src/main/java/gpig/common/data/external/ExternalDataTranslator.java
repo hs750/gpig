@@ -3,6 +3,7 @@ package gpig.common.data.external;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import gpig.all.schema.Position;
 import gpig.all.schema.Timestamp;
 import gpig.all.schema.datatypes.Delivery;
 import gpig.all.schema.datatypes.StrandedPerson;
+import gpig.common.data.Constants;
 import gpig.common.data.Detection;
 import gpig.common.data.Location;
 import gpig.common.data.Person;
@@ -77,7 +79,7 @@ public class ExternalDataTranslator {
         return detections;
     }
 
-    public static GISPosition export(Detection detection) {
+    public static GISPosition export(Detection detection, URL detectionImageURL) {
         GISPosition gis = new GISPosition();
         gis.timestamp = new Timestamp();
         gis.timestamp.date = toDate(detection.timestamp);
@@ -90,7 +92,10 @@ public class ExternalDataTranslator {
 
         StrandedPerson sp = new StrandedPerson();
         sp.image = new Image();
-        sp.image.url = detection.image.toString();
+        String detImgString = detection.image.toString();
+        String[] split = detImgString.split(File.separator);
+        String imgFile = split.length > 0 ? split[split.length-1] : "";
+        sp.image.url = detectionImageURL.toString() + "/" + imgFile;
         gis.payload = sp;
 
         return gis;
@@ -114,7 +119,7 @@ public class ExternalDataTranslator {
 
     }
 
-    public static GPIGData export(Collection<Detection> detections, Collection<DeliveryNotification> deliveries) {
+    public static GPIGData export(Collection<Detection> detections, Collection<DeliveryNotification> deliveries, URL detectionImageURL) {
         if (detections == null) {
             detections = Collections.emptyList();
         }
@@ -125,7 +130,7 @@ public class ExternalDataTranslator {
         GPIGData data = new GPIGData();
         data.positions = new HashSet<>();
 
-        detections.forEach(detection -> data.positions.add(export(detection)));
+        detections.forEach(detection -> data.positions.add(export(detection, detectionImageURL)));
         deliveries.forEach(delivery -> data.positions.add(export(delivery)));
 
         return data;
