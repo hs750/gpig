@@ -6,7 +6,6 @@ import gpig.common.units.Kilometres;
 import java.io.File;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 
 import static gpig.common.units.Units.*;
 
@@ -24,7 +23,7 @@ public class Constants {
 
     public static double SPEED_SCALING_FACTOR = 10.0;
     
-    public final static int DRONE_HEARTBEAT_INTERVAL = 1000; // milliseconds
+    public final static int DRONE_HEARTBEAT_INTERVAL = 50; // milliseconds
     public final static int DRONE_HEARTBEAT_TIMEOUT = 5000; // milliseconds
     
     public final static File EXTERNAL_OUTPUT_LOCATION = new File("Group4.xml");
