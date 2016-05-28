@@ -73,6 +73,10 @@ public abstract class DroneDispatcher extends Thread {
             start();
         }
     }
+    
+    public boolean isDeployable(){
+        return deployable;
+    }
 
     public synchronized void recoverDrones() {
         deployable = false;

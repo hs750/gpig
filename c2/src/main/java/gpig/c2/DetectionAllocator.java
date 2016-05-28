@@ -2,6 +2,7 @@ package gpig.c2;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -59,14 +60,17 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
             if (message != null) {
 
                 Map<UUID, Location> dcs = database.getDCLocations();
+                List<UUID> activeDCs = database.getActiveDCs();
                 Kilometres closestDCDist = new Kilometres(Double.MAX_VALUE);
                 UUID closestDC = null;
 
                 for (Entry<UUID, Location> DCs : dcs.entrySet()) {
-                    Kilometres dist = DCs.getValue().distanceFrom(message.detection.person.location);
-                    if (dist.value() <= Constants.DEPLOYMENT_DELIVERY_RADIUS.value()) {
-                        if (dist.value() < closestDCDist.value()) {
-                            closestDC = DCs.getKey();
+                    if (activeDCs.contains(DCs.getKey())) {
+                        Kilometres dist = DCs.getValue().distanceFrom(message.detection.person.location);
+                        if (dist.value() <= Constants.DEPLOYMENT_DELIVERY_RADIUS.value()) {
+                            if (dist.value() < closestDCDist.value()) {
+                                closestDC = DCs.getKey();
+                            }
                         }
                     }
                 }
@@ -76,7 +80,7 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                     DeliveryAssignment da = new DeliveryAssignment(a);
                     dcMessageSender.send(da);
                     database.getDeliveryAssignmentHandler().handle(da);
-                    
+
                     Log.info("Delivery to %s assigned to %s", message.detection.person.location.toString(), closestDC);
                 } else {
                     // Attempt delivery assignment later.
@@ -90,7 +94,7 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                 if (dn != null) {
                     unallocatedDeliveries.add(dn);
                 }
-                
+
                 // Wait for detections to need servicing.
                 try {
                     Thread.sleep(1000);
