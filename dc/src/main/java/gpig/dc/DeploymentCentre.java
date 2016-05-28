@@ -101,7 +101,8 @@ public class DeploymentCentre {
             dtdd.setCurrentLocation(new DeploymentArea(this.location(), Constants.DEPLOYMENT_SEARCH_RADIUS));
             dedd.setCurrentLocation(new DeploymentArea(this.location(), Constants.DEPLOYMENT_DELIVERY_RADIUS));
             
-            DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location(), dtdd.isDeployable() && dedd.isDeployable() ? DCState.ACTIVE : DCState.INACTIVE);
+                DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location(),
+                        dtdd.isDeployable() && dedd.isDeployable() ? DCState.ACTIVE : DCState.INACTIVE);
             msgToC2.send(msg);
         }, 0, 50, TimeUnit.MILLISECONDS);
     }
