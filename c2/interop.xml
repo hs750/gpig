@@ -11,7 +11,7 @@
 	<gisposition>
 		<position xsi:type="point"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-			<position latitude="54.12" longitude="-0.779" />
+			<position latitude="53.990915" longitude="-1.149070" />
 		</position>
 		<timestamp date="2016-05-24T16:27:51.862+01:00" />
 		<value xsi:type="strandedPerson" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -29,7 +29,7 @@
 	<gisposition>
 		<position xsi:type="point"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-			<position latitude="54.13" longitude="-1.183" />
+			<position latitude="53.999594" longitude="-1.131990" />
 		</position>
 		<timestamp date="2016-05-24T16:27:51.864+01:00" />
 		<value xsi:type="strandedPerson" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
