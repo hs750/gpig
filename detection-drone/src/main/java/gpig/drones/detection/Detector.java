@@ -1,6 +1,5 @@
 package gpig.drones.detection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import gpig.common.data.Detection;
@@ -15,7 +14,6 @@ public class Detector {
     private final static Kilometres detectionInterval = new Kilometres(0.01);
     private DetectionBehaviour detBehaviour;
     private MessageSender messenger;
-    private List<Detection> detections = new ArrayList<>();
 
     public Detector(DetectionBehaviour detectionBehaviour, MessageSender messenger) {
         this.detBehaviour = detectionBehaviour;
@@ -44,15 +42,7 @@ public class Detector {
     }
 
     private void detect(Detection detection) {
-        if (!hasBeenDetected(detection)) {
-            detections.add(detection);
-            messenger.send(new DetectionNotification(detection));
-            Log.info("Detected %s at %s", detection.person.type.toString(), detection.person.location.toString());
-        }
-    }
-
-    private boolean hasBeenDetected(Detection detection) {
-        boolean exists = detections.stream().anyMatch(det -> det.person.location.equals(detection.person.location));
-        return exists;
+        messenger.send(new DetectionNotification(detection));
+        Log.info("Detected %s at %s", detection.person.type.toString(), detection.person.location.toString());
     }
 }
