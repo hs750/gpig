@@ -13,6 +13,7 @@ import static gpig.common.units.Units.*;
 public class Constants {
     public final static KMPH DETECTION_DRONE_SPEED = kilometresPerHour(80);
     public final static KMPH DELIVERY_DRONE_SPEED = kilometresPerHour(20);
+    public final static KMPH MDC_SPEED = kilometresPerHour(350);
 
     public final static Kilometres DEPLOYMENT_SEARCH_RADIUS = kilometres(10.0);
     public final static Kilometres DEPLOYMENT_DELIVERY_RADIUS = kilometres(10.0);

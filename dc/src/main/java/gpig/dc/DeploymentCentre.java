@@ -85,9 +85,7 @@ public class DeploymentCentre {
         msgFromC2.addHandler(pathHandler);
 
         
-
-        // FIXME: Use real DC speed
-        movementBehaviour = new WaypointBasedMovement(initialLocation, kilometresPerHour(150.0), new NoFailsafe());
+        movementBehaviour = new WaypointBasedMovement(initialLocation, Constants.MDC_SPEED, new NoFailsafe());
     }
 
     public void run() {
