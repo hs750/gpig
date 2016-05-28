@@ -13,6 +13,7 @@ import static gpig.common.units.Units.*;
 public class Constants {
     public final static KMPH DETECTION_DRONE_SPEED = kilometresPerHour(80);
     public final static KMPH DELIVERY_DRONE_SPEED = kilometresPerHour(20);
+    public final static KMPH MDC_SPEED = kilometresPerHour(350);
 
     public final static Kilometres DEPLOYMENT_SEARCH_RADIUS = kilometres(10.0);
     public final static Kilometres DEPLOYMENT_DELIVERY_RADIUS = kilometres(10.0);
@@ -29,5 +30,7 @@ public class Constants {
     public final static File EXTERNAL_OUTPUT_LOCATION = new File("Group4.xml");
     public final static int EXTERNAL_OUTPUT_RATE = 1000; // milliseconds
     public final static int EXTERNAL_INPUT_RATE = 1000; // milliseconds
+    
+    public final static String DETECTION_IMAGE_DIR = ".." + File.separator + "c2" + File.separator + "DetectionImages";
     
 }

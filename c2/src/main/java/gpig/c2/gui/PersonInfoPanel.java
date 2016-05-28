@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -56,7 +57,12 @@ public class PersonInfoPanel extends InfoPanel{
 		
 		BufferedImage detectionImageBuf = null;
 		try {
-			detectionImageBuf = ImageIO.read(detectionImageURL);
+		    if(detection.image.exists()){
+		        detectionImageBuf = ImageIO.read(detection.image.toURI().toURL());
+		    }else{
+		        detectionImageBuf = ImageIO.read(detectionImageURL);
+		    }
+			
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}

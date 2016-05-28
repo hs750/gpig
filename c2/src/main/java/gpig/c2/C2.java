@@ -53,7 +53,7 @@ public class C2 {
         // Allocate DCs to deliver to detections
         DetectionAllocator alloc = new DetectionAllocator(msgToDCs, msgFromDCs, c2data);
         
-        new DataExporter(c2data);
+        new DataExporter(c2data, config);
         DataImporter di = new DataImporter(config);
         di.addHandler(c2data.getDetectionHandler());
         di.addHandler(alloc);

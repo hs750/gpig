@@ -4,6 +4,7 @@ import processing.core.PApplet;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import com.rabbitmq.tools.Tracer.Logger;
 
 import gpig.common.data.ActorType;
+import gpig.common.data.Constants;
 import gpig.common.data.Detection;
 import gpig.common.data.DroneState;
 import gpig.common.data.Location;
@@ -45,7 +47,7 @@ public class GUI {
 	private URL deliveryDroneHardFailURL = GUI.class.getResource("/DeliveryDroneHardFail.png");
 	private URL otherTeamDetectionURL = GUI.class.getResource("/OtherTeamDetection.png");
 	private URL otherTeamDeliveredURL = GUI.class.getResource("/OtherTeamDetectionDelivered.png");
-	private URL detectionImagesDirectory = GUI.class.getResource("/DetectionImages");
+	private File detectionImagesDirectory = new File(Constants.DETECTION_IMAGE_DIR);
 	private URL[] detectionImageURLs;
 	private HashMap<UUID, URL> detectionImageMap;
 	
@@ -71,10 +73,15 @@ public class GUI {
 		this.adapterInbound = adapterInbound;
 		this.adapterOutbound = adapterOutbound;
 		
-		int numeberOfImages = new File(detectionImagesDirectory.getPath()).listFiles().length;
+		int numeberOfImages = detectionImagesDirectory.listFiles().length;
 		detectionImageURLs = new URL[numeberOfImages];
-		for(int i=0;i<detectionImageURLs.length;i++)
-			detectionImageURLs[i] = GUI.class.getResource("/DetectionImages/D"+i +".jpg");
+		for(int i=0;i<detectionImageURLs.length;i++){
+			try {
+                detectionImageURLs[i] = new File(Constants.DETECTION_IMAGE_DIR + File.separator + "D"+i +".jpg").toURI().toURL();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+		}
 		detectionImageMap = new HashMap<>();
 		
 		createAndShowGUI();

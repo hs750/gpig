@@ -1,6 +1,7 @@
 {
 	"app": "C2",
 	"speedScalingFactor": 10,
+	"detectionImageURL": "http://localhost/DetectionImages",
 	"c2dcChannel": {
 		"out": "C2-DC",
 		"in": "DC-C2",
