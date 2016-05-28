@@ -27,7 +27,7 @@ class DetectionsFromConfig implements DetectionBehaviour {
         this.alreadyDetected = new HashSet<>();
 
         Log.info("Loaded %d people", allPeople.size());
-        
+
         numImages = new File("../c2/DetectionImages").listFiles().length;
         r = new Random();
     }
@@ -37,14 +37,13 @@ class DetectionsFromConfig implements DetectionBehaviour {
         CircularArea detectionArea = new CircularArea(location, Constants.DETECTION_RADIUS);
 
         List<Person> undetectedVictimsInArea = allPeople.stream()
-                .filter(person -> detectionArea.contains(person.location))
-                .filter(this::notAlreadyDetected)
-                .filter(this::needsSupplies)
-                .collect(Collectors.toList());
+                .filter(person -> detectionArea.contains(person.location)).filter(this::notAlreadyDetected)
+                .filter(this::needsSupplies).collect(Collectors.toList());
 
-        
         List<Detection> detections = undetectedVictimsInArea.stream()
-                .map(person -> new Detection(person, new File(Constants.DETECTION_IMAGE_DIR + File.separator + "D" + (1 + r.nextInt(numImages -1)) + ".jpg"), LocalDateTime.now()))
+                .map(person -> new Detection(person, new File(
+                        Constants.DETECTION_IMAGE_DIR + File.separator + "D" + (1 + r.nextInt(numImages - 1)) + ".jpg"),
+                        LocalDateTime.now()))
                 .collect(Collectors.toList());
 
         detections.forEach(d -> alreadyDetected.add(d.person.id));
