@@ -18,7 +18,7 @@ public class AppletRunner extends Thread{
 	@Override
 	public void run() {
         mapApp = new MapApp(gui);
-        PApplet.runSketch(new String[] { MapApp.class.getName() }, mapApp);
+        PApplet.runSketch(new String[] { "Group 4 (Vendor Lock-in): Flood Victim Detection and Supply Delivery" }, mapApp);
         
     }
 }
