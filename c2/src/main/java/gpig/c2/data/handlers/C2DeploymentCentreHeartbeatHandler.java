@@ -5,14 +5,14 @@ import gpig.common.data.Location;
 import gpig.common.messages.DeploymentCentreHeartbeat;
 import gpig.common.messages.handlers.DeploymentCentreHeartbeatHandler;
 
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class C2DeploymentCentreHeartbeatHandler implements DeploymentCentreHeartbeatHandler {
-    private final ConcurrentHashMap<UUID, Location> dcLocations;
-    private final ConcurrentHashMap<UUID, DCState> states;
+    private final Map<UUID, Location> dcLocations;
+    private final Map<UUID, DCState> states;
 
-    public C2DeploymentCentreHeartbeatHandler(ConcurrentHashMap<UUID, Location> dcLocations, ConcurrentHashMap<UUID, DCState> states) {
+    public C2DeploymentCentreHeartbeatHandler(Map<UUID, Location> dcLocations, Map<UUID, DCState> states) {
         this.dcLocations = dcLocations;
         this.states = states;
     }
