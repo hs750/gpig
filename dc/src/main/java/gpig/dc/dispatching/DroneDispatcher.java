@@ -29,6 +29,7 @@ import gpig.common.units.Kilometres;
 import gpig.common.util.Log;
 
 public abstract class DroneDispatcher extends Thread {
+    private boolean started = false;
     protected DeploymentArea currentLocation;
     protected boolean deployable = false;
     protected boolean deployed = false;
@@ -70,7 +71,10 @@ public abstract class DroneDispatcher extends Thread {
         }
         if (!deployable && !deployed) {
             deployable = true;
-            start();
+            if (!started) {
+                started = true;
+                start();
+            }
         }
     }
     
