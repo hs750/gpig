@@ -28,7 +28,7 @@ class DetectionsFromConfig implements DetectionBehaviour {
 
         Log.info("Loaded %d people", allPeople.size());
 
-        numImages = new File("../c2/DetectionImages").listFiles().length;
+        numImages = new File(Constants.DETECTION_IMAGE_DIR).listFiles().length;
         r = new Random();
     }
 
