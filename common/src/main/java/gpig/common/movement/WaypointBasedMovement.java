@@ -30,8 +30,10 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
         this.failsafeBehaviour = failsafeBehaviour;
     }
 
-    public void setPath(Path newPath) {
+    public synchronized void setPath(Path newPath) {
         path = new InTraversalPath(newPath);
+        lastUpdateTime = null;
+        
 
         // Teleport to destination if the teleport location exists
         path.teleportLocation().ifPresent(loc -> currentLocation = loc);
@@ -41,11 +43,11 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
         return currentLocation;
     }
 
-    public boolean isMoving() {
+    public synchronized boolean isMoving() {
         return path != null && !path.isAtEnd();
     }
 
-    public Location step() {
+    public synchronized Location step() {
         if (!isMoving()) {
             // No target, so the drone stays where it is
             return currentLocation();
