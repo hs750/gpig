@@ -35,7 +35,162 @@
     "location" : {
       "lat" : 53.931076,
       "lon" : -1.079118
-    }
-    
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.952824,
+      "lon" : -1.165011
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.921905,
+      "lon" : -1.144523
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 54.019446,
+      "lon" : -1.076703
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 54.000616,
+      "lon" : -1.006667
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.904554,
+      "lon" : -1.088851
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.932769,
+      "lon" : -0.975820
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.968990,
+      "lon" : -0.973368
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.946811,
+      "lon" : -1.030851
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.947463,
+      "lon" : -1.029651
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.947919, 
+      "lon" : -1.030087
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.948606, 
+      "lon" : -1.031217
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.948847, 
+      "lon" : -1.028450
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.949106,  
+      "lon" : -1.025776
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.948556, 
+      "lon" : -1.025688
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.950803,  
+      "lon" : -1.018211
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.953297, 
+      "lon" : -1.036200 
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.940833, 
+      "lon" : -1.071484
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.905345, 
+      "lon" : -1.037923
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.941953, 
+      "lon" : -1.161731
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.889131, 
+      "lon" : -1.165425
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.946374, 
+      "lon" : -0.951711
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 54.010146, 
+      "lon" : -1.151795
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 54.019907, 
+      "lon" : -1.110224
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.978945, 
+      "lon" : -1.199583
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.931583, 
+      "lon" : -1.197765
+    }   
+  },{
+    "type" : "CIVILIAN",
+    "location" : {
+      "lat" : 53.959099, 
+      "lon" : -1.029629
+    }   
   } ]
 }
