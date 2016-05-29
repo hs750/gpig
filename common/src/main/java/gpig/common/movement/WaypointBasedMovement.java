@@ -185,6 +185,10 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
         setPath(new Path(currentLocation));
         
     }
+    
+    protected Optional<Path> getPath(){
+        return path == null ? Optional.empty() : Optional.ofNullable(path.path);
+    }
 
     private class TravelStatus {
         public final Location newLocation;
