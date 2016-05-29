@@ -125,7 +125,7 @@ public abstract class DroneDispatcher extends Thread {
         return null;
     }
 
-    public void handle(DroneHeartbeat heartbeat) {
+    public synchronized void handle(DroneHeartbeat heartbeat) {
         DroneHeartbeat dh = allDrones.put(heartbeat.origin, heartbeat);
         if(heartbeat.state != DroneState.FAULTY){
             timedOutDrones.remove(heartbeat.origin);

@@ -69,9 +69,11 @@ public class DetectionDrone {
         ses.scheduleAtFixedRate(() -> {
             if(isDeployed()){
                 step();
-                if(movementBehaviour.currentLocation().equals(dcLocation)){
-                    Log.info("Returned to DC");
-                    setReturned();
+                synchronized (this) {
+                    if(movementBehaviour.currentLocation().equals(dcLocation)){
+                        Log.info("Returned to DC");
+                        setReturned();
+                    }
                 }
             }
             

@@ -17,8 +17,10 @@ public class DetectionPathHandler implements SetPathHandler{
         if (message.isFor(det.thisDrone)) {
             Log.info("Received path");
             det.dcLocation = message.path.getInitialLocation();
-            det.movementBehaviour.setPath(message.path);
-            det.movementBehaviour.step();
+            synchronized (det) {
+                det.movementBehaviour.setPath(message.path);
+                det.movementBehaviour.step(); 
+            }
             Log.info("Detection Drone Deployment made to location %s", message.path.get(0).location);
             det.setDeployed();
         }

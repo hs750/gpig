@@ -60,9 +60,11 @@ public class DeliveryDrone {
         ses.scheduleAtFixedRate(() -> {
             if (isDeployed()) {
                 movementBehaviour.step();
-                if (movementBehaviour.currentLocation().equals(dcLocation)) {
-                    Log.info("Returned to DC");
-                    setReturned();
+                synchronized (this) {
+                    if (movementBehaviour.currentLocation().equals(dcLocation)) {
+                        Log.info("Returned to DC");
+                        setReturned();
+                    }
                 }
             }
 

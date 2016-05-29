@@ -17,8 +17,10 @@ public class DeliveryPathHandler implements SetPathHandler{
         if (message.isFor(del.thisDrone)) {
             Log.info("Received path");
             del.dcLocation = message.path.getInitialLocation();
-            del.movementBehaviour.setPath(message.path);
-            del.movementBehaviour.step();
+            synchronized (del) {
+                del.movementBehaviour.setPath(message.path);
+                del.movementBehaviour.step();
+            }
             Log.info("Delivery Drone Deployment made to location %s", message.path.get(0).location);
             del.setDeployed();
         }
