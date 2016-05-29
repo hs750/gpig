@@ -70,7 +70,7 @@ public class DetectionDrone {
             if(isDeployed()){
                 step();
                 synchronized (this) {
-                    if(movementBehaviour.currentLocation().equals(dcLocation)){
+                    if(movementBehaviour.currentLocation().equals(dcLocation) && movementBehaviour.isStationary()){
                         Log.info("Returned to DC");
                         setReturned();
                     }

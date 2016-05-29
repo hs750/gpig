@@ -61,7 +61,7 @@ public class DeliveryDrone {
             if (isDeployed()) {
                 movementBehaviour.step();
                 synchronized (this) {
-                    if (movementBehaviour.currentLocation().equals(dcLocation)) {
+                    if (movementBehaviour.currentLocation().equals(dcLocation) && movementBehaviour.isStationary()) {
                         Log.info("Returned to DC");
                         setReturned();
                     }
