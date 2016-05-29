@@ -16,6 +16,7 @@ public class DeliveryBatteryFailureHandler implements FailCommandHandler {
         if (message.drone.equals(del.thisDrone)) {
             if (message.type == FailType.BATTERY) {
                 del.battery.setBatteryLevel(message.batteryPercentage);
+                del.state.setFaulty();
             }
         }
 

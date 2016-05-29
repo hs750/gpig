@@ -16,6 +16,7 @@ public class DetectionBatteryFailureHandler implements FailCommandHandler {
         if (message.drone.equals(det.thisDrone)) {
             if (message.type == FailType.BATTERY) {
                 det.battery.setBatteryLevel(message.batteryPercentage);
+                det.state.setFaulty();
             }
         }
 

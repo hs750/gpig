@@ -24,7 +24,7 @@ import gpig.drones.delivery.config.DeliveryDroneConfig;
 public class DeliveryDrone {
     private final FallibleMessageSender msgToDC;
     UUID thisDrone;
-    private StateProvider state;
+    StateProvider state;
     MovementBehaviour movementBehaviour;
     Battery battery;
     Location dcLocation;

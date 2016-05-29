@@ -33,7 +33,7 @@ public class DetectionDrone {
     MovementBehaviour movementBehaviour;
     Detector detector;
     Battery battery;
-    private StateProvider state;
+    StateProvider state;
     Location dcLocation;
 
     DetectionDrone(DetectionDroneConfig config) throws IOException {

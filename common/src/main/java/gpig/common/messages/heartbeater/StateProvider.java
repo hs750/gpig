@@ -9,31 +9,31 @@ public class StateProvider {
         setUndeployed();
     }
     
-    public DroneState getState(){
+    public synchronized DroneState getState(){
         return state;
     }
     
-    public void setOutbound(){
+    public synchronized void setOutbound(){
         state = DroneState.OUTBOUND;
     }
     
-    public void setUndeployed(){
+    public synchronized void setUndeployed(){
         state = DroneState.UNDEPLOYED;
     }
     
-    public void setReturning(){
+    public synchronized void setReturning(){
         state = DroneState.RETURNING;
     }
     
-    public void setFaulty(){
+    public synchronized void setFaulty(){
         state = DroneState.FAULTY;
     }
     
-    public void setCrashed(){
+    public synchronized void setCrashed(){
         state = DroneState.CRASHED;
     }
     
-    public void setDelivering(){
+    public synchronized void setDelivering(){
         state = DroneState.DELIVERING;
     }
 }

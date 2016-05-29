@@ -127,7 +127,9 @@ public abstract class DroneDispatcher extends Thread {
 
     public void handle(DroneHeartbeat heartbeat) {
         DroneHeartbeat dh = allDrones.put(heartbeat.origin, heartbeat);
-        timedOutDrones.remove(heartbeat.origin);
+        if(heartbeat.state != DroneState.FAULTY){
+            timedOutDrones.remove(heartbeat.origin);
+        }
         
         if(heartbeat.state == DroneState.UNDEPLOYED){
             LocalDateTime deployTime = deployedDrones.get(heartbeat.origin);
@@ -141,6 +143,12 @@ public abstract class DroneDispatcher extends Thread {
                 }
             }else{
                 unallocateTask(heartbeat.origin);
+            }
+        }else if(heartbeat.state == DroneState.FAULTY){
+            // battery failure
+            // stop the task getting re-added if the drone later fails in another way
+            if(firstTimeoutBeat(heartbeat.origin)){ 
+                tasks.add(allocatedTasks.get(heartbeat.origin).task);
             }
         }
         if(dh == null){
