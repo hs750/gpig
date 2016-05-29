@@ -146,10 +146,7 @@ public abstract class DroneDispatcher extends Thread {
             }
         }else if(heartbeat.state == DroneState.FAULTY){
             // battery failure
-            // stop the task getting re-added if the drone later fails in another way
-            if(firstTimeoutBeat(heartbeat.origin)){ 
-                tasks.add(allocatedTasks.get(heartbeat.origin).task);
-            }
+            handleBatteryFail(heartbeat);
         }
         if(dh == null){
             Log.info("Descovered new drone " + heartbeat.getClass().getSimpleName() + " " + heartbeat.origin);
@@ -210,6 +207,8 @@ public abstract class DroneDispatcher extends Thread {
     protected abstract void taskListEmpty();
 
     protected abstract void handleTimeout(AllocatedTask task);
+    
+    protected abstract void handleBatteryFail(DroneHeartbeat beat);
 
     private class HeartbeatTimer extends Thread {
         private int timeoutLength;
