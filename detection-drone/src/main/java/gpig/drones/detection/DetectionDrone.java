@@ -58,6 +58,7 @@ public class DetectionDrone {
         
         msgFromDC.addHandler(new DetectionPathHandler(this));
         msgFromDC.addHandler(new DetectionFatalFailureHandler(this));
+        msgFromDC.addHandler(new DetectionBatteryFailureHandler(this));
         
         new DetectionHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
     }

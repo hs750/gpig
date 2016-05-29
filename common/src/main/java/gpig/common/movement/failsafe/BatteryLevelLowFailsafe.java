@@ -15,6 +15,16 @@ public class BatteryLevelLowFailsafe implements BatteryFailsafeBehaviour {
         this.battery = battery;
         this.homeLocation = homeLocation;
     }
+    
+    @Override
+    public void restoreBattery() {
+        battery.setBatteryLevel(100);
+    }
+    
+    @Override
+    public void setHomeLocation(Location l){
+        homeLocation = l;
+    }
 
     @Override
     public boolean isTriggered(Path remainingPath) {

@@ -96,7 +96,7 @@ public class C2 {
     
     //need to send requests to dcs here
     public void failBattery(UUID id){
-    	 msgToDCs.send(new FailCommand(id, 51));
+    	 msgToDCs.send(new FailCommand(id, 40));
     	
     }
     public void failComms(UUID id){

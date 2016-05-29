@@ -43,4 +43,16 @@ public class CalculatedRemainingBatteryFailsafe implements BatteryFailsafeBehavi
         Path toHome = new Path(homeLocation);
         return Optional.of(toHome);
     }
+
+    @Override
+    public void setHomeLocation(Location l) {
+        this.homeLocation = homeLocation;
+        
+    }
+
+    @Override
+    public void restoreBattery() {
+        battery.setBatteryLevel(100);
+        
+    }
 }

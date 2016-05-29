@@ -33,6 +33,8 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
     public void setPath(Path newPath) {
         path = new InTraversalPath(newPath);
 
+        failsafeBehaviour.setHomeLocation(newPath.get(newPath.length() - 1).location);
+        
         // Teleport to destination if the teleport location exists
         path.teleportLocation().ifPresent(loc -> currentLocation = loc);
     }
@@ -61,6 +63,7 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
             Path failsafePath = failsafeBehaviour.path(path.remainingPath())
                     .orElseThrow(() -> new IllegalStateException("Failsafe behaviour was triggered but did not provide a failsafe path"));
             setPath(failsafePath);
+            failsafeBehaviour.restoreBattery();
         }
 
         double speedScalingFactor = Constants.SPEED_SCALING_FACTOR;

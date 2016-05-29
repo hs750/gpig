@@ -26,7 +26,7 @@ public class DeliveryDrone {
     UUID thisDrone;
     private StateProvider state;
     MovementBehaviour movementBehaviour;
-    private Battery battery;
+    Battery battery;
     Location dcLocation;
 
     public DeliveryDrone(DeliveryDroneConfig config) {
@@ -49,6 +49,7 @@ public class DeliveryDrone {
 
         msgFromDC.addHandler(new DeliveryPathHandler(this));
         msgFromDC.addHandler(new DeliveryFatalFailureHandler(this));
+        msgFromDC.addHandler(new DeliveryBatteryFailureHandler(this));
 
         new DeliveryHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
     }
