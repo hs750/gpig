@@ -66,6 +66,7 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
                     .orElseThrow(() -> new IllegalStateException("Failsafe behaviour was triggered but did not provide a failsafe path"));
             setPath(failsafePath);
             failsafeBehaviour.restoreBattery();
+            return currentLocation(); // So that we are not stepping over the old path
         }
 
         double speedScalingFactor = Constants.SPEED_SCALING_FACTOR;
