@@ -24,9 +24,9 @@ import gpig.drones.delivery.config.DeliveryDroneConfig;
 public class DeliveryDrone {
     private final FallibleMessageSender msgToDC;
     UUID thisDrone;
-    private StateProvider state;
+    StateProvider state;
     MovementBehaviour movementBehaviour;
-    private Battery battery;
+    Battery battery;
     Location dcLocation;
 
     public DeliveryDrone(DeliveryDroneConfig config) {
@@ -49,6 +49,7 @@ public class DeliveryDrone {
 
         msgFromDC.addHandler(new DeliveryPathHandler(this));
         msgFromDC.addHandler(new DeliveryFatalFailureHandler(this));
+        msgFromDC.addHandler(new DeliveryBatteryFailureHandler(this));
 
         new DeliveryHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
     }
@@ -59,9 +60,11 @@ public class DeliveryDrone {
         ses.scheduleAtFixedRate(() -> {
             if (isDeployed()) {
                 movementBehaviour.step();
-                if (movementBehaviour.currentLocation().equals(dcLocation)) {
-                    Log.info("Returned to DC");
-                    setReturned();
+                synchronized (this) {
+                    if (movementBehaviour.currentLocation().equals(dcLocation) && movementBehaviour.isStationary()) {
+                        Log.info("Returned to DC");
+                        setReturned();
+                    }
                 }
             }
 

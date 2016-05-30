@@ -17,12 +17,16 @@ public class Battery {
         this.batteryPercentage = 100.0;
         this.lastUpdateTime = LocalDateTime.now();
     }
+    
+    public synchronized void setBatteryLevel(double percentage){
+        batteryPercentage = percentage;
+    }
 
-    public double percentage() {
+    public synchronized double percentage() {
         return batteryPercentage;
     }
 
-    public double step() {
+    public synchronized double step() {
         LocalDateTime currentTime = LocalDateTime.now();
         double scalingFactor = Constants.SPEED_SCALING_FACTOR;
 
@@ -40,11 +44,11 @@ public class Battery {
         return batteryPercentage;
     }
 
-    public boolean isRunDown() {
+    public synchronized boolean isRunDown() {
         return batteryPercentage < 0.01;
     }
 
-    public long estimatedRemainingSeconds() {
+    public synchronized long estimatedRemainingSeconds() {
         return ((long) (batteryDuration.getSeconds() * batteryPercentage));
     }
 }

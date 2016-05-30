@@ -125,9 +125,11 @@ public abstract class DroneDispatcher extends Thread {
         return null;
     }
 
-    public void handle(DroneHeartbeat heartbeat) {
+    public synchronized void handle(DroneHeartbeat heartbeat) {
         DroneHeartbeat dh = allDrones.put(heartbeat.origin, heartbeat);
-        timedOutDrones.remove(heartbeat.origin);
+        if(heartbeat.state != DroneState.FAULTY){
+            timedOutDrones.remove(heartbeat.origin);
+        }
         
         if(heartbeat.state == DroneState.UNDEPLOYED){
             LocalDateTime deployTime = deployedDrones.get(heartbeat.origin);
@@ -142,6 +144,9 @@ public abstract class DroneDispatcher extends Thread {
             }else{
                 unallocateTask(heartbeat.origin);
             }
+        }else if(heartbeat.state == DroneState.FAULTY){
+            // battery failure
+            handleBatteryFail(heartbeat);
         }
         if(dh == null){
             Log.info("Descovered new drone " + heartbeat.getClass().getSimpleName() + " " + heartbeat.origin);
@@ -202,6 +207,8 @@ public abstract class DroneDispatcher extends Thread {
     protected abstract void taskListEmpty();
 
     protected abstract void handleTimeout(AllocatedTask task);
+    
+    protected abstract void handleBatteryFail(DroneHeartbeat beat);
 
     private class HeartbeatTimer extends Thread {
         private int timeoutLength;

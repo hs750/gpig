@@ -12,6 +12,7 @@ import gpig.common.data.Location;
 import gpig.common.data.Path;
 import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.DetectionDroneHeartbeat;
+import gpig.common.messages.DroneHeartbeat;
 import gpig.common.messages.handlers.DetectionDroneHeartbeatHandler;
 import gpig.common.movement.RecoveryStrategy;
 import gpig.common.networking.MessageSender;
@@ -78,6 +79,15 @@ public class DetectionDroneDispatcher extends DroneDispatcher implements Detecti
         }else{
             DetectionDroneHeartbeat ddh = new DetectionDroneHeartbeat(task.drone, DroneState.FAULTY, allDrones.get(task.drone).location);
             c2Messager.send(ddh);
+        }
+        
+    }
+
+    @Override
+    protected void handleBatteryFail(DroneHeartbeat beat) {
+        // stop the task getting re-added if the drone later fails in another way
+        if(firstTimeoutBeat(beat.origin)){ 
+            addTask(allocatedTasks.get(beat.origin).task);
         }
         
     }

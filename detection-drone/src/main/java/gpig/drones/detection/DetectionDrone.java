@@ -33,7 +33,7 @@ public class DetectionDrone {
     MovementBehaviour movementBehaviour;
     Detector detector;
     Battery battery;
-    private StateProvider state;
+    StateProvider state;
     Location dcLocation;
 
     DetectionDrone(DetectionDroneConfig config) throws IOException {
@@ -58,6 +58,7 @@ public class DetectionDrone {
         
         msgFromDC.addHandler(new DetectionPathHandler(this));
         msgFromDC.addHandler(new DetectionFatalFailureHandler(this));
+        msgFromDC.addHandler(new DetectionBatteryFailureHandler(this));
         
         new DetectionHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
     }
@@ -68,9 +69,11 @@ public class DetectionDrone {
         ses.scheduleAtFixedRate(() -> {
             if(isDeployed()){
                 step();
-                if(movementBehaviour.currentLocation().equals(dcLocation)){
-                    Log.info("Returned to DC");
-                    setReturned();
+                synchronized (this) {
+                    if(movementBehaviour.currentLocation().equals(dcLocation) && movementBehaviour.isStationary()){
+                        Log.info("Returned to DC");
+                        setReturned();
+                    }
                 }
             }
             

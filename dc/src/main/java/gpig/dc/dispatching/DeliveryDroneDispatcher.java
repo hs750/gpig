@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import gpig.common.data.Assignment;
+import gpig.common.data.Assignment.AssignmentStatus;
 import gpig.common.data.Constants;
 import gpig.common.data.DeploymentArea;
 import gpig.common.data.DroneState;
@@ -21,6 +22,7 @@ import gpig.common.data.Path.Waypoint;
 import gpig.common.messages.DeliveryAssignment;
 import gpig.common.messages.DeliveryDroneHeartbeat;
 import gpig.common.messages.DeliveryNotification;
+import gpig.common.messages.DroneHeartbeat;
 import gpig.common.messages.handlers.DeliveryAssignmentHandler;
 import gpig.common.messages.handlers.DeliveryDroneHeartbeatHandler;
 import gpig.common.messages.handlers.DeliveryNotificationHandler;
@@ -50,12 +52,12 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
     }
 
     private Path calculatePathToDelivery(Location deliveryLocation) {
-        if(currentLocation.deploymentArea.contains(deliveryLocation)){
+        if (currentLocation.deploymentArea.contains(deliveryLocation)) {
             List<Waypoint> wps = Arrays.asList(new Waypoint(deliveryLocation), new Waypoint(getLocation()));
             Path p = new Path(wps, currentLocation.deploymentArea.centre);
             return p;
         }
-        
+
         return null;
     }
 
@@ -63,9 +65,9 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
     public void handle(DeliveryAssignment message) {
         Location l = message.assignment.detection.person.location;
         Path p = calculatePathToDelivery(l);
-        if(p == null){
+        if (p == null) {
             Log.warn("Unable to schedule delivery to %s", l);
-        }else{
+        } else {
             Log.info("Delivery scheduled to %s", l);
             addTask(new Task(p, message.assignment));
         }
@@ -74,46 +76,65 @@ public class DeliveryDroneDispatcher extends DroneDispatcher
 
     @Override
     public void handle(DeliveryDroneHeartbeat message) {
-        if(pendingTimeouts.contains(message.origin)){
-            // If the drone was timed out but returned (comms failure) send notification that the delivery did indeed happen
+        if (pendingTimeouts.contains(message.origin)) {
+            // If the drone was timed out but returned (comms failure) send
+            // notification that the delivery did indeed happen
             sendDeliveryNotification(message.origin, LocalDateTime.now());
             pendingTimeouts.remove(message.origin);
         }
         super.handle(message);
-        
+
     }
 
     @Override
     protected void handleTimeout(AllocatedTask task) {
         pendingTimeouts.add(task.drone);
-        // Only re-allocate delivery if drone doesn't return in the expected time.
+        // Only re-allocate delivery if drone doesn't return in the expected
+        // time.
         // This is the difference between dead drone and comms out drone
-        if(task.expectedReturnTime.isBefore(LocalDateTime.now())){
-            if(firstTimeoutBeat(task.drone)){
+        if (task.expectedReturnTime.isBefore(LocalDateTime.now())) {
+            if (firstTimeoutBeat(task.drone)) {
                 addTask(task.task);
             }
-            
-            DeliveryDroneHeartbeat ddh = new DeliveryDroneHeartbeat(task.drone, DroneState.CRASHED, allDrones.get(task.drone).location);
+
+            DeliveryDroneHeartbeat ddh = new DeliveryDroneHeartbeat(task.drone, DroneState.CRASHED,
+                    allDrones.get(task.drone).location);
             c2Messager.send(ddh);
-        }else{
-            DeliveryDroneHeartbeat ddh = new DeliveryDroneHeartbeat(task.drone, DroneState.FAULTY, allDrones.get(task.drone).location);
+        } else {
+            DeliveryDroneHeartbeat ddh = new DeliveryDroneHeartbeat(task.drone, DroneState.FAULTY,
+                    allDrones.get(task.drone).location);
             c2Messager.send(ddh);
         }
-        
+
     }
 
     @Override
     public void handle(DeliveryNotification message) {
         sendDeliveryNotification(message.deliveryDrone, message.timestamp);
     }
-    
-    private void sendDeliveryNotification(UUID drone, LocalDateTime timestamp){
-        Optional<Assignment> a = allocatedTasks.get(drone).task.assignment;
-        if(a.isPresent()){
+
+    private void sendDeliveryNotification(UUID drone, LocalDateTime timestamp) {
+        Optional<Assignment> a = allocatedTasks.containsKey(drone) ? allocatedTasks.get(drone).task.assignment : Optional.empty();
+        if (a.isPresent()) {
             c2Messager.send(new DeliveryNotification(timestamp, a.get()));
-        }else{
+            a.get().status = AssignmentStatus.DELIVERED;
+        } else {
             Log.error("Unable to forward delivery notification for drone " + drone);
         }
+    }
+
+    @Override
+    protected void handleBatteryFail(DroneHeartbeat beat) {
+        // stop the task getting re-added if the drone later fails in another
+        // way
+        if (firstTimeoutBeat(beat.origin)) {
+            if (allocatedTasks.get(beat.origin).task.assignment.isPresent()
+                    && allocatedTasks.get(beat.origin).task.assignment.get().status == AssignmentStatus.ASSIGNED) {
+                addTask(allocatedTasks.get(beat.origin).task);
+            }
+
+        }
+
     }
 
 }

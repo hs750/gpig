@@ -14,8 +14,9 @@ import gpig.common.units.KMPH;
 
 public class DeliveryPathMovementBehaviour extends WaypointBasedMovement{
     private MessageSender dcMessenger;
-    boolean delivered;
+    private boolean delivered;
     private UUID thisDrone;
+    private BatteryFailsafeBehaviour failsafe;
     
     public DeliveryPathMovementBehaviour(Location initialLocation, KMPH speed,
             BatteryFailsafeBehaviour failsafeBehaviour, MessageSender dcMessenger, UUID thisDrone) {
@@ -23,6 +24,7 @@ public class DeliveryPathMovementBehaviour extends WaypointBasedMovement{
         this.dcMessenger = dcMessenger;
         this.delivered = false;
         this.thisDrone = thisDrone;
+        this.failsafe = failsafeBehaviour;
     }
 
     @Override
@@ -37,7 +39,11 @@ public class DeliveryPathMovementBehaviour extends WaypointBasedMovement{
     
     @Override
     public void setPath(Path newPath) {
-        delivered = false;
+        if(getPath().isPresent() && failsafe.isTriggered(getPath().get())){
+            delivered = true;
+        }else{
+            delivered = false;
+        }
         super.setPath(newPath);
     }
 }

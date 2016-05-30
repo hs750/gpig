@@ -35,6 +35,8 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
         lastUpdateTime = null;
         
 
+        failsafeBehaviour.setHomeLocation(newPath.get(newPath.length() - 1).location);
+        
         // Teleport to destination if the teleport location exists
         path.teleportLocation().ifPresent(loc -> currentLocation = loc);
     }
@@ -63,6 +65,8 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
             Path failsafePath = failsafeBehaviour.path(path.remainingPath())
                     .orElseThrow(() -> new IllegalStateException("Failsafe behaviour was triggered but did not provide a failsafe path"));
             setPath(failsafePath);
+            failsafeBehaviour.restoreBattery();
+            return currentLocation(); // So that we are not stepping over the old path
         }
 
         double speedScalingFactor = Constants.SPEED_SCALING_FACTOR;
@@ -183,6 +187,10 @@ public class WaypointBasedMovement implements MovementBehaviour, LocationProvide
     public void clearPath() {
         setPath(new Path(currentLocation));
         
+    }
+    
+    protected Optional<Path> getPath(){
+        return path == null ? Optional.empty() : Optional.ofNullable(path.path);
     }
 
     private class TravelStatus {
