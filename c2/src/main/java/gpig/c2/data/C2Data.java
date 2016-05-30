@@ -65,54 +65,58 @@ public class C2Data {
     }
 
     public synchronized List<Assignment> getAssignments() {
-        return Collections.unmodifiableList(assignments);
+        return assignments;
     }
     
     public Map<Assignment, LocalDateTime> getDeliveryTimes(){
-        return Collections.unmodifiableMap(deliveryTimes);
+        return deliveryTimes;
     }
     
     public synchronized List<Detection> getDetections() {
-        return Collections.unmodifiableList(detections);
+        return detections;
     }
     
     public Map<UUID, Location> getDCLocations(){
-        return Collections.unmodifiableMap(dcLocations);
+        return dcLocations;
     }
     
     public Map<UUID, Location> getDeliveryDronesLocation(){
-        return Collections.unmodifiableMap(deliveryDronesLocation);
+        return deliveryDronesLocation;
     }
     
     public Map<UUID, Location> getDetectionDronesLocation(){
-        return Collections.unmodifiableMap(detectionDronesLocation);
+        return detectionDronesLocation;
     }
     
     public Map<UUID, DroneState> getDeliveryDronesState(){
-        return Collections.unmodifiableMap(deliveryDronesState);
+        return deliveryDronesState;
     }
     
     public Map<UUID, DroneState> getDetectionDronesState(){
-        return Collections.unmodifiableMap(detectionDronesState);
+        return detectionDronesState;
     }
     
     public List<UUID> getActiveDCs(){
         ArrayList<UUID> ids = new ArrayList<>();
-        dcStates.forEach((k,v) -> {
-           if(v == DCState.ACTIVE){
-               ids.add(k);
-           }
-        });
+        synchronized (dcStates) {
+            dcStates.forEach((k,v) -> {
+                if(v == DCState.ACTIVE){
+                    ids.add(k);
+                }
+             }); 
+        }
         return ids;
     }
     
     public List<UUID> getInactiveDCs(){
         ArrayList<UUID> ids = new ArrayList<>();
-        dcStates.forEach((k,v) -> {
-           if(v == DCState.INACTIVE){
-               ids.add(k);
-           }
-        });
+        synchronized (dcStates) {
+            dcStates.forEach((k,v) -> {
+                if(v == DCState.INACTIVE){
+                    ids.add(k);
+                }
+             });  
+        }
         return ids;
     }
 

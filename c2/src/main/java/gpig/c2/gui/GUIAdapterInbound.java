@@ -50,17 +50,22 @@ public class GUIAdapterInbound {
 		List<Assignment> allAssignments = c2Data.getAssignments();
 		ArrayList<UUID> deliveredDetectionIDs = new ArrayList<UUID>();
 		
-		for(Assignment assignment : allAssignments){
-			if(assignment.status == AssignmentStatus.DELIVERED){
-				deliveredDetectionIDs.add(assignment.detection.person.id);
-			}
-		}
+		synchronized (allAssignments) {
+		    for(Assignment assignment : allAssignments){
+	            if(assignment.status == AssignmentStatus.DELIVERED){
+	                deliveredDetectionIDs.add(assignment.detection.person.id);
+	            }
+	        }
+        }
 		
-		for(Detection detection : allDetections){
-			if( ! deliveredDetectionIDs.contains(detection.person.id) ){
-				undeliveredDetections.add(detection);
-			}
-		}
+		synchronized (allDetections) {
+		    for(Detection detection : allDetections){
+	            if( ! deliveredDetectionIDs.contains(detection.person.id) ){
+	                undeliveredDetections.add(detection);
+	            }
+	        }
+        }
+		
 		
 		
 		return undeliveredDetections;
@@ -71,11 +76,14 @@ public class GUIAdapterInbound {
 		
 		List<Assignment> allAssignments = c2Data.getAssignments();
 		
-		for(Assignment assignment : allAssignments){
-			if( assignment.status == AssignmentStatus.DELIVERED){
-				deliveredDetections.add(assignment.detection);
-			}
-		}
+		synchronized (allAssignments) {
+		    for(Assignment assignment : allAssignments){
+	            if( assignment.status == AssignmentStatus.DELIVERED){
+	                deliveredDetections.add(assignment.detection);
+	            }
+	        }
+        }
+		
 		
 		
 		return deliveredDetections;
@@ -102,12 +110,14 @@ public class GUIAdapterInbound {
 		HashMap<UUID,Location> deliveryDroneLocations = new HashMap<UUID,Location>(c2Data.getDeliveryDronesLocation());
 		HashMap<UUID,DroneState> deliveryDroneStates = new HashMap<UUID,DroneState>(c2Data.getDeliveryDronesState());
 		
+		synchronized (deliveryDroneStates) {
+		    for(UUID id : deliveryDroneStates.keySet()){
+	            if(deliveryDroneStates.get(id) == DroneState.FAULTY){
+	                faultyDeliveryDroneLocations.put(id, deliveryDroneLocations.get(id));
+	            }
+	        }
+        }
 		
-		for(UUID id : deliveryDroneStates.keySet()){
-			if(deliveryDroneStates.get(id) == DroneState.FAULTY){
-				faultyDeliveryDroneLocations.put(id, deliveryDroneLocations.get(id));
-			}
-		}
 		
 		return faultyDeliveryDroneLocations;
 	}
@@ -118,12 +128,14 @@ public class GUIAdapterInbound {
 		HashMap<UUID,Location> detectionDroneLocations = new HashMap<UUID,Location>(c2Data.getDetectionDronesLocation());
 		HashMap<UUID,DroneState> detectionDroneStates = new HashMap<UUID,DroneState>(c2Data.getDetectionDronesState());
 		
+		synchronized (detectionDroneStates) {
+		    for(UUID id : detectionDroneStates.keySet()){
+	            if(detectionDroneStates.get(id) == DroneState.FAULTY){
+	                faultyDetectionDroneLocations.put(id, detectionDroneLocations.get(id));
+	            }
+	        }
+        }
 		
-		for(UUID id : detectionDroneStates.keySet()){
-			if(detectionDroneStates.get(id) == DroneState.FAULTY){
-				faultyDetectionDroneLocations.put(id, detectionDroneLocations.get(id));
-			}
-		}
 		
 		return faultyDetectionDroneLocations;
 	}
@@ -135,12 +147,14 @@ public class GUIAdapterInbound {
 		HashMap<UUID,Location> deliveryDroneLocations = new HashMap<UUID,Location>(c2Data.getDeliveryDronesLocation());
 		HashMap<UUID,DroneState> deliveryDroneStates = new HashMap<UUID,DroneState>(c2Data.getDeliveryDronesState());
 		
+		synchronized (deliveryDroneStates) {
+		    for(UUID id : deliveryDroneStates.keySet()){
+	            if(deliveryDroneStates.get(id) == DroneState.CRASHED){
+	                crashedDeliveryDroneLocations.put(id, deliveryDroneLocations.get(id));
+	            }
+	        }
+        }
 		
-		for(UUID id : deliveryDroneStates.keySet()){
-			if(deliveryDroneStates.get(id) == DroneState.CRASHED){
-				crashedDeliveryDroneLocations.put(id, deliveryDroneLocations.get(id));
-			}
-		}
 		
 		return crashedDeliveryDroneLocations;
 	}
@@ -151,12 +165,14 @@ public class GUIAdapterInbound {
 		HashMap<UUID,Location> detectionDroneLocations = new HashMap<UUID,Location>(c2Data.getDetectionDronesLocation());
 		HashMap<UUID,DroneState> detectionDroneStates = new HashMap<UUID,DroneState>(c2Data.getDetectionDronesState());
 		
+		synchronized (detectionDroneStates) {
+		    for(UUID id : detectionDroneStates.keySet()){
+	            if(detectionDroneStates.get(id) == DroneState.CRASHED){
+	                crashedDetectionDroneLocations.put(id, detectionDroneLocations.get(id));
+	            }
+	        }
+        }
 		
-		for(UUID id : detectionDroneStates.keySet()){
-			if(detectionDroneStates.get(id) == DroneState.CRASHED){
-				crashedDetectionDroneLocations.put(id, detectionDroneLocations.get(id));
-			}
-		}
 		
 		return crashedDetectionDroneLocations;
 	}
@@ -167,12 +183,15 @@ public class GUIAdapterInbound {
 		Detection result = null;
 		List<Detection> detections =  c2Data.getDetections();
 		
-		for(Detection detection : detections){
-			if(detection.person.id == id){
-				result = detection;
-				break;
-			}	
-		}
+		synchronized (detections) {
+		    for(Detection detection : detections){
+	            if(detection.person.id == id){
+	                result = detection;
+	                break;
+	            }   
+	        }
+        }
+		
 	
 		return result;
 	}
@@ -218,12 +237,15 @@ public class GUIAdapterInbound {
 		
 		List<Assignment> allAssignments = c2Data.getAssignments();
 		
-		for(Assignment assignment : allAssignments){
-			if( assignment.status == AssignmentStatus.DELIVERED && assignment.detection.person.id == id){
-				result = true;
-				break;
-			}
-		}
+		synchronized (allAssignments) {
+		    for(Assignment assignment : allAssignments){
+	            if( assignment.status == AssignmentStatus.DELIVERED && assignment.detection.person.id == id){
+	                result = true;
+	                break;
+	            }
+	        }
+        }
+		
 		
 		return result;
 	}
