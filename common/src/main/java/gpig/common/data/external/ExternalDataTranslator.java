@@ -44,34 +44,39 @@ public class ExternalDataTranslator {
     public static List<DetectionNotification> extractDetections(GPIGData data) {
         ArrayList<DetectionNotification> detections = new ArrayList<>();
 
-        for (GISPosition item : data.positions) {
-            if (item.payload instanceof StrandedPerson) {
-                Position p = item.position;
-                Location l = null;
+        if (data.positions != null) {
+            for (GISPosition item : data.positions) {
+                if (item.payload instanceof StrandedPerson) {
+                    Position p = item.position;
+                    Location l = null;
 
-                if (p instanceof Point) {
-                    l = new Location(((Point) p).coord.latitude, ((Point) p).coord.longitude);
-                } else if (p instanceof Polar) {
-                    l = new Location(((Polar) p).point.latitude, ((Polar) p).point.longitude);
-                } else if (p instanceof BoundingBox) {
-                    Location l1 = new Location(((BoundingBox) p).topleft.latitude, ((BoundingBox) p).topleft.longitude);
-                    Location l2 = new Location(((BoundingBox) p).topright.latitude,
-                            ((BoundingBox) p).topright.longitude);
+                    if (p instanceof Point) {
+                        l = new Location(((Point) p).coord.latitude, ((Point) p).coord.longitude);
+                    } else if (p instanceof Polar) {
+                        l = new Location(((Polar) p).point.latitude, ((Polar) p).point.longitude);
+                    } else if (p instanceof BoundingBox) {
+                        Location l1 = new Location(((BoundingBox) p).topleft.latitude,
+                                ((BoundingBox) p).topleft.longitude);
+                        Location l2 = new Location(((BoundingBox) p).topright.latitude,
+                                ((BoundingBox) p).topright.longitude);
 
-                    double b = l1.bearingOf(l2);
-                    Kilometres d = l1.distanceFrom(l2);
+                        double b = l1.bearingOf(l2);
+                        Kilometres d = l1.distanceFrom(l2);
 
-                    // location in the middle of the bounding box
-                    l = l1.locationAt(b, new Kilometres(d.value() / 2));
-                } else {
-                    Log.error("Cannot have detections in Ploygon");
-                }
+                        // location in the middle of the bounding box
+                        l = l1.locationAt(b, new Kilometres(d.value() / 2));
+                    } else {
+                        Log.error("Cannot have detections in Ploygon");
+                    }
 
-                if (l != null) {
-                    Detection d = new Detection(new Person(PersonType.OTHER, l),
-                            new File(((StrandedPerson) item.payload).image.url), toLocalDateTime(item.timestamp.date));
-                    DetectionNotification dn = new DetectionNotification(d);
-                    detections.add(dn);
+                    if (l != null) {
+                        File imgFile = new File(((StrandedPerson) item.payload).image == null ? "f"
+                                : ((StrandedPerson) item.payload).image.url);
+                        Detection d = new Detection(new Person(PersonType.OTHER, l), imgFile,
+                                toLocalDateTime(item.timestamp.date));
+                        DetectionNotification dn = new DetectionNotification(d);
+                        detections.add(dn);
+                    }
                 }
             }
         }
@@ -94,7 +99,7 @@ public class ExternalDataTranslator {
         sp.image = new Image();
         String detImgString = detection.image.toString();
         String[] split = detImgString.split(File.separator);
-        String imgFile = split.length > 0 ? split[split.length-1] : "";
+        String imgFile = split.length > 0 ? split[split.length - 1] : "";
         sp.image.url = detectionImageURL.toString() + "/" + imgFile;
         gis.payload = sp;
 
@@ -119,7 +124,8 @@ public class ExternalDataTranslator {
 
     }
 
-    public static GPIGData export(Collection<Detection> detections, Collection<DeliveryNotification> deliveries, URL detectionImageURL) {
+    public static GPIGData export(Collection<Detection> detections, Collection<DeliveryNotification> deliveries,
+            URL detectionImageURL) {
         if (detections == null) {
             detections = Collections.emptyList();
         }

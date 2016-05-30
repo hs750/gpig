@@ -49,7 +49,7 @@
 		
 	},
 	
-	"interoperabilityInputs": ["file:interop.xml"]
+	"interoperabilityInputs": ["file:interop.xml", "http://flood.kieranb.com/export.php"]
 	
 	
 }
