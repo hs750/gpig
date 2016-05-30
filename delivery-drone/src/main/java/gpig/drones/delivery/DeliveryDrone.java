@@ -44,7 +44,7 @@ public class DeliveryDrone {
 
         battery = new Battery(Constants.AERIAL_VEHICLE_BATTERY_DURATION);
         Location homeLocation = new Location(0.0, 0.0);
-        movementBehaviour = new DeliveryPathMovementBehaviour(homeLocation, Constants.DETECTION_DRONE_SPEED,
+        movementBehaviour = new DeliveryPathMovementBehaviour(homeLocation, Constants.DELIVERY_DRONE_SPEED,
                 new BatteryLevelLowFailsafe(battery, homeLocation), msgToDC, thisDrone);
 
         msgFromDC.addHandler(new DeliveryPathHandler(this));
