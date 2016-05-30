@@ -99,9 +99,9 @@ public class ControlPanel extends JPanel{
 		//buttons
 		deployB = new JButton("Deploy to");
 		reDeployB = new JButton("Redeploy to");
-		failBatteryB = new JButton("Fail Battery");
-		failCommsB = new JButton("Fail Comms");
-		failEngineB = new JButton("Fail Engine");
+		failBatteryB = new JButton("Predicted Failure");
+		failCommsB = new JButton("Comms Failure");
+		failEngineB = new JButton("Unpredicted Failure");
 		
 		//checkbox filters
 		
