@@ -40,11 +40,6 @@ public class Detection {
         if (getClass() != obj.getClass())
             return false;
         Detection other = (Detection) obj;
-        if (image == null) {
-            if (other.image != null)
-                return false;
-        } else if (!image.getAbsoluteFile().equals(other.image.getAbsoluteFile()))
-            return false;
         if (person == null) {
             if (other.person != null)
                 return false;

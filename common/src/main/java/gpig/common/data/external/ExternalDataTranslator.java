@@ -98,7 +98,11 @@ public class ExternalDataTranslator {
         StrandedPerson sp = new StrandedPerson();
         sp.image = new Image();
         String detImgString = detection.image.toString();
-        String[] split = detImgString.split(File.separator);
+        String spliter = File.separator;
+        if(File.separator.equals("\\")){
+        	spliter += File.separator;
+        }
+        String[] split = detImgString.split(spliter);
         String imgFile = split.length > 0 ? split[split.length - 1] : "";
         sp.image.url = detectionImageURL.toString() + "/" + imgFile;
         gis.payload = sp;
