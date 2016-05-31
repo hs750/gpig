@@ -12,11 +12,16 @@ subprojects {
         jcenter()
         maven { url "https://jitpack.io" }
     }
+
+    task copyDependencies(type: Copy) {
+        from configurations.compile
+        into 'build/libs'
+    }
 }
 
 task copyJars(type: Copy, dependsOn: subprojects.jar) {
     from(subprojects.jar)
-    into project.file('build')
+    into project.file('build/libs')
 }
 
 build.finalizedBy(copyJars)

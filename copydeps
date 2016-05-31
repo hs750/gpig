@@ -1,0 +1,4 @@
+#!/bin/sh
+
+gradle :common:copyDependencies
+find . -name "*.jar" | grep "/lib" | xargs -I{} cp "{}" ./build/libs
