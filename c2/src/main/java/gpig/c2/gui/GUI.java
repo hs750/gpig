@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.swing.*;
@@ -50,6 +51,7 @@ public class GUI {
 	private File detectionImagesDirectory = new File(Constants.DETECTION_IMAGE_DIR);
 	private URL[] detectionImageURLs;
 	private HashMap<UUID, URL> detectionImageMap;
+	private Random rand;
 	
 	private JFrame detailsFrame;
 	private ControlPanel controlPanel;
@@ -70,6 +72,7 @@ public class GUI {
 	
 	
 	public GUI(GUIAdapterInbound adapterInbound, GUIAdapterOutbound adapterOutbound){
+	    rand = new Random();
 		this.adapterInbound = adapterInbound;
 		this.adapterOutbound = adapterOutbound;
 		
@@ -327,8 +330,8 @@ public class GUI {
 			
 			if( ! detectionImageMap.containsKey(detection.person.id)){
 				int index = detectionImageMap.size()+1;
-				if(index>=detectionImageURLs.length)
-					index = 0;
+				
+				
 				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
 			}
 		}
@@ -349,8 +352,8 @@ public class GUI {
 		
 			if( ! detectionImageMap.containsKey(detection.person.id)){
 				int index = detectionImageMap.size()+1;
-				if(index>=detectionImageURLs.length)
-					index = 0;
+				index = 1 + rand.nextInt(detectionImageURLs.length - 1);
+				
 				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
 			}
 		}
