@@ -329,9 +329,8 @@ public class GUI {
 		    }
 			
 			if( ! detectionImageMap.containsKey(detection.person.id)){
-				int index = detectionImageMap.size()+1;
-				
-				
+				int index = rand.nextInt(detectionImageURLs.length - 1);
+
 				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
 			}
 		}
@@ -351,9 +350,8 @@ public class GUI {
 		    }
 		
 			if( ! detectionImageMap.containsKey(detection.person.id)){
-				int index = detectionImageMap.size()+1;
-				index = 1 + rand.nextInt(detectionImageURLs.length - 1);
-				
+				int index = rand.nextInt(detectionImageURLs.length - 1);
+
 				detectionImageMap.put(detection.person.id, detectionImageURLs[index]);
 			}
 		}
