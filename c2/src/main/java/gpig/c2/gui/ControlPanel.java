@@ -49,7 +49,7 @@ public class ControlPanel extends JPanel{
 	
 	//control buttons
 	protected JButton deployB;
-	protected JButton reDeployB;
+	//protected JButton reDeployB;
 	protected JButton failBatteryB;
 	protected JButton failCommsB;
 	protected JButton failEngineB;
@@ -98,7 +98,7 @@ public class ControlPanel extends JPanel{
 		
 		//buttons
 		deployB = new JButton("Deploy to");
-		reDeployB = new JButton("Redeploy to");
+		//reDeployB = new JButton("Redeploy to");
 		failBatteryB = new JButton("Predicted Failure");
 		failCommsB = new JButton("Comms Failure");
 		failEngineB = new JButton("Unpredicted Failure");
@@ -114,7 +114,7 @@ public class ControlPanel extends JPanel{
 		
 		//button background
 		deployB.setOpaque(false);
-		reDeployB.setOpaque(false);
+		//reDeployB.setOpaque(false);
 		failBatteryB.setOpaque(false);
 		failCommsB.setOpaque(false);
 		failEngineB.setOpaque(false);
@@ -129,7 +129,7 @@ public class ControlPanel extends JPanel{
 		
 		//initial states
 		deployB.setEnabled(false);
-		reDeployB.setEnabled(false);
+		//reDeployB.setEnabled(false);
 		failBatteryB.setEnabled(false);
 		failCommsB.setEnabled(false);
 		failEngineB.setEnabled(false);
@@ -154,17 +154,17 @@ public class ControlPanel extends JPanel{
 			  } 
 			});
 		
-		reDeployB.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  reDeployB.setEnabled(false);
-			    
-			    gui.requestRedeploy(
-			    		new Location(
-			    				Double.parseDouble(selectedLatL.getText()),
-			    				Double.parseDouble(selectedLonL.getText())
-			    				));
-			  } 
-			});
+//		reDeployB.addActionListener(new ActionListener() { 
+//			  public void actionPerformed(ActionEvent e) { 
+//				  reDeployB.setEnabled(false);
+//			    
+//			    gui.requestRedeploy(
+//			    		new Location(
+//			    				Double.parseDouble(selectedLatL.getText()),
+//			    				Double.parseDouble(selectedLonL.getText())
+//			    				));
+//			  } 
+//			});
 		
 		failBatteryB.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
@@ -306,13 +306,13 @@ public class ControlPanel extends JPanel{
 		c.gridy = 2;
 		add(deployB,c);
 		
-		c.fill = GridBagConstraints.BOTH;
-		c.anchor = GridBagConstraints.WEST;
-		c.weighty = 0.5;
-		c.gridwidth = 1;
-		c.gridx = 1;
-		c.gridy = 2;
-		add(reDeployB,c);
+//		c.fill = GridBagConstraints.BOTH;
+//		c.anchor = GridBagConstraints.WEST;
+//		c.weighty = 0.5;
+//		c.gridwidth = 1;
+//		c.gridx = 1;
+//		c.gridy = 2;
+//		add(reDeployB,c);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.WEST;
@@ -399,13 +399,13 @@ public class ControlPanel extends JPanel{
 		deployB.setEnabled(true);
 	}
 	public void enableRedeployment(){
-		reDeployB.setEnabled(true);
+		//reDeployB.setEnabled(true);
 	}
 	public void disableDeployment(){
 		deployB.setEnabled(false);
 	}
 	public void disableRedeployment(){
-		reDeployB.setEnabled(false);
+		//reDeployB.setEnabled(false);
 	}
 	
 	public void enableBatteryFailure(){

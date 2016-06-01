@@ -16,8 +16,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class C2Data {
-	private int numberOfDCs = 2;
-	private int numberOfUndeployedDCs = 2;
+	private int numberOfDCs = 1;
+	private int numberOfUndeployedDCs = 1;
     private List<Assignment> assignments;
     private ConcurrentHashMap<UUID, DroneState> deliveryDronesState;
     private ConcurrentHashMap<UUID, Location> dcLocations;
