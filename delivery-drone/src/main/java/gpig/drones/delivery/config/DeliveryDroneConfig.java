@@ -5,4 +5,5 @@ import gpig.common.config.CommunicationChannelConfig;
 
 public class DeliveryDroneConfig extends CommonConfig {
     public CommunicationChannelConfig dedcChannel;
+    public int heartbeatRate;
 }

@@ -42,9 +42,12 @@ public class DeploymentCentre {
     private DetectionDroneDispatcher dtdd;
     private DeliveryDroneDispatcher dedd;
 
+    private int heartbeatRate;
+
     public DeploymentCentre(DCConfig config) {
         id = UUID.randomUUID();
         Log.info("Starting mobile deployment centre: %s", id);
+        heartbeatRate = config.heartbeatRate;
 
         // C2-DC communication
         MessageReceiver msgFromC2 = new MessageReceiver();
@@ -103,7 +106,7 @@ public class DeploymentCentre {
             
             DeploymentCentreHeartbeat msg = new DeploymentCentreHeartbeat(this.id, this.location(), dtdd.isDeployable() && dedd.isDeployable() ? DCState.ACTIVE : DCState.INACTIVE);
             msgToC2.send(msg);
-        }, 0, 50, TimeUnit.MILLISECONDS);
+        }, 0, heartbeatRate, TimeUnit.MILLISECONDS);
     }
 
     public void setDeployed() {

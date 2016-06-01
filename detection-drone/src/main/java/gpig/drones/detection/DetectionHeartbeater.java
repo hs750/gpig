@@ -11,8 +11,8 @@ import gpig.common.networking.MessageSender;
 
 public class DetectionHeartbeater extends Heartbeater {
 
-    public DetectionHeartbeater(UUID thisDrone, MessageSender messenger, LocationProvider locationProvider, StateProvider stateProvider) {
-        super(thisDrone, Constants.DRONE_HEARTBEAT_INTERVAL, messenger, locationProvider, stateProvider);
+    public DetectionHeartbeater(UUID thisDrone, MessageSender messenger, LocationProvider locationProvider, StateProvider stateProvider, int heartbeatRate) {
+        super(thisDrone, heartbeatRate, messenger, locationProvider, stateProvider);
     }
 
     @Override

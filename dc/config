@@ -1,6 +1,7 @@
 {
 	"app": "DC",
 	"speedScalingFactor": 10,
+    "heartbeatRate": 50,
 	"dcc2Channel": {
 		"out": "DC-C2",
 		"in": "C2-DC",

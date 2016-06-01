@@ -1,6 +1,7 @@
 {
 	"app": "detection-drone",
 	"speedScalingFactor": 10,
+    "heartbeatRate": 50,
 	"dtdcChannel": {
 		"out": "DT-DC",
 		"in": "DC-DT",

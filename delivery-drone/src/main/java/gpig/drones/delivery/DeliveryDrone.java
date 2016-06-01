@@ -28,10 +28,12 @@ public class DeliveryDrone {
     MovementBehaviour movementBehaviour;
     Battery battery;
     Location dcLocation;
+    int heartbeatRate;
 
     public DeliveryDrone(DeliveryDroneConfig config) {
         Log.info("Starting delivery drone");
 
+        heartbeatRate = config.heartbeatRate;
         thisDrone = UUID.randomUUID();
 
         MessageReceiver msgFromDC = new MessageReceiver();
@@ -51,7 +53,7 @@ public class DeliveryDrone {
         msgFromDC.addHandler(new DeliveryFatalFailureHandler(this));
         msgFromDC.addHandler(new DeliveryBatteryFailureHandler(this));
 
-        new DeliveryHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
+        new DeliveryHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state, heartbeatRate);
     }
 
     public void run() {
@@ -68,7 +70,7 @@ public class DeliveryDrone {
                 }
             }
 
-        }, 0, 50, TimeUnit.MILLISECONDS);
+        }, 0, heartbeatRate, TimeUnit.MILLISECONDS);
     }
 
     public DroneState getState() {

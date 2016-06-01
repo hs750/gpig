@@ -35,10 +35,12 @@ public class DetectionDrone {
     Battery battery;
     StateProvider state;
     Location dcLocation;
+    int heartbeatRate;
 
     DetectionDrone(DetectionDroneConfig config) throws IOException {
         Log.info("Starting detection drone");
         thisDrone = UUID.randomUUID();
+        heartbeatRate = config.heartbeatRate;
         
         MessageReceiver msgFromDC = new MessageReceiver();
         CommunicationChannel dtdcChannel = new CommunicationChannel(config.dtdcChannel, msgFromDC);
@@ -60,7 +62,7 @@ public class DetectionDrone {
         msgFromDC.addHandler(new DetectionFatalFailureHandler(this));
         msgFromDC.addHandler(new DetectionBatteryFailureHandler(this));
         
-        new DetectionHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state);
+        new DetectionHeartbeater(thisDrone, msgToDC, (LocationProvider) movementBehaviour, state, heartbeatRate);
     }
 
     void run() {
@@ -77,7 +79,7 @@ public class DetectionDrone {
                 }
             }
             
-        }, 0, 50, TimeUnit.MILLISECONDS);
+        }, 0, heartbeatRate, TimeUnit.MILLISECONDS);
     }
     
     private void step(){

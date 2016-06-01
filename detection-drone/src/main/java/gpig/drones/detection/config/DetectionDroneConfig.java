@@ -8,4 +8,5 @@ import gpig.common.config.CommunicationChannelConfig;
 public class DetectionDroneConfig extends CommonConfig {
     public CommunicationChannelConfig dtdcChannel;
     public File detectionConfig;
+    public int heartbeatRate;
 }

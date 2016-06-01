@@ -9,4 +9,5 @@ public class DCConfig extends CommonConfig {
     public CommunicationChannelConfig dcdtChannel;
     public CommunicationChannelConfig dcdeChannel;
     public LocationsConfig dcLocations;
+    public int heartbeatRate;
 }

@@ -1,6 +1,7 @@
 {
 	"app": "delivery-drone",
 	"speedScalingFactor": 10,
+    "heartbeatRate": 50,
 	"dedcChannel": {
 		"out": "DE-DC",
 		"in": "DC-DE",
