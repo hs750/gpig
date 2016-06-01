@@ -64,12 +64,14 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
                 Kilometres closestDCDist = new Kilometres(Double.MAX_VALUE);
                 UUID closestDC = null;
 
-                for (Entry<UUID, Location> DCs : dcs.entrySet()) {
-                    if (activeDCs.contains(DCs.getKey())) {
-                        Kilometres dist = DCs.getValue().distanceFrom(message.detection.person.location);
-                        if (dist.value() <= Constants.DEPLOYMENT_DELIVERY_RADIUS.value()) {
-                            if (dist.value() < closestDCDist.value()) {
-                                closestDC = DCs.getKey();
+                synchronized (dcs) {
+                    for (Entry<UUID, Location> DCs : dcs.entrySet()) {
+                        if (activeDCs.contains(DCs.getKey())) {
+                            Kilometres dist = DCs.getValue().distanceFrom(message.detection.person.location);
+                            if (dist.value() <= Constants.DEPLOYMENT_DELIVERY_RADIUS.value()) {
+                                if (dist.value() < closestDCDist.value()) {
+                                    closestDC = DCs.getKey();
+                                }
                             }
                         }
                     }
@@ -77,11 +79,19 @@ public class DetectionAllocator extends Thread implements DetectionNotificationH
 
                 if (closestDC != null) {
                     Assignment a = new Assignment(message.detection, closestDC);
-                    DeliveryAssignment da = new DeliveryAssignment(a);
-                    dcMessageSender.send(da);
-                    database.getDeliveryAssignmentHandler().handle(da);
+                    
+                    if(!database.getAssignments().contains(a)){
+                        DeliveryAssignment da = new DeliveryAssignment(a);
+                        dcMessageSender.send(da);
+                        database.getDeliveryAssignmentHandler().handle(da);
+                        
+                        Log.info("Delivery to %s assigned to %s", message.detection.person.location.toString(), closestDC);
+                    }else{
+                        Log.info("Delivery to %s has already been assigned.", message.detection.person.location.toString(), closestDC);
+                    }
+                    
 
-                    Log.info("Delivery to %s assigned to %s", message.detection.person.location.toString(), closestDC);
+                    
                 } else {
                     // Attempt delivery assignment later.
                     unableDeliveries.add(message);
