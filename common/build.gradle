@@ -5,5 +5,5 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.4'
-    compile 'com.github.j6mes:gpig-flood-schema:d5bcaad'
+    compile 'gpig.all:flood-data:1.0.4'
 }
