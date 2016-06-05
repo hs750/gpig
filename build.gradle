@@ -10,7 +10,7 @@ subprojects {
 
     repositories {
         jcenter()
-        maven { url "http://www.harrison-spain.com/maven/gpig-public-repo" }
+        maven { url "http://www.harrison-spain.com/maven" }
     }
 
     task copyDependencies(type: Copy) {
